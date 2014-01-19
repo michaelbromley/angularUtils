@@ -58,6 +58,6 @@ angular.module( 'app' )
             for (var i = matchingIndices.length; i > 0; i --) {
                 format = insertAtIndex(format, matchingIndices[i-1], suffix);
             }
-            return $filter('date')(new Date(timestamp), format);
+            return $filter('date')(date, format);
         };
     });
