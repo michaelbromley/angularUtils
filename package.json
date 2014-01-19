@@ -1,11 +1,8 @@
 {
   "name": "angularUtils",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A collection of re-usable AngularJS components",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "Michael Bromley",
   "license": "MIT",
   "devDependencies": {
