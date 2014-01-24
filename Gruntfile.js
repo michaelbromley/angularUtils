@@ -22,12 +22,14 @@ module.exports = function(grunt) {
             unit: {
                 options: {
                     files: [
+                        'vendor/jquery/jquery-2.1.0.min.js', // jQuery is included for the purposes of easier DOM selection when testing directives.
                         'vendor/angular/angular.js',
                         'vendor/angular/angular-mocks.js',
                         'src/angularUtils.js',
-                        'src/filters/ordinalDate/ordinalDate.js',
-                        'src/filters/ordinalDate/ordinalDate.spec.js'
-                        //'src/**/*.js'
+                        'src/filters/**/*.js',
+                        'src/filters/**/*.spec.js',
+                        'src/directives/**/*.js',
+                        'src/directives/**/*.spec.js'
                     ],
                     frameworks: [ 'jasmine' ],
                     plugins: [ 'karma-jasmine', 'karma-firefox-launcher', 'karma-chrome-launcher', 'karma-phantomjs-launcher' ]
