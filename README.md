@@ -12,9 +12,13 @@ This code is made available under the MIT license, so feel free to use any of th
 
 ## Index of Utilities
 
-Filters
--------
+### Filters
+
 
 - [**ordinalDate**](https://github.com/michaelbromley/angularUtils/tree/master/src/filters/ordinalDate) : Works like the built-in date filter, but will add the English ordinal suffix to the day.
+
+### Directives
+
+- [**Disqus**](https://github.com/michaelbromley/angularUtils/tree/master/src/directives/disqus) : Embed a Disqus comments widget in your app
 
 That's all for now. Watch this space - there'll be more soon I expect.
