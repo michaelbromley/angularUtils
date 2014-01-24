@@ -2,7 +2,7 @@ describe('ordinalDate', function() {
     var ordinalDateFilter;
     var timestamp1 = 1384474920000; // 15th November 2013, 00:22:00
 
-    beforeEach(module('app'));
+    beforeEach(module('angularUtils'));
     beforeEach (function(){
         inject(function ($injector) {
             ordinalDateFilter = $injector.get('ordinalDateFilter');
