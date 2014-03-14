@@ -21,4 +21,8 @@ This code is made available under the MIT license, so feel free to use any of th
 
 - [**Disqus**](https://github.com/michaelbromley/angularUtils/tree/master/src/directives/disqus) : Embed a Disqus comments widget in your app
 
+### Services
+
+- [**noise**](https://github.com/michaelbromley/angularUtils/tree/master/src/services/noise) : A simple 1D interpolated noise generator.
+
 That's all for now. Watch this space - there'll be more soon I expect.
