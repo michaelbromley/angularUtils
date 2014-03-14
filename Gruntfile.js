@@ -29,14 +29,19 @@ module.exports = function(grunt) {
                         'src/filters/**/*.js',
                         'src/filters/**/*.spec.js',
                         'src/directives/**/*.js',
-                        'src/directives/**/*.spec.js'
+                        'src/directives/**/*.spec.js',
+                        'src/services/**/*.js',
+                        'src/services/**/*.spec.js'
                     ],
                     frameworks: [ 'jasmine' ],
                     plugins: [ 'karma-jasmine', 'karma-firefox-launcher', 'karma-chrome-launcher', 'karma-phantomjs-launcher' ]
 
                 },
                 singleRun: true,
-                port: 9877
+                port: 9877,
+                browsers: [
+                    'PhantomJS'
+                ]
             }
         }
 
