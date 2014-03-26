@@ -24,6 +24,12 @@ angular.module('angularUtils')
             template: '<div id="disqus_thread"></div><a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>',
             link: function(scope) {
 
+                // ensure that the disqus_identifier and disqus_url are both set, otherwise we will run in to identifier conflicts when using URLs with "#" in them
+                // see http://help.disqus.com/customer/portal/articles/662547-why-are-the-same-comments-showing-up-on-multiple-pages-
+                if (!scope.disqus_identifier || !scope.disqus_url) {
+                    throw "Please ensure that the `disqus-identifier` and `disqus-url` attributes are both set.";
+                }
+
                 scope.$watch("readyToBind", function(isReady) {
 
                     // If the directive has been called without the 'ready-to-bind' attribute, we
@@ -47,7 +53,12 @@ angular.module('angularUtils')
                             (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
                         } else {
                             $window.DISQUS.reset({
-                                reload: true
+                                reload: true,
+                                config: function () {
+                                    this.page.identifier = scope.disqus_identifier;
+                                    this.page.url = scope.disqus_url;
+                                    this.page.title = scope.disqus_title;
+                                }
                             });
                         }
                     }
