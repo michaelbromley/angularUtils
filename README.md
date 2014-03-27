@@ -16,13 +16,13 @@ This code is made available under the MIT license, so feel free to use any of th
 
 
 - [**ordinalDate**](https://github.com/michaelbromley/angularUtils/tree/master/src/filters/ordinalDate) : Works like the built-in date filter, but will add the English ordinal suffix to the day.
+- [**startsWith**](https://github.com/michaelbromley/angularUtils/tree/master/src/filters/startsWith) : Filter for strings which *start with* the search string.
 
 ### Directives
 
 - [**Disqus**](https://github.com/michaelbromley/angularUtils/tree/master/src/directives/disqus) : Embed a Disqus comments widget in your app
+- [**tagbox**](https://github.com/michaelbromley/angularUtils/tree/master/src/directives/tagbox) : A Twitter-style tag suggestion and auto-complete directive that can be added to any text input or textarea.
 
 ### Services
 
 - [**noise**](https://github.com/michaelbromley/angularUtils/tree/master/src/services/noise) : A simple 1D interpolated noise generator.
-
-That's all for now. Watch this space - there'll be more soon I expect.
