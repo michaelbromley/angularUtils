@@ -9,68 +9,28 @@
  */
 angular.module('angularUtils')
 
-.directive('dirTagbox', function($compile) {
-
-        /**
-         * function taken from http://stackoverflow.com/a/263796/772859
-         * @param el
-         * @returns {*}
-         */
-        function getCaret(el) {
-            if (el.selectionStart) {
-                return el.selectionStart;
-            } else if (document.selection) {
-                el.focus();
-
-                var r = document.selection.createRange();
-                if (r === null) {
-                    return 0;
-                }
-
-                var re = el.createTextRange(),
-                    rc = re.duplicate();
-                re.moveToBookmark(r.getBookmark());
-                rc.setEndPoint('EndToStart', re);
-
-                return rc.text.length;
-            }
-            return 0;
-        }
-
+    .directive('dirTagbox', function($compile) {
         return {
             restrict: 'A',
             scope: {
                 tags: '=dirTagbox'
             },
             link: function(scope, element, attrs) {
-
                 var TOKEN = attrs.dirTagtoken !== undefined ? attrs.dirTagtoken : '';
 
-                function insertSelectedTag(selectedTag) {
-                    var inputVal = input.val();
-                    var output = inputVal.substring(0, scope.candidate.start) + TOKEN + selectedTag + inputVal.substring(scope.candidate.end);
-
-                    scope.$parent.$apply(function() {
-                        scope.$parent[attrs.ngModel] = output;
-                        input.val(output);
-                    });
+                var input = element;
+                var isValidInputType = (input[0].nodeName === 'INPUT' && (input[0].type === 'text' || input[0].type === 'search' || input[0].type === 'email'));
+                if (input[0].nodeName !== 'TEXTAREA' && !isValidInputType) {
+                    return;
                 }
 
+                // create wrapper div
+                var wrapper = angular.element('<div style="position: relative; display: inline-block"></div>');
+                input.wrap(wrapper);
+
                 // create the suggestions div
-                var suggestions = angular.element(
-                    '<div class="suggestions-container" ng-show="0 < filteredTags.length">' +
-                        '<div class="suggestion" ng-class="{selected: $index == selectedIndex}" ng-repeat="tag in filteredTags = (tags | startsWith : candidateHashtag)">' + TOKEN + '{{ tag }}</div>' +
-                        '</div>');
-                suggestions.css({
-                    'position': 'absolute',
-                    'width': element[0].offsetWidth + 'px',
-                    'left': element[0].offsetLeft + 'px',
-                    'max-height': '200px',
-                    'overflow': 'auto',
-                    'z-index': 100
-                });
-                element.after(suggestions);
-                $compile(suggestions)(scope);
+                var suggestions = makeSuggestionsBox();
+                input.parent().append(suggestions);
 
                 scope.candidateHashtag = "?";
                 scope.candidate = {
@@ -79,23 +39,38 @@ angular.module('angularUtils')
                 };
                 scope.selectedIndex = null;
                 scope.filteredTags = [];
-
-                var input = element;
-                // ensure the element is a textarea
-                if (input[0].nodeName !== 'TEXTAREA' && input[0].nodeName !== 'INPUT') {
-                    return;
-                }
+                scope.isFocussed = false;
+                var mouseIsOverSuggestions = false;
 
                 suggestions.on('click', function(e) {
-                    var selectedTag = e.target.innerHTML.substring(1);
+                    var selectedTag = e.target.innerHTML.substring(TOKEN.length);
                     insertSelectedTag(selectedTag);
+                    input[0].focus();
                     suggestions.addClass('ng-hide');
                 });
 
                 suggestions.on('mouseover', function() {
+                    mouseIsOverSuggestions = true;
                     scope.$apply(function() {
                         scope.selectedIndex = null;
                     });
+                });
+                suggestions.on('mouseout', function() {
+                    mouseIsOverSuggestions = false;
+                });
+
+                input.on('focus', function() {
+                    scope.$apply(function() {
+                        scope.isFocussed = true;
+                    });
+                });
+
+                input.on('blur', function() {
+                    if (!mouseIsOverSuggestions) {
+                        scope.$apply(function() {
+                            scope.isFocussed = false;
+                        });
+                    }
                 });
 
                 input.on('keyup', function() {
@@ -148,6 +123,59 @@ angular.module('angularUtils')
                         });
                     }
                 });
+
+                function makeSuggestionsBox() {
+                    var suggestions =angular.element(
+                        '<div class="suggestions-container" ng-show="isFocussed && 0 < filteredTags.length" tabindex="-1">' +
+                            '<div class="suggestion" ng-class="{selected: $index == selectedIndex}" ng-repeat="tag in filteredTags = (tags | startsWith : candidateHashtag)">' + TOKEN + '{{ tag }}</div>' +
+                            '</div>');
+                    suggestions.css({
+                        'position': 'absolute',
+                        'width': input[0].offsetWidth + 'px',
+                        'left': input[0].offsetLeft + 'px',
+                        'max-height': '200px',
+                        'overflow': 'auto',
+                        'z-index': 100
+                    });
+                    $compile(suggestions)(scope);
+                    return suggestions;
+                }
+
+                function insertSelectedTag(selectedTag) {
+                    var inputVal = input.val();
+                    var output = inputVal.substring(0, scope.candidate.start) + TOKEN + selectedTag + inputVal.substring(scope.candidate.end);
+
+                    scope.$parent.$apply(function() {
+                        scope.$parent[attrs.ngModel] = output;
+                        input.val(output);
+                    });
+                }
+
+                /**
+                 * function taken from http://stackoverflow.com/a/263796/772859
+                 * @param el
+                 * @returns {*}
+                 */
+                function getCaret(el) {
+                    if (el.selectionStart) {
+                        return el.selectionStart;
+                    } else if (document.selection) {
+                        el.focus();
+
+                        var r = document.selection.createRange();
+                        if (r == null) {
+                            return 0;
+                        }
+
+                        var re = el.createTextRange(),
+                            rc = re.duplicate();
+                        re.moveToBookmark(r.getBookmark());
+                        rc.setEndPoint('EndToStart', re);
+
+                        return rc.text.length;
+                    }
+                    return 0;
+                }
             }
         };
     });

@@ -22,11 +22,12 @@ describe('tagbox directive', function() {
         ];
 
         textarea = angular.element('<textarea name="description" id="description" dir-tagbox="tags" dir-tagtoken="#" rows="3"></textarea>');
+        document.body.appendChild(textarea[0]);
         _$compile_(textarea)(scope);
         scope.$apply();
 
         suggestions = textarea.next();
-        document.body.appendChild(textarea[0]);
+        textarea[0].focus();
     }));
 
     it('should add the suggestions div after the textarea', function() {
