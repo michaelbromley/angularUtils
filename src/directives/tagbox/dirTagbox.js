@@ -46,7 +46,9 @@ angular.module('angularUtils')
                     var selectedTag = e.target.innerHTML.substring(TOKEN.length);
                     insertSelectedTag(selectedTag);
                     input[0].focus();
-                    suggestions.addClass('ng-hide');
+                    scope.$apply(function() {
+                        scope.candidateHashtag = "?";
+                    });
                 });
 
                 suggestions.on('mouseover', function() {
