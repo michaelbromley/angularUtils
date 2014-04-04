@@ -24,6 +24,7 @@ route's breadcrumb. If none is specified, or if the specified property is not fo
 
 He is an example that illustrates the main features of the directive:
 
+```JavaScript
     angular.module('yourModule').config(function($stateProvider) {
         $stateProvider
             .state('home', {
@@ -74,10 +75,13 @@ He is an example that illustrates the main features of the directive:
                     displayName: false
                 }
             })
+```
 
+```html
     // in the app template somewhere
     <ui-breadcrumbs displayname-property="data.displayName"></ui-breadcrumbs>
     <div ui-view="content"></div>
+```
 
 The first two states are straightforward. The property specified in the `displayname-property` attribute can be seen
 to exist in the config object, the value of which is a string with the name we want to display in the breadcrumb.
