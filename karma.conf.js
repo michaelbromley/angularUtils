@@ -17,7 +17,9 @@ module.exports = function(config) {
         files: [
             'vendor/jquery/jquery-2.1.0.min.js', // jQuery is included for the purposes of easier DOM selection when testing directives.
             'vendor/angular/angular.js',
-            'vendor/angular/angular-mocks.js',
+            'vendor/angular-ui-router/release/angular-ui-router.js',
+            'vendor/angular-mocks/angular-mocks.js',
+            'tmp/templates.js',
             'src/angularUtils.js',
             'src/filters/**/*.js',
             'src/filters/**/*.spec.js',
@@ -63,7 +65,7 @@ module.exports = function(config) {
         // - Safari (only Mac; has to be installed with `npm install karma-safari-launcher`)
         // - PhantomJS
         // - IE (only Windows; has to be installed with `npm install karma-ie-launcher`)
-        browsers: ['Firefox'],
+        browsers: ['Chrome'],
 
 
         // If browser does not capture in given timeout [ms], kill it
