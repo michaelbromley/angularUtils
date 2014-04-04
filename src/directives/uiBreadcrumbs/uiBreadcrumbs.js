@@ -11,7 +11,7 @@ angular.module('angularUtils.directives.uiBreadcrumbs', ['ui.router', 'templates
             scope: {
                 displaynameProperty: '@'
             },
-            link: function(scope, element) {
+            link: function(scope) {
                 scope.breadcrumbs = [];
                 if ($state.$current.name !== '') {
                     updateBreadcrumbsArray();
@@ -29,10 +29,13 @@ angular.module('angularUtils.directives.uiBreadcrumbs', ['ui.router', 'templates
                     var currentState = $state.$current;
 
                     while(currentState && currentState.name !== '') {
-                        breadcrumbs.push({
-                            displayName: getDisplayName(currentState),
-                            route: currentState.name
-                        });
+                        var displayName = getDisplayName(currentState);
+                        if (displayName !== false) {
+                            breadcrumbs.push({
+                                displayName: displayName,
+                                route: currentState.name
+                            });
+                        }
                         currentState = currentState.parent;
                     }
 
@@ -48,17 +51,26 @@ angular.module('angularUtils.directives.uiBreadcrumbs', ['ui.router', 'templates
                  * @returns {*}
                  */
                 function getDisplayName(currentState) {
+                    var resolveProperty;
+                    var i;
+                    var propertyReference;
+                    var propertyArray;
+                    var displayName;
+
                     if (!scope.displaynameProperty) {
                         // if the displayname-property attribute was not specified, default to the state's name
                         return currentState.name;
                     }
-                    var displayName;
-                    var propertyArray = scope.displaynameProperty.split('.');
-                    var propertyReference = currentState;
+                    propertyArray = scope.displaynameProperty.split('.');
+                    propertyReference = currentState;
 
-                    for (var i = 0; i < propertyArray.length; i ++) {
-                        if (propertyReference[propertyArray[i]]) {
-                            propertyReference = propertyReference[propertyArray[i]];
+                    for (i = 0; i < propertyArray.length; i ++) {
+                        if (angular.isDefined(propertyReference[propertyArray[i]])) {
+                            if (propertyReference[propertyArray[i]] === false) {
+                                return false;
+                            } else {
+                                propertyReference = propertyReference[propertyArray[i]];
+                            }
                         } else {
                             // if the specified property was not foundm default to the state's name
                             return currentState.name;
@@ -66,7 +78,7 @@ angular.module('angularUtils.directives.uiBreadcrumbs', ['ui.router', 'templates
                     }
                     if (propertyReference.indexOf(':') === 0) {
                         // the : syntax indicates a reference to a resolved property, so use that instead
-                        var resolveProperty = propertyReference.substr(1);
+                        resolveProperty = propertyReference.substr(1);
                         displayName = currentState.locals.globals[resolveProperty];
                     } else {
                         displayName = propertyReference;

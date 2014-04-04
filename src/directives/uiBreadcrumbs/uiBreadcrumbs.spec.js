@@ -38,6 +38,12 @@ describe('uiBreadcrumbs directive', function() {
                                 displayName: 'Subsection'
                             }
                         })
+                        .state('root.section.subsection.nobreadcrumb', {
+                            url: 'subsection/bit',
+                            data: {
+                                displayName: false
+                            }
+                        })
                         .state('async1', {
                             url: 'aync1/',
                             data: {
@@ -111,13 +117,20 @@ describe('uiBreadcrumbs directive', function() {
             expect(element[0].querySelectorAll('li').length).toBe(1);
         });
 
+        it('should not make a breadcrumb if displayName is set to false', function() {
+            $state.go('root.section.subsection.nobreadcrumb');
+            $scope.$apply();
+
+            expect(element[0].querySelectorAll('li').length).toBe(3);
+            expect(angular.element(element[0].querySelectorAll('li')[2]).hasClass("active")).toBe(true);
+        });
+
         it('should show correct displayName for alternative directive attribute', function() {
             var element2 = $compile('<ui-breadcrumbs displayname-property="custom.alternateDisplayName"></ui-breadcrumbs>')($scope);
             $scope.$apply();
 
             $state.go('root');
             $scope.$apply();
-
 
             expect(element2[0].querySelectorAll('li')[0].innerHTML).toContain('Other Home');
         });
