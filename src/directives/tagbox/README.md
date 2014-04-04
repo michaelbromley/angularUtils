@@ -12,11 +12,14 @@ The directive is invoked by adding `dir-tagbox` to the input element. The direct
 
 You may also optionally specify the character that is used as a prefix to your tags, such as `#` if you are aiming for hashtag functionality. This is done by adding the `dir-tagtoken` attribute.
 
-    // in your controller
-    $scope.tags = datastore.getAllTags(); // let's assume this gets an array or all possible tags from the server.
-
-    // in your template
-    <input type="text" dir-tagbox="tags" dir-tagtoken="#">
+```JavaScript
+// in your controller
+$scope.tags = datastore.getAllTags(); // let's assume this gets an array or all possible tags from the server.
+```
+```html
+// in your template
+<input type="text" dir-tagbox="tags" dir-tagtoken="#">
+```
 
 In the above example, when the user starts to type `#ca`.., all matching tags will appear in a box below the input.
 
@@ -29,19 +32,20 @@ often undesirable behaviour in this type of application. If you don't want to bo
 
 In order to get the "highlighting" effect in the suggestions box, you'll need to style the `.selected` class. Here is a basic suggested styling, which is used in the demo above.
 
-    .suggestions-container {
-      background-color: rgba(255,255,255,0.95);
-      border: 1px solid #999;
-      cursor: pointer;
-    }
-    .suggestion {
-      padding: 3px 10px;
-      font-size: 1.1em;
-    }
-    .suggestion.selected, .suggestion:hover {
-      background-color: #00b3ee;
-    }
-
+```css
+.suggestions-container {
+  background-color: rgba(255,255,255,0.95);
+  border: 1px solid #999;
+  cursor: pointer;
+}
+.suggestion {
+  padding: 3px 10px;
+  font-size: 1.1em;
+}
+.suggestion.selected, .suggestion:hover {
+  background-color: #00b3ee;
+}
+```
 
 ## Keyboard Controls
 The keyboard can be used to select from the suggestions using the up and down arrow keys. Pressing enter will select that tag and add it to the input, as will clicking a suggestion with the mouse

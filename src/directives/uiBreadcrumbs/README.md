@@ -25,62 +25,62 @@ route's breadcrumb. If none is specified, or if the specified property is not fo
 He is an example that illustrates the main features of the directive:
 
 ```JavaScript
-    angular.module('yourModule').config(function($stateProvider) {
-        $stateProvider
-            .state('home', {
-                url: '/',
-                views: {
-                    'content@': {
-                        templateUrl: ...
-                    }
-                },
-                data: {
-                    displayName: 'Home'
+angular.module('yourModule').config(function($stateProvider) {
+    $stateProvider
+        .state('home', {
+            url: '/',
+            views: {
+                'content@': {
+                    templateUrl: ...
                 }
-            })
-            .state('home.usersList', {
-                url: 'users/',
-                views: {
-                    'content@': {
-                        templateUrl: ...
-                    }
-                },
-                data: {
-                    displayName: 'Users'
+            },
+            data: {
+                displayName: 'Home'
+            }
+        })
+        .state('home.usersList', {
+            url: 'users/',
+            views: {
+                'content@': {
+                    templateUrl: ...
                 }
-            })
-            .state('home.userList.detail', {
-                url: ':id',
-                views: {
-                    'content@': {
-                        templateUrl: ...
-                    }
-                },
-                data: {
-                    displayName: ':userName'
+            },
+            data: {
+                displayName: 'Users'
+            }
+        })
+        .state('home.userList.detail', {
+            url: ':id',
+            views: {
+                'content@': {
+                    templateUrl: ...
                 }
-                resolve: {
-                    userName : function($stateParams, userService) {
-                        return userService.getUserName($stateParams.id);
-                    }
+            },
+            data: {
+                displayName: ':userName'
+            }
+            resolve: {
+                userName : function($stateParams, userService) {
+                    return userService.getUserName($stateParams.id);
                 }
-            })
-            .state('home.userList.detail.image', {
-                views: {
-                    'content@': {
-                        templateUrl: ...
-                    }
-                },
-                data: {
-                    displayName: false
+            }
+        })
+        .state('home.userList.detail.image', {
+            views: {
+                'content@': {
+                    templateUrl: ...
                 }
-            })
+            },
+            data: {
+                displayName: false
+            }
+        })
 ```
 
 ```html
-    // in the app template somewhere
-    <ui-breadcrumbs displayname-property="data.displayName"></ui-breadcrumbs>
-    <div ui-view="content"></div>
+// in the app template somewhere
+<ui-breadcrumbs displayname-property="data.displayName"></ui-breadcrumbs>
+<div ui-view="content"></div>
 ```
 
 The first two states are straightforward. The property specified in the `displayname-property` attribute can be seen

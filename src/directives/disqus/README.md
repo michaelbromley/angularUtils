@@ -19,10 +19,12 @@ First, put the directive code in your app, wherever you store your directives.
 
 Wherever you want the Disqus comments to appear, add the following to your template:
 
-    <dir-disqus disqus-shortname="YOUR_DISQUS_SHORTNAME"
-             disqus-identifier="{{ identifier }}"
-             disqus-url="{{ url }}">
-    </dir-disqus>
+```html
+<dir-disqus disqus-shortname="YOUR_DISQUS_SHORTNAME"
+         disqus-identifier="{{ identifier }}"
+         disqus-url="{{ url }}">
+</dir-disqus>
+```
 
 The attributes given above are all required. The inclusion of the identifier and URL ensure that identifier conflicts will not occur. See http://help.disqus.com/customer/portal/articles/662547-why-are-the-same-comments-showing-up-on-multiple-pages-
 
@@ -47,23 +49,25 @@ to `true`, any config attributes which are bound to your model should be availab
 
 For example:
 
-    // simple example of controller loading async data
-    function myController($scope, $http) {
-        $scope.contentLoaded = false;
+```JavaScript
+// simple example of controller loading async data
+function myController($scope, $http) {
+    $scope.contentLoaded = false;
 
-        $http.get('api/article/1').then(function(result) {
-            $scope.article = result.article;
-            $scope.contentLoaded = true; // this tells the directive that it should load the Disqus widget now
-        })
-    }
-
-    // in your view code
-    <dir-disqus disqus-shortname="YOUR_DISQUS_SHORTNAME"
-                disqus-identifier="{{ article.id }}"
-                disqus-url="{{ article.url }}"
-                ready-to-bind="{{ contentLoaded }}">
-    </dir-disqus>
-
+    $http.get('api/article/1').then(function(result) {
+        $scope.article = result.article;
+        $scope.contentLoaded = true; // this tells the directive that it should load the Disqus widget now
+    })
+}
+```
+```html
+// in your view code
+<dir-disqus disqus-shortname="YOUR_DISQUS_SHORTNAME"
+            disqus-identifier="{{ article.id }}"
+            disqus-url="{{ article.url }}"
+            ready-to-bind="{{ contentLoaded }}">
+</dir-disqus>
+```
 
  If you omit the `ready-to-bind` attribute, the Disqus widget will be created immediately. This is okay so long as
  rely on interpolated data which is not available on page load.

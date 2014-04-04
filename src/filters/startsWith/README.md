@@ -4,11 +4,14 @@ Dead simple - whereas the standard AngularJS `filter` filter will return a match
 
 For example:
 
-    // in your controller
-    $scope.things = ['cathode', 'house', 'chomp'];
-    $scope.search = "ho";
+```JavaScript
+// in your controller
+$scope.things = ['cathode', 'house', 'chomp'];
+$scope.search = "ho";
+```
+```html
+// in your template
+<li ng-repeat="thing in things | filter: search">{{thing}}</li> // cathode, house, chomp
 
-    // in your template
-    <li ng-repeat="thing in things | filter: search">{{thing}}</li> // cathode, house, chomp
-
-    <li ng-repeat="thing in things | startsWith: search">{{thing}}</li> // house
+<li ng-repeat="thing in things | startsWith: search">{{thing}}</li> // house
+```

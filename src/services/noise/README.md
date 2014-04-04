@@ -18,18 +18,21 @@ Angular `.factory()` wrapper.
 
 In your Angular app, include the service by usual Angular dependency injection, then you can use it like this:
 
-    var generator = noise.newGenerator();
+```JavaScript
+var generator = noise.newGenerator();
 
-    var x = 1; // can be any number
-    var y = generator.getVal(x); // number between 0 and 1, e.g. 0.231144
+var x = 1; // can be any number
+var y = generator.getVal(x); // number between 0 and 1, e.g. 0.231144
+```
 
 You can generate a continuously varying sequence like this:
 
-    var generator = noise.newGenerator();
-
-    for (var i = 0; i < 200; i ++) {
-        console.log(generator.getVal(i);
-    }
+```JavaScript
+var generator = noise.newGenerator();
+ for (var i = 0; i < 200; i ++) {
+    console.log(generator.getVal(i);
+}
+```
 
 ## Options
 
