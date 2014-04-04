@@ -22,6 +22,7 @@ This code is made available under the MIT license, so feel free to use any of th
 
 - [**Disqus**](https://github.com/michaelbromley/angularUtils/tree/master/src/directives/disqus) : Embed a Disqus comments widget in your app
 - [**tagbox**](https://github.com/michaelbromley/angularUtils/tree/master/src/directives/tagbox) : A Twitter-style tag suggestion and auto-complete directive that can be added to any text input or textarea.
+- [**uiBreadcrumbs**](https://github.com/michaelbromley/angularUtils/tree/master/src/directives/uiBreadcrumbs) : Auto-generated breadcrumbs for angular-ui-router using nested views.
 
 ### Services
 
