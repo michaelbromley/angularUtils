@@ -24,7 +24,9 @@ module.exports = function(grunt) {
                     files: [
                         'vendor/jquery/jquery-2.1.0.min.js', // jQuery is included for the purposes of easier DOM selection when testing directives.
                         'vendor/angular/angular.js',
-                        'vendor/angular/angular-mocks.js',
+                        'vendor/angular-mocks/angular-mocks.js',
+                        'vendor/angular-ui-router/release/angular-ui-router.js',
+                        'tmp/templates.js',
                         'src/angularUtils.js',
                         'src/filters/**/*.js',
                         'src/filters/**/*.spec.js',
@@ -43,13 +45,34 @@ module.exports = function(grunt) {
                     'PhantomJS'
                 ]
             }
-        }
+        },
+
+        watch: {
+            jssrc: {
+                files: [
+                    'src/**/*.js'
+                ],
+                tasks: [ 'default' ]
+            }
+        },
+
+        html2js: {
+            options: {
+              // custom options, see below
+            },
+            main: {
+              src: ['src/**/*.tpl.html'],
+              dest: 'tmp/templates.js'
+            },
+          },
 
     });
 
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-html2js');
 
-    grunt.registerTask('default', ['jshint', 'karma']);
+    grunt.registerTask('default', ['jshint', 'html2js', 'karma']);
 
 };

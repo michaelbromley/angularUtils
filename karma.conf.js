@@ -15,22 +15,21 @@ module.exports = function(config) {
 
         // list of files / patterns to load in the browser
         files: [
+            'vendor/jquery/jquery-2.1.0.min.js', // jQuery is included for the purposes of easier DOM selection when testing directives.
             'vendor/angular/angular.js',
-            'vendor/angular-bootstrap/ui-bootstrap-tpls.min.js',
-            'vendor/placeholders/angular-placeholders-0.0.1-SNAPSHOT.min.js',
-            'vendor/angular-ui-router/release/angular-ui-router.js',
-            'vendor/angular-ui-utils/modules/route/route.js',
-            'build/templates-app.js',
-            'build/templates-common.js',
-            'vendor/angular-mocks/angular-mocks.js',
-
-            'src/**/*.js'
+            'vendor/angular/angular-mocks.js',
+            'src/angularUtils.js',
+            'src/filters/**/*.js',
+            'src/filters/**/*.spec.js',
+            'src/directives/**/*.js',
+            'src/directives/**/*.spec.js',
+            'src/services/**/*.js',
+            'src/services/**/*.spec.js'
         ],
 
 
         // list of files to exclude
         exclude: [
-            'src/e2e/**/*.js'
         ],
 
 
