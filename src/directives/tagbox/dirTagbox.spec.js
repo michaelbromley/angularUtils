@@ -8,7 +8,8 @@ describe('tagbox directive', function() {
     var suggestions;
     var scope;
 
-    beforeEach(module('angularUtils'));
+    beforeEach(module('angularUtils.directives.dirTagBox'));
+    beforeEach(module('angularUtils.filters.startsWith'));
     beforeEach(inject(function(_$compile_, _$rootScope_) {
         scope = _$rootScope_;
 

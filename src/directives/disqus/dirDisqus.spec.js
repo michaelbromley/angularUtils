@@ -4,7 +4,7 @@ describe('dirDiqus directive', function() {
         compiled,
         html;
 
-    beforeEach(module('angularUtils'));
+    beforeEach(module('angularUtils.directives.dirDisqus'));
     beforeEach(function (){
         //set our view html.
         html = '<dir-disqus disqus-shortname="shortname" ' +

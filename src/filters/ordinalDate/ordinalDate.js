@@ -1,4 +1,4 @@
-angular.module( 'angularUtils' )
+angular.module( 'angularUtils.filters.ordinalDate', [] )
 
     .filter('ordinalDate', function($filter) {
 

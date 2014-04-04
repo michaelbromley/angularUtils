@@ -1,7 +1,7 @@
 /**
  * Created by Michael on 27/03/14.
  */
-angular.module('angularUtils')
+angular.module('angularUtils.filters.startsWith', [])
 
     .filter('startsWith', function() {
         return function(array, search) {

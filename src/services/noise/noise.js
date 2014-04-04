@@ -2,7 +2,7 @@
  * Created by Michael on 12/03/14.
  */
 
-angular.module('angularUtils')
+angular.module('angularUtils.services.noise', [])
 /**
  * Service to generate 1-dimensional Perlin noise. Based on the excellent article at Scratchapixel:
  * http://www.scratchapixel.com/lessons/3d-advanced-lessons/noise-part-1/creating-a-simple-1d-noise/

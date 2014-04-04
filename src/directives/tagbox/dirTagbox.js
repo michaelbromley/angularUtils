@@ -7,7 +7,7 @@
  * Copyright Michael Bromley 2014
  * Available under the MIT license.
  */
-angular.module('angularUtils')
+angular.module('angularUtils.directives.dirTagBox', [ 'angularUtils.filters.startsWith'])
 
     .directive('dirTagbox', function($compile) {
         return {

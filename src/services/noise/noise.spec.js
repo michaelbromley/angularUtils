@@ -6,7 +6,7 @@ describe('Perlin noise service', function() {
     var generator;
     var generateLotsOfNoise;
 
-    beforeEach(module('angularUtils'));
+    beforeEach(module('angularUtils.services.noise'));
 
     beforeEach(inject(function(_noise_) {
         generator = _noise_.newGenerator();

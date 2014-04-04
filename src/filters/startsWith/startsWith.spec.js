@@ -5,7 +5,7 @@ describe('startsWith filter', function() {
     var startsWithFilter;
     var testArray;
 
-    beforeEach(module('angularUtils'));
+    beforeEach(module('angularUtils.filters.startsWith'));
     beforeEach(inject(function(_$filter_) {
         testArray = [
             'cake',
