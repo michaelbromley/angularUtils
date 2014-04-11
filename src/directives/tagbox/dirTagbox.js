@@ -80,7 +80,7 @@ angular.module('angularUtils.directives.dirTagBox', [ 'angularUtils.filters.star
                     var candidateChanged = false;
                     var currentCaretIndex = getCaret(input[0]);
                     var text = input.val();
-                    var regexp = new RegExp(TOKEN + "[a-zA-Z0-9_]+","g");
+                    var regexp = new RegExp('\\B' + TOKEN + '\\w+', 'g');
                     var match;
                     while ((match = regexp.exec(text)) != null) {
                         var startOfHashtag = match.index;
