@@ -9,7 +9,7 @@
  */
 angular.module('angularUtils.directives.dirTagBox', [ 'angularUtils.filters.startsWith'])
 
-    .directive('dirTagbox', function($compile) {
+    .directive('dirTagbox', function($compile, $parse) {
         return {
             restrict: 'A',
             scope: {
@@ -148,7 +148,8 @@ angular.module('angularUtils.directives.dirTagBox', [ 'angularUtils.filters.star
                     var output = inputVal.substring(0, scope.candidate.start) + TOKEN + selectedTag + inputVal.substring(scope.candidate.end);
 
                     scope.$parent.$apply(function() {
-                        scope.$parent[attrs.ngModel] = output;
+                        var setter = $parse(attrs.ngModel).assign;
+                        setter(scope.$parent, output);
                         input.val(output);
                     });
                 }
