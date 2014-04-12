@@ -25,7 +25,7 @@ angular.module('angularUtils.directives.dirTagBox', [ 'angularUtils.filters.star
                 }
 
                 // create wrapper div
-                var wrapper = angular.element('<div style="position: relative; display: inline-block"></div>');
+                var wrapper = angular.element('<div class="dir-tagbox-wrapper" style="position: relative; display: inline-block"></div>');
                 input.wrap(wrapper);
 
                 // create the suggestions div
@@ -82,7 +82,7 @@ angular.module('angularUtils.directives.dirTagBox', [ 'angularUtils.filters.star
                     var text = input.val();
                     var regexp = new RegExp('\\B' + TOKEN + '\\w+', 'g');
                     var match;
-                    while ((match = regexp.exec(text)) != null) {
+                    while ((match = regexp.exec(text)) !== null) {
                         var startOfHashtag = match.index;
                         var endOfHashtag = startOfHashtag + match[0].length;
 
@@ -166,7 +166,7 @@ angular.module('angularUtils.directives.dirTagBox', [ 'angularUtils.filters.star
                         el.focus();
 
                         var r = document.selection.createRange();
-                        if (r == null) {
+                        if (r === null) {
                             return 0;
                         }
 
