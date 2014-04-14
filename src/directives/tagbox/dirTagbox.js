@@ -7,13 +7,14 @@
  * Copyright Michael Bromley 2014
  * Available under the MIT license.
  */
-angular.module('angularUtils.directives.dirTagBox', [ 'angularUtils.filters.startsWith'])
+angular.module('angularUtils.directives.dirTagBox', [])
 
     .directive('dirTagbox', function($compile, $parse) {
         return {
             restrict: 'A',
             scope: {
-                tags: '=dirTagbox'
+                tags: '=dirTagbox',
+                callback: '&dirOnTagSelect'
             },
             link: function(scope, element, attrs) {
                 var TOKEN = attrs.dirTagtoken !== undefined ? attrs.dirTagtoken : '';
@@ -80,7 +81,12 @@ angular.module('angularUtils.directives.dirTagBox', [ 'angularUtils.filters.star
                     var candidateChanged = false;
                     var currentCaretIndex = getCaret(input[0]);
                     var text = input.val();
-                    var regexp = new RegExp('\\B' + TOKEN + '\\w+', 'g');
+                    var regexp;
+                    if (TOKEN !== '') {
+                        regexp = new RegExp('\\B' + TOKEN + '\\w+', 'g');
+                    } else {
+                        regexp = new RegExp('\\b\\w+', 'g');
+                    }
                     var match;
                     while ((match = regexp.exec(text)) !== null) {
                         var startOfHashtag = match.index;
@@ -154,6 +160,10 @@ angular.module('angularUtils.directives.dirTagBox', [ 'angularUtils.filters.star
                         }
                         input.val(output);
                     });
+
+                    if(scope.callback) {
+                        scope.callback();
+                    }
                 }
 
                 /**
@@ -182,5 +192,22 @@ angular.module('angularUtils.directives.dirTagBox', [ 'angularUtils.filters.star
                     return 0;
                 }
             }
+        };
+    })
+
+/**
+ * Note - this filter is included since the default Angular `filter` filter will match a string that appears anywhere in the target string, but typically in a tag autocomplete, we only care about
+ * matching the start of the string.
+ */
+    .filter('startsWith', function() {
+        return function(array, search) {
+            var matches = [];
+            for(var i = 0; i < array.length; i++) {
+                if (array[i].indexOf(search) === 0 &&
+                    search.length < array[i].length) {
+                    matches.push(array[i]);
+                }
+            }
+            return matches;
         };
     });
