@@ -148,8 +148,10 @@ angular.module('angularUtils.directives.dirTagBox', [ 'angularUtils.filters.star
                     var output = inputVal.substring(0, scope.candidate.start) + TOKEN + selectedTag + inputVal.substring(scope.candidate.end);
 
                     scope.$parent.$apply(function() {
-                        var setter = $parse(attrs.ngModel).assign;
-                        setter(scope.$parent, output);
+                        if (attrs.ngModel) {
+                            var setter = $parse(attrs.ngModel).assign;
+                            setter(scope.$parent, output);
+                        }
                         input.val(output);
                     });
                 }
