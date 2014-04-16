@@ -26,7 +26,7 @@ angular.module('angularUtils.directives.dirDisqus', [])
 
                 // ensure that the disqus_identifier and disqus_url are both set, otherwise we will run in to identifier conflicts when using URLs with "#" in them
                 // see http://help.disqus.com/customer/portal/articles/662547-why-are-the-same-comments-showing-up-on-multiple-pages-
-                if (!scope.disqus_identifier || !scope.disqus_url) {
+                if (typeof scope.disqus_identifier === 'undefined' || typeof scope.disqus_url === 'undefined') {
                     throw "Please ensure that the `disqus-identifier` and `disqus-url` attributes are both set.";
                 }
 
