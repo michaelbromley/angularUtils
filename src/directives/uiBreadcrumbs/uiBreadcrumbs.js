@@ -2,9 +2,9 @@
  * Created by Michael on 02/04/14.
  */
 
-angular.module('angularUtils.directives.uiBreadcrumbs', ['ui.router', 'templates-main'])
+angular.module('angularUtils.directives.uiBreadcrumbs', ['ui.router'])
 
-    .directive('uiBreadcrumbs', function($state) {
+    .directive('uiBreadcrumbs', function($interpolate, $state) {
         return {
             restrict: 'E',
             templateUrl: 'directives/uiBreadcrumbs/uiBreadcrumbs.tpl.html',
@@ -45,13 +45,12 @@ angular.module('angularUtils.directives.uiBreadcrumbs', ['ui.router', 'templates
 
                 /**
                  * Resolve the displayName of the specified state. Take the property specified by the `displayname-property`
-                 * attribute and look up the corresponding property on the state's config object. If the string found begins with
-                 * a colon eg `:username`, that signifies that the displayName should be provided by the result of the named `resolve` property.
+                 * attribute and look up the corresponding property on the state's config object. The specified string can be interpolated against any resolved
+                 * properties on the state config object, by using the usual {{ }} syntax.
                  * @param currentState
                  * @returns {*}
                  */
                 function getDisplayName(currentState) {
-                    var resolveProperty;
                     var i;
                     var propertyReference;
                     var propertyArray;
@@ -76,13 +75,9 @@ angular.module('angularUtils.directives.uiBreadcrumbs', ['ui.router', 'templates
                             return currentState.name;
                         }
                     }
-                    if (propertyReference.indexOf(':') === 0) {
-                        // the : syntax indicates a reference to a resolved property, so use that instead
-                        resolveProperty = propertyReference.substr(1);
-                        displayName = currentState.locals.globals[resolveProperty];
-                    } else {
-                        displayName = propertyReference;
-                    }
+                    // use the $interpolate service to handle any bindings in the propertyReference string.
+                    displayName = $interpolate(propertyReference)(currentState.locals.globals);
+
                     return displayName;
                 }
             }

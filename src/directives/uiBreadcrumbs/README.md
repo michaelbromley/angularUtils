@@ -57,11 +57,11 @@ angular.module('yourModule').config(function($stateProvider) {
                 }
             },
             data: {
-                displayName: ':userName'
+                displayName: '{{ user.firstName }} {{ user.lastName | uppercase }}'
             }
             resolve: {
-                userName : function($stateParams, userService) {
-                    return userService.getUserName($stateParams.id);
+                user : function($stateParams, userService) {
+                    return userService.getUser($stateParams.id);
                 }
             }
         })
@@ -86,10 +86,10 @@ angular.module('yourModule').config(function($stateProvider) {
 The first two states are straightforward. The property specified in the `displayname-property` attribute can be seen
 to exist in the config object, the value of which is a string with the name we want to display in the breadcrumb.
 
-The third state illustrates how we can use a resolved value as our breadcrumb display name. This is done by
-specifying a string starting with a colon, followed by the name of a `resolve` function that should return a
-string containing the name. In this case, `:userName` corresponds to the `resolve` function that is using our
-imaginary `userService` to asynchronously grab the name of the current user.
+The third state illustrates how we can use a resolved value as our breadcrumb display name. This is done by using the
+regular Angular interpolation syntax `{{ value }}`. In this case, `user` corresponds to the `resolve` function that is using our
+imaginary `userService` to asynchronously grab an object containing the details of the current user. You can also see that, just like in any Angular interpolation
+string, you can reference properties of objects, use filters and so on.
 
 The fourth state illustrates that if we don't want a state to show up in the breadcrumbs, we should set the
  display name to `false`.

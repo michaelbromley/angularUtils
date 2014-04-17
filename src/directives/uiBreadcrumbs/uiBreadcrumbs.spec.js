@@ -10,6 +10,7 @@ describe('uiBreadcrumbs directive', function() {
     var $state;
 
     beforeEach(module('angularUtils.directives.uiBreadcrumbs'));
+    beforeEach(module('templates-main'));
 
     describe('synchronous behaviour', function() {
 
@@ -58,7 +59,7 @@ describe('uiBreadcrumbs directive', function() {
                         .state('async2', {
                             url: 'async2/',
                             data: {
-                                displayName: ':resolvedName'
+                                displayName: '{{ resolvedName | uppercase }}'
                             },
                             resolve:{
                                 resolvedName: function(){
@@ -145,14 +146,14 @@ describe('uiBreadcrumbs directive', function() {
             expect(element2[0].querySelectorAll('li')[0].innerHTML).toContain('Async Route 1');
         });
 
-        it('should use resolved property if specified with colon syntax', function() {
+        it('should interpolate the string against the resolved properties on the config object', function() {
             var element2 = $compile('<ui-breadcrumbs displayname-property="data.displayName"></ui-breadcrumbs>')($scope);
             $scope.$apply();
 
             $state.go('async2');
             $scope.$apply();
 
-            expect(element2[0].querySelectorAll('li')[0].innerHTML).toContain('A Good Route');
+            expect(element2[0].querySelectorAll('li')[0].innerHTML).toContain('A GOOD ROUTE');
         });
 
     });
