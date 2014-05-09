@@ -2,8 +2,14 @@
  * dirPagination - AngularJS module for paginating (almost) anything.
  *
  *
- * Credit to https://groups.google.com/d/msg/angular/an9QpzqIYiM/r8v-3W1X5vcJ
+ * Credits
+ * =======
+ *
+ * Daniel Tabuenca: https://groups.google.com/d/msg/angular/an9QpzqIYiM/r8v-3W1X5vcJ
  * for the idea on how to dynamically invoke the ng-repeat directive.
+ *
+ * I borrowed a couple of lines and a few attribute names from the AngularUI Bootstrap project:
+ * https://github.com/angular-ui/bootstrap/blob/master/src/pagination/pagination.js
  *
  * Created by Michael on 04/05/14.
  */
@@ -53,58 +59,14 @@ angular.module('angularUtils.directives.dirPagination', [])
                         }
                     });
 
+                    //When linking just delegate to the link function returned by the new compile
                     compiled(scope);
                 };
             }
         };
     })
 
-    .filter('itemsPerPage', function(paginationService) {
-        return function(collection, itemsPerPage) {
-            itemsPerPage = itemsPerPage || 9999999999;
-            var start = (paginationService.getCurrentPage() - 1) * itemsPerPage;
-            var end = start + itemsPerPage;
-            paginationService.setItemsPerPage(itemsPerPage);
-
-            return collection.slice(start, end);
-        };
-    })
-
-    .service('paginationService', function() {
-        var itemsPerPage;
-        var collectionLength;
-        var currentPageParser;
-        var context;
-        this.paginationDirectiveInitialized = false;
-
-        this.setCurrentPageParser = function(val, scope) {
-            currentPageParser = val;
-            context = scope;
-        };
-        this.setCurrentPage = function(val) {
-            currentPageParser.assign(context, val);
-        };
-        this.getCurrentPage = function() {
-            return currentPageParser(context);
-        };
-
-        this.setItemsPerPage = function(val) {
-            itemsPerPage = val;
-        };
-        this.getItemsPerPage = function() {
-            return itemsPerPage;
-        };
-
-        this.setCollectionLength = function(val) {
-            collectionLength = val;
-        };
-        this.getCollectionLength = function() {
-            return collectionLength;
-        };
-    })
-
     .directive('dirPaginationControls', function(paginationService) {
-
         /**
          * Generate an array of page numbers (or the '...' string) which is used in an ng-repeat to generate the
          * links used in pagination
@@ -197,7 +159,7 @@ angular.module('angularUtils.directives.dirPagination', [])
                 };
 
                 scope.$watch(function() {
-                    return paginationService.getCollectionLength();
+                    return paginationService.getCollectionLength() * paginationService.getItemsPerPage();
                 }, function(length) {
                     if (0 < length) {
                         generatePagination();
@@ -223,7 +185,55 @@ angular.module('angularUtils.directives.dirPagination', [])
                 function generatePagination() {
                     scope.pages = generatePagesArray(1, paginationService.getCollectionLength(), paginationService.getItemsPerPage(), paginationRange);
                     scope.pagination.last = scope.pages[scope.pages.length - 1];
+                    if (scope.pagination.last < scope.pagination.current) {
+                        scope.setCurrent(scope.pagination.last);
+                    }
                 }
             }
         };
-    });
+    })
+
+    .filter('itemsPerPage', function(paginationService) {
+        return function(collection, itemsPerPage) {
+            itemsPerPage = itemsPerPage || 9999999999;
+            var start = (paginationService.getCurrentPage() - 1) * itemsPerPage;
+            var end = start + itemsPerPage;
+            paginationService.setItemsPerPage(itemsPerPage);
+
+            return collection.slice(start, end);
+        };
+    })
+
+    .service('paginationService', function() {
+        var itemsPerPage;
+        var collectionLength;
+        var currentPageParser;
+        var context;
+        this.paginationDirectiveInitialized = false;
+
+        this.setCurrentPageParser = function(val, scope) {
+            currentPageParser = val;
+            context = scope;
+        };
+        this.setCurrentPage = function(val) {
+            currentPageParser.assign(context, val);
+        };
+        this.getCurrentPage = function() {
+            return currentPageParser(context);
+        };
+
+        this.setItemsPerPage = function(val) {
+            itemsPerPage = val;
+        };
+        this.getItemsPerPage = function() {
+            return itemsPerPage;
+        };
+
+        this.setCollectionLength = function(val) {
+            collectionLength = val;
+        };
+        this.getCollectionLength = function() {
+            return collectionLength;
+        };
+    })
+;
