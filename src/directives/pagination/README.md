@@ -31,7 +31,8 @@ correct location of the `dirPagination.tpl.html` file.
 
 ```HTML
 <ANY
-    dir-paginate="expression | itemsPerPage: (int|expression)">
+    dir-paginate="expression | itemsPerPage: (int|expression)"
+    [current-page=""]>
     ...
     </ANY>
 ...
@@ -42,12 +43,20 @@ correct location of the `dirPagination.tpl.html` file.
     </dir-pagination-controls>
 ```
 
+### `dir-paginate`
+
 * **`expression`** Under the hood, this directive delegates to the `ng-repeat` directive, so the syntax for the
 expression is exactly as you would expect. [See the ng-repeat docs for the full rundown](https://docs.angularjs.org/api/ng/directive/ngRepeat).
 This means that you can also use any kind of filters you like, etc.
 
 * **`itemsPerPage`** The `expression` **must** include this filter. It is required by the pagination logic. The syntax
 is the same as any filter: `itemsPerPage: 10`, or you can also bind it to a property of the $scope: `itemsPerPage: pageSize`.
+
+* **`current-page`** (optional) Specify a property on your controller's $scope that will be bound to the current
+page of the pagination. If this is not specified, the directive will automatically create a property named `__currentPage` and use
+that instead.
+
+### `dir-pagination-controls`
 
 * **`max-size`** (optional, default = 9) Specify a maximum number of pagination links to display. The default is 9, and
 the minimum is 5 (setting a lower value than 5 will not have an effect).
@@ -57,6 +66,9 @@ pagination.
 
 * **`boundary-links`** (optional, default = false) Specify whether to display the "start" & "end" arrows in the
 pagination.
+
+Note: you cannot use the `dir-pagination-controls` directive without `dir-paginate`. Attempting to do so will result in an
+exception.
 
 ## Demo
 
