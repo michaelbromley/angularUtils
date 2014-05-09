@@ -9,7 +9,7 @@
  */
 angular.module('angularUtils.directives.dirDisqus', [])
 
-    .directive('dirDisqus', function($window) {
+    .directive('dirDisqus', ['$window', function($window) {
         return {
             restrict: 'E',
             scope: {
@@ -65,4 +65,4 @@ angular.module('angularUtils.directives.dirDisqus', [])
                 });
             }
         };
-    });
+    }]);
