@@ -195,12 +195,16 @@ angular.module('angularUtils.directives.dirPagination', [])
 
     .filter('itemsPerPage', function(paginationService) {
         return function(collection, itemsPerPage) {
-            itemsPerPage = itemsPerPage || 9999999999;
-            var start = (paginationService.getCurrentPage() - 1) * itemsPerPage;
-            var end = start + itemsPerPage;
-            paginationService.setItemsPerPage(itemsPerPage);
+            if (collection instanceof Array) {
+                itemsPerPage = itemsPerPage || 9999999999;
+                var start = (paginationService.getCurrentPage() - 1) * itemsPerPage;
+                var end = start + itemsPerPage;
+                paginationService.setItemsPerPage(itemsPerPage);
 
-            return collection.slice(start, end);
+                return collection.slice(start, end);
+            } else {
+                return collection;
+            }
         };
     })
 
