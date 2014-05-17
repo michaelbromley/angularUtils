@@ -94,6 +94,76 @@ string, you can reference properties of objects, use filters and so on.
 The fourth state illustrates that if we don't want a state to show up in the breadcrumbs, we should set the
  display name to `false`.
 
+## Working With Abstract States
+
+AngularUI Router provides the option of setting up [abstract states](https://github.com/angular-ui/ui-router/wiki/Nested-States-%26-Nested-Views#abstract-states), which
+by definition cannot be transitioned to. Therefore, we cannot show them in the breadcrumbs, as clicking on an abstract state would cause the router to try
+to transition to that state, which results in an exception.
+
+Therefore, the default behaviour is to ignore abstract states and skip that level of the breadcrumb hierarchy.
+
+However, in many cases this behaviour would not be desirable. Consider the following setup (taken from the ui-router docs):
+
+```JavaScript
+$stateProvider
+    .state('contacts', {
+        abstract: true,
+        url: '/contacts',
+
+        // Note: abstract still needs a ui-view for its children to populate.
+        // You can simply add it inline here.
+        template: '<ui-view/>'
+    })
+    .state('contacts.list', {
+        // url will become '/contacts/list'
+        url: '/list'
+        //...more
+    })
+    .state('contacts.detail', {
+        // url will become '/contacts/detail'
+        url: '/detail',
+        //...more
+    })
+```
+
+In this case, if we were in the `contacts.detail` state, the breadcrumbs would only display that state and ignore the parent state as it
+is abstract. What we really want to do is substitute the `contacts.list` state for the parent state. This is because, logically, the
+list of contacts is one level up from the detail page, even though they are strictly at the same level in the $state definition.
+
+In order to achieve this substitution, we can use the `abstract-proxy-property` attribute on our directive. This tells the directive
+to look for the specified property on the state config object, where it should find the name of the state to use instead of the abstract state.
+
+To implement this, we would modify the above example to look like this:
+
+```JavaScript
+$stateProvider
+    .state('contacts', {
+        abstract: true,
+        url: '/contacts',
+        template: '<ui-view/>'
+        data: {
+            breadcrumbsProxy: 'contacts.list'
+        }
+    })
+    .state('contacts.list', {
+        url: '/list'
+        //...more
+    })
+    .state('contacts.detail', {
+        url: '/detail',
+        //...more
+    })
+```
+
+The directive element would then look like this:
+
+```HTML
+<ui-breadcrumbs displayname-property="data.displayName" abstract-proxy-property="data.breadcrumbProxy"></ui-breadcrumbs>
+```
+
+Now, when we are in the `contacts.detail` state, the breadcrumbs will show the `contacts.list` as the immediate parent,
+rather than the abstract `contacts` state.
+
 ## Demo
 
 You can see a working demo that demonstrates all of the above here: [http://plnkr.co/edit/bBgdxgB91Z6323HLWCzF?p=preview](http://plnkr.co/edit/bBgdxgB91Z6323HLWCzF?p=preview)
