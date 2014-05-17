@@ -192,6 +192,19 @@ describe('uiBreadcrumbs directive', function() {
 
         expect(element[0].querySelectorAll('li')[0].innerHTML).toContain('Home');
         expect(element[0].querySelectorAll('li')[1].innerHTML).toContain('Concrete');
+        expect(element[0].querySelectorAll('li')[2]).not.toBeDefined();
+        expect(element[0].querySelectorAll('li').length).toBe(2);
+    });
+
+    it('should not display an abstract state in the breadcrumbs even if proxy attribute is set', function() {
+        var element2 = $compile('<ui-breadcrumbs displayname-property="data.displayName" abstract-proxy-property="data.breadcrumbProxy"></ui-breadcrumbs>')($scope);
+        $state.go('root.abstract.child');
+        $scope.$apply();
+
+        expect(element2[0].querySelectorAll('li')[0].innerHTML).toContain('Home');
+        expect(element2[0].querySelectorAll('li')[1].innerHTML).toContain('Concrete');
+        expect(element2[0].querySelectorAll('li')[2]).not.toBeDefined();
+        expect(element2[0].querySelectorAll('li').length).toBe(2);
     });
 
     it('should not display an abstract state if no proxy has been set', function() {

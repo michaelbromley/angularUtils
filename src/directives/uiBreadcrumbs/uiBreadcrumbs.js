@@ -62,7 +62,11 @@ angular.module('angularUtils.directives.uiBreadcrumbs', ['ui.router'])
                     if (currentState.abstract === true) {
                         if (typeof scope.abstractProxyProperty !== 'undefined') {
                             proxyStateName = getObjectValue(scope.abstractProxyProperty, currentState);
-                            workingState = $state.get(proxyStateName);
+                            if (proxyStateName) {
+                                workingState = $state.get(proxyStateName);
+                            } else {
+                                workingState = false;
+                            }
                         } else {
                             workingState = false;
                         }
@@ -90,6 +94,8 @@ angular.module('angularUtils.directives.uiBreadcrumbs', ['ui.router'])
 
                     if (propertyReference === false) {
                         return false;
+                    } else if (typeof propertyReference === 'undefined') {
+                        return currentState.name;
                     } else {
                         // use the $interpolate service to handle any bindings in the propertyReference string.
                         interpolationContext =  (typeof currentState.locals !== 'undefined') ? currentState.locals.globals : currentState;
@@ -116,7 +122,7 @@ angular.module('angularUtils.directives.uiBreadcrumbs', ['ui.router'])
                             propertyReference = propertyReference[propertyArray[i]];
                         } else {
                             // if the specified property was not found, default to the state's name
-                            return context.name;
+                            return undefined;
                         }
                     }
                     return propertyReference;
