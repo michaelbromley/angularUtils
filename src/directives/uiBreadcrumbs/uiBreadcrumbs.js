@@ -9,7 +9,8 @@ angular.module('angularUtils.directives.uiBreadcrumbs', ['ui.router'])
             restrict: 'E',
             templateUrl: 'directives/uiBreadcrumbs/uiBreadcrumbs.tpl.html',
             scope: {
-                displaynameProperty: '@'
+                displaynameProperty: '@',
+                abstractProxyProperty: '@?'
             },
             link: function(scope) {
                 scope.breadcrumbs = [];
@@ -25,22 +26,47 @@ angular.module('angularUtils.directives.uiBreadcrumbs', ['ui.router'])
                  * array of breadcrumbs that can be used in an ng-repeat in the template.
                  */
                 function updateBreadcrumbsArray() {
+                    var workingState;
+                    var displayName;
                     var breadcrumbs = [];
                     var currentState = $state.$current;
 
                     while(currentState && currentState.name !== '') {
-                        var displayName = getDisplayName(currentState);
-                        if (displayName !== false) {
-                            breadcrumbs.push({
-                                displayName: displayName,
-                                route: currentState.name
-                            });
+                        workingState = getWorkingState(currentState);
+                        if (workingState) {
+                            displayName = getDisplayName(workingState);
+                            if (displayName !== false) {
+                                breadcrumbs.push({
+                                    displayName: displayName,
+                                    route: workingState.name
+                                });
+                            }
                         }
                         currentState = currentState.parent;
                     }
-
                     breadcrumbs.reverse();
                     scope.breadcrumbs = breadcrumbs;
+                }
+
+                /**
+                 * Get the state to put in the breadcrumbs array, taking into account that if the current state is abstract,
+                 * we need to either substitute it with the state named in the `scope.abstractProxyProperty` property, or
+                 * set it to `false` which means this breadcrumb level will be skipped entirely.
+                 * @param currentState
+                 * @returns {*}
+                 */
+                function getWorkingState(currentState) {
+                    var proxyStateName;
+                    var workingState = currentState;
+                    if (currentState.abstract === true) {
+                        if (typeof scope.abstractProxyProperty !== 'undefined') {
+                            proxyStateName = getObjectValue(scope.abstractProxyProperty, currentState);
+                            workingState = $state.get(proxyStateName);
+                        } else {
+                            workingState = false;
+                        }
+                    }
+                    return workingState;
                 }
 
                 /**
@@ -51,34 +77,48 @@ angular.module('angularUtils.directives.uiBreadcrumbs', ['ui.router'])
                  * @returns {*}
                  */
                 function getDisplayName(currentState) {
-                    var i;
+                    var interpolationContext;
                     var propertyReference;
-                    var propertyArray;
                     var displayName;
 
                     if (!scope.displaynameProperty) {
                         // if the displayname-property attribute was not specified, default to the state's name
                         return currentState.name;
                     }
-                    propertyArray = scope.displaynameProperty.split('.');
-                    propertyReference = currentState;
+                    propertyReference = getObjectValue(scope.displaynameProperty, currentState);
+
+                    if (propertyReference === false) {
+                        return false;
+                    } else {
+                        // use the $interpolate service to handle any bindings in the propertyReference string.
+                        interpolationContext =  (typeof currentState.locals !== 'undefined') ? currentState.locals.globals : currentState;
+                        displayName = $interpolate(propertyReference)(interpolationContext);
+                        return displayName;
+                    }
+                }
+
+                /**
+                 * Given a string of the type 'object.property.property', traverse the given context (eg the current $state object) and return the
+                 * value found at that path.
+                 *
+                 * @param objectPath
+                 * @param context
+                 * @returns {*}
+                 */
+                function getObjectValue(objectPath, context) {
+                    var i;
+                    var propertyArray = objectPath.split('.');
+                    var propertyReference = context;
 
                     for (i = 0; i < propertyArray.length; i ++) {
                         if (angular.isDefined(propertyReference[propertyArray[i]])) {
-                            if (propertyReference[propertyArray[i]] === false) {
-                                return false;
-                            } else {
-                                propertyReference = propertyReference[propertyArray[i]];
-                            }
+                            propertyReference = propertyReference[propertyArray[i]];
                         } else {
-                            // if the specified property was not foundm default to the state's name
-                            return currentState.name;
+                            // if the specified property was not found, default to the state's name
+                            return context.name;
                         }
                     }
-                    // use the $interpolate service to handle any bindings in the propertyReference string.
-                    displayName = $interpolate(propertyReference)(currentState.locals.globals);
-
-                    return displayName;
+                    return propertyReference;
                 }
             }
         };
