@@ -35,7 +35,8 @@ angular.module('angularUtils.directives.uiBreadcrumbs', ['ui.router'])
                         workingState = getWorkingState(currentState);
                         if (workingState) {
                             displayName = getDisplayName(workingState);
-                            if (displayName !== false) {
+
+                            if (displayName !== false && !stateAlreadyInBreadcrumbs(workingState, breadcrumbs)) {
                                 breadcrumbs.push({
                                     displayName: displayName,
                                     route: workingState.name
@@ -119,6 +120,24 @@ angular.module('angularUtils.directives.uiBreadcrumbs', ['ui.router'])
                         }
                     }
                     return propertyReference;
+                }
+
+                /**
+                 * Check whether the current `state` has already appeared in the current breadcrumbs array. This check is necessary
+                 * when using abstract states that might specify a proxy that is already there in the breadcrumbs.
+                 * @param state
+                 * @param breadcrumbs
+                 * @returns {boolean}
+                 */
+                function stateAlreadyInBreadcrumbs(state, breadcrumbs) {
+                    var i;
+                    var alreadyUsed = false;
+                    for(i = 0; i < breadcrumbs.length; i++) {
+                        if (breadcrumbs[i].route === state.name) {
+                            alreadyUsed = true;
+                        }
+                    }
+                    return alreadyUsed;
                 }
             }
         };

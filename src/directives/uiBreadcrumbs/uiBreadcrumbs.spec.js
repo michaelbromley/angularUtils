@@ -212,4 +212,15 @@ describe('uiBreadcrumbs directive', function() {
         expect(element2[0].querySelectorAll('li')[2].innerHTML).toContain('A Thing');
     });
 
+    it('should not display the abstract proxy if it has already appeared in the breadcrumbs', function() {
+        var element2 = $compile('<ui-breadcrumbs displayname-property="data.displayName" abstract-proxy-property="data.breadcrumbProxy"></ui-breadcrumbs>')($scope);
+        $state.go('root.things.list');
+        $scope.$apply();
+
+        expect(element2[0].querySelectorAll('li')[0].innerHTML).toContain('Home');
+        expect(element2[0].querySelectorAll('li')[1].innerHTML).toContain('Things');
+        expect(element2[0].querySelectorAll('li')[2]).not.toBeDefined();
+        expect(element2[0].querySelectorAll('li').length).toBe(2);
+    });
+
 });
