@@ -142,7 +142,7 @@ $stateProvider
         url: '/contacts',
         template: '<ui-view/>'
         data: {
-            breadcrumbsProxy: 'contacts.list'
+            breadcrumbProxy: 'contacts.list'
         }
     })
     .state('contacts.list', {
