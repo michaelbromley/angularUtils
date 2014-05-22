@@ -51,14 +51,24 @@ angular.module('angularUtils.directives.dirPagination', [])
                     }
                     paginationService.setCurrentPageParser(currentPageGetter, scope);
 
-                    scope.$watchCollection(function() {
-                        return collectionGetter(scope);
-                    }, function(collection) {
-                        if (collection) {
-                            paginationService.setCollectionLength(collection.length);
-                        }
-                    });
-
+                    if (typeof attrs.totalItems !== 'undefined') {
+                        paginationService.asyncMode = true;
+                        scope.$watch(function() {
+                            return $parse(attrs.totalItems)(scope);
+                        }, function (result) {
+                            if (0 < result) {
+                                paginationService.setCollectionLength(result);
+                            }
+                        });
+                    } else {
+                        scope.$watchCollection(function() {
+                            return collectionGetter(scope);
+                        }, function(collection) {
+                            if (collection) {
+                                paginationService.setCollectionLength(collection.length);
+                            }
+                        });
+                    }
                     //When linking just delegate to the link function returned by the new compile
                     compiled(scope);
                 };
@@ -140,7 +150,8 @@ angular.module('angularUtils.directives.dirPagination', [])
             restrict: 'AE',
             templateUrl:  'directives/pagination/dirPagination.tpl.html',
             scope: {
-                maxSize: '=?'
+                maxSize: '=?',
+                onPageChange: '&?'
             },
             link: function(scope, element, attrs) {
                 if (!scope.maxSize) { scope.maxSize = 9; }
@@ -178,6 +189,11 @@ angular.module('angularUtils.directives.dirPagination', [])
                             paginationService.setCurrentPage(num);
                             scope.pages = generatePagesArray(num, paginationService.getCollectionLength(), paginationService.getItemsPerPage(), paginationRange);
                             scope.pagination.current = num;
+
+                            // if a callback has been set, then call it with the page number as an argument
+                            if (scope.onPageChange) {
+                                scope.onPageChange({ newPageNumber : num });
+                            }
                         }
                     }
                 };
@@ -195,10 +211,16 @@ angular.module('angularUtils.directives.dirPagination', [])
 
     .filter('itemsPerPage', function(paginationService) {
         return function(collection, itemsPerPage) {
+            var end;
+            var start;
             if (collection instanceof Array) {
                 itemsPerPage = itemsPerPage || 9999999999;
-                var start = (paginationService.getCurrentPage() - 1) * itemsPerPage;
-                var end = start + itemsPerPage;
+                if (paginationService.asyncMode) {
+                    start = 0;
+                } else {
+                    start = (paginationService.getCurrentPage() - 1) * itemsPerPage;
+                }
+                end = start + itemsPerPage;
                 paginationService.setItemsPerPage(itemsPerPage);
 
                 return collection.slice(start, end);
@@ -239,5 +261,6 @@ angular.module('angularUtils.directives.dirPagination', [])
         this.getCollectionLength = function() {
             return collectionLength;
         };
+        this.asyncMode = false;
     })
 ;

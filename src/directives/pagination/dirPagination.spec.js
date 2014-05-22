@@ -24,13 +24,17 @@ describe('dirPagination directive', function() {
         }
     }));
 
-    function compileElement(collection, itemsPerPage, currentPage, customExpression) {
+    function compileElement(collection, itemsPerPage, currentPage, customExpression, totalItems) {
+        var expression;
+        var totalItemsHtml;
         var html;
         $scope.collection = collection;
         $scope.itemsPerPage = itemsPerPage;
         $scope.currentPage = currentPage || 1;
-        var expression = customExpression || "item in collection | itemsPerPage: itemsPerPage";
-        html = '<ul class="list"><li dir-paginate="'+ expression + '" current-page="currentPage">{{ item }}</li></ul> ' +
+        $scope.totalItems = totalItems || undefined;
+        totalItemsHtml =  (typeof totalItems !== 'undefined') ? 'total-items="totalItems"' : '';
+        expression = customExpression || "item in collection | itemsPerPage: itemsPerPage";
+        html = '<ul class="list"><li dir-paginate="'+ expression + '" current-page="currentPage" ' + totalItemsHtml + ' >{{ item }}</li></ul> ' +
             '<dir-pagination-controls></dir-pagination-controls>';
         containingElement.append($compile(html)($scope));
         $scope.$apply();
@@ -309,6 +313,56 @@ describe('dirPagination directive', function() {
                 pagination.children().eq(10).find('a').triggerHandler('click');
                 $scope.$apply();
                 expect($scope.currentPage).toBe(2);
+            });
+
+            describe('on-page-change callback', function() {
+
+                beforeEach(function() {
+                    $scope.myCallback = function(currentPage) {
+                        return "The current page is " + currentPage;
+                    };
+                    spyOn($scope, 'myCallback').and.callThrough();
+                    compileWithAttributes(' on-page-change="myCallback(newPageNumber)" ');
+                });
+
+                it('should call the callback when page link clicked', function() {
+                    var pagination = containingElement.find('ul.pagination');
+
+                    pagination.children().eq(2).find('a').triggerHandler('click');
+                    $scope.$apply();
+                    expect($scope.myCallback).toHaveBeenCalled();
+                });
+
+                it('should pass the current page number to the callback', function() {
+                    var pagination = containingElement.find('ul.pagination');
+
+                    pagination.children().eq(2).find('a').triggerHandler('click');
+                    $scope.$apply();
+                    expect($scope.myCallback).toHaveBeenCalledWith(2);
+                });
+            });
+
+            describe('total-items attribute', function() {
+
+                it('should give correct pagination at 200', function() {
+                    compileElement(myCollection, 100, 1, false, 200);
+
+                    var pageLinks = getPageLinksArray();
+                    expect(pageLinks).toEqual(['‹','1', '2', '›']);
+                });
+
+                it('should give correct pagination at 500', function() {
+                    compileElement(myCollection, 100, 1, false, 500);
+
+                    var pageLinks = getPageLinksArray();
+                    expect(pageLinks).toEqual(['‹','1', '2','3','4','5', '›']);
+                });
+
+                it('should correctly display the second page of results', function() {
+                    compileElement(myCollection, 100, 2, false, 500);
+                    listItems = getListItems();
+                    expect(listItems.length).toEqual(100);
+                });
             });
         });
     });
