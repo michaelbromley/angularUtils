@@ -200,6 +200,7 @@ angular.module('angularUtils.directives.dirPagination', [])
 
                 function generatePagination() {
                     scope.pages = generatePagesArray(1, paginationService.getCollectionLength(), paginationService.getItemsPerPage(), paginationRange);
+                    scope.pagination.current = parseInt(paginationService.getCurrentPage());
                     scope.pagination.last = scope.pages[scope.pages.length - 1];
                     if (scope.pagination.last < scope.pagination.current) {
                         scope.setCurrent(scope.pagination.last);
