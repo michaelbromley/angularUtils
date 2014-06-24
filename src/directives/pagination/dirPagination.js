@@ -15,7 +15,7 @@
  */
 
 angular.module('angularUtils.directives.dirPagination', [])
-    .directive('dirPaginate', function($compile, $parse, $timeout, paginationService) {
+    .directive('dirPaginate', ['$compile', '$parse', '$timeout', 'paginationService', function($compile, $parse, $timeout, paginationService) {
         return  {
             priority: 5000, //High priority means it will execute first
             terminal: true,
@@ -74,9 +74,9 @@ angular.module('angularUtils.directives.dirPagination', [])
                 };
             }
         };
-    })
+    }])
 
-    .directive('dirPaginationControls', function(paginationService) {
+    .directive('dirPaginationControls', ['paginationService', function(paginationService) {
         /**
          * Generate an array of page numbers (or the '...' string) which is used in an ng-repeat to generate the
          * links used in pagination
@@ -207,9 +207,9 @@ angular.module('angularUtils.directives.dirPagination', [])
                 }
             }
         };
-    })
+    }])
 
-    .filter('itemsPerPage', function(paginationService) {
+    .filter('itemsPerPage', ['paginationService', function(paginationService) {
         return function(collection, itemsPerPage) {
             var end;
             var start;
@@ -228,7 +228,7 @@ angular.module('angularUtils.directives.dirPagination', [])
                 return collection;
             }
         };
-    })
+    }])
 
     .service('paginationService', function() {
         var itemsPerPage;
