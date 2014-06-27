@@ -170,7 +170,7 @@ angular.module('angularUtils.directives.dirPagination', [])
                 };
 
                 scope.$watch(function() {
-                    return paginationService.getCollectionLength() * paginationService.getItemsPerPage();
+                    return (paginationService.getCollectionLength() + 1) * paginationService.getItemsPerPage();
                 }, function(length) {
                     if (0 < length) {
                         generatePagination();
