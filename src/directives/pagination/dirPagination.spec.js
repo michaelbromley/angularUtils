@@ -201,7 +201,7 @@ describe('dirPagination directive', function() {
             expect(paginationLinks).toEqual(['‹','1', '2', '3', '›']);
         });
 
-        it('should update the currentPage property of $scope', function() {
+        it('should update the currentPage property of $scope when links clicked', function() {
             compileElement(myCollection, 40);
             var pagination = containingElement.find('ul.pagination');
 
@@ -216,6 +216,14 @@ describe('dirPagination directive', function() {
             pagination.children().eq(1).find('a').triggerHandler('click');
             $scope.$apply();
             expect($scope.currentPage).toBe(1);
+        });
+
+        it('should set the pagination.current value to 5 when compiled with currentPage = 5', function() {
+            compileElement(myCollection, 3, 5);
+            var activePageItem = containingElement.find('li.active').eq(0);
+            var activePage = activePageItem.text().trim();
+
+            expect(activePage).toEqual('5');
         });
 
         it('should show the correct pagination links at start of sequence', function() {
