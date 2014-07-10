@@ -26,7 +26,7 @@ angular.module('angularUtils.directives.dirPagination', [])
                 // regex taken directly from https://github.com/angular/angular.js/blob/master/src/ng/directive/ngRepeat.js#L211
                 var match = expression.match(/^\s*([\s\S]+?)\s+in\s+([\s\S]+?)(?:\s+track\s+by\s+([\s\S]+?))?\s*$/);
 
-                var filterPattern = /\|\s*itemsPerPage:\s*\S+\s*/;
+                var filterPattern = /\|\s*itemsPerPage:[^|]*/;
                 if (match[2].match(filterPattern) === null) {
                     throw "pagination directive: the 'itemsPerPage' filter must be set.";
                 }
@@ -38,9 +38,11 @@ angular.module('angularUtils.directives.dirPagination', [])
                 //recursion (we don't want to compile ourselves again)
                 var compiled =  $compile(element, null, 5000);
 
-                paginationService.paginationDirectiveInitialized = true;
-
                 return function(scope, element, attrs){
+                    var paginationId;
+                    paginationId = attrs.paginationId || "__default";
+                    paginationService.registerInstance(paginationId);
+
                     var currentPageGetter;
                     if (attrs.currentPage) {
                         currentPageGetter = $parse(attrs.currentPage);
@@ -49,15 +51,15 @@ angular.module('angularUtils.directives.dirPagination', [])
                         scope.__currentPage = 1;
                         currentPageGetter = $parse('__currentPage');
                     }
-                    paginationService.setCurrentPageParser(currentPageGetter, scope);
+                    paginationService.setCurrentPageParser(paginationId, currentPageGetter, scope);
 
                     if (typeof attrs.totalItems !== 'undefined') {
-                        paginationService.asyncMode = true;
+                        paginationService.setAsyncModeTrue(paginationId);
                         scope.$watch(function() {
                             return $parse(attrs.totalItems)(scope);
                         }, function (result) {
                             if (0 < result) {
-                                paginationService.setCollectionLength(result);
+                                paginationService.setCollectionLength(paginationId, result);
                             }
                         });
                     } else {
@@ -65,7 +67,7 @@ angular.module('angularUtils.directives.dirPagination', [])
                             return collectionGetter(scope);
                         }, function(collection) {
                             if (collection) {
-                                paginationService.setCollectionLength(collection.length);
+                                paginationService.setCollectionLength(paginationId, collection.length);
                             }
                         });
                     }
@@ -154,12 +156,15 @@ angular.module('angularUtils.directives.dirPagination', [])
                 onPageChange: '&?'
             },
             link: function(scope, element, attrs) {
+                var paginationId;
+                paginationId = attrs.paginationId || "__default";
                 if (!scope.maxSize) { scope.maxSize = 9; }
                 scope.directionLinks = angular.isDefined(attrs.directionLinks) ? scope.$parent.$eval(attrs.directionLinks) : true;
                 scope.boundaryLinks = angular.isDefined(attrs.boundaryLinks) ? scope.$parent.$eval(attrs.boundaryLinks) : false;
 
-                if (paginationService.paginationDirectiveInitialized === false) {
-                    throw "pagination directive: the pagination controls cannot be used without the corresponding pagination directive.";
+                if (!paginationService.isRegistered(paginationId)) {
+                    var idMessage = (paginationId !== '__default') ? " (id: " + paginationId + ") " : " ";
+                    throw "pagination directive: the pagination controls" + idMessage + "cannot be used without the corresponding pagination directive.";
                 }
 
                 var paginationRange = Math.max(scope.maxSize, 5);
@@ -170,7 +175,7 @@ angular.module('angularUtils.directives.dirPagination', [])
                 };
 
                 scope.$watch(function() {
-                    return (paginationService.getCollectionLength() + 1) * paginationService.getItemsPerPage();
+                    return (paginationService.getCollectionLength(paginationId) + 1) * paginationService.getItemsPerPage(paginationId);
                 }, function(length) {
                     if (0 < length) {
                         generatePagination();
@@ -178,16 +183,16 @@ angular.module('angularUtils.directives.dirPagination', [])
                 });
 
                 scope.$watch(function() {
-                    return paginationService.getCurrentPage();
+                    return paginationService.getCurrentPage(paginationId);
                 }, function(currentPage) {
-                    scope.pages = generatePagesArray(currentPage, paginationService.getCollectionLength(), paginationService.getItemsPerPage(), paginationRange);
+                    scope.pages = generatePagesArray(currentPage, paginationService.getCollectionLength(paginationId), paginationService.getItemsPerPage(paginationId), paginationRange);
                 });
 
                 scope.setCurrent = function(num) {
                     if (/^\d+$/.test(num)) {
                         if (0 < num && num <= scope.pagination.last) {
-                            paginationService.setCurrentPage(num);
-                            scope.pages = generatePagesArray(num, paginationService.getCollectionLength(), paginationService.getItemsPerPage(), paginationRange);
+                            paginationService.setCurrentPage(paginationId, num);
+                            scope.pages = generatePagesArray(num, paginationService.getCollectionLength(paginationId), paginationService.getItemsPerPage(paginationId), paginationRange);
                             scope.pagination.current = num;
 
                             // if a callback has been set, then call it with the page number as an argument
@@ -199,7 +204,7 @@ angular.module('angularUtils.directives.dirPagination', [])
                 };
 
                 function generatePagination() {
-                    scope.pages = generatePagesArray(1, paginationService.getCollectionLength(), paginationService.getItemsPerPage(), paginationRange);
+                    scope.pages = generatePagesArray(1, paginationService.getCollectionLength(paginationId), paginationService.getItemsPerPage(paginationId), paginationRange);
                     scope.pagination.last = scope.pages[scope.pages.length - 1];
                     if (scope.pagination.last < scope.pagination.current) {
                         scope.setCurrent(scope.pagination.last);
@@ -210,18 +215,24 @@ angular.module('angularUtils.directives.dirPagination', [])
     }])
 
     .filter('itemsPerPage', ['paginationService', function(paginationService) {
-        return function(collection, itemsPerPage) {
+        return function(collection, itemsPerPage, paginationId) {
+            if (typeof (paginationId) === 'undefined') {
+                paginationId = "__default";
+            }
+            if (!paginationService.isRegistered(paginationId)) {
+                throw "pagination directive: the itemsPerPage id argument (id: " + paginationId + ") does not match a registered pagination-id.";
+            }
             var end;
             var start;
             if (collection instanceof Array) {
                 itemsPerPage = itemsPerPage || 9999999999;
-                if (paginationService.asyncMode) {
+                if (paginationService.isAsyncMode(paginationId)) {
                     start = 0;
                 } else {
-                    start = (paginationService.getCurrentPage() - 1) * itemsPerPage;
+                    start = (paginationService.getCurrentPage(paginationId) - 1) * itemsPerPage;
                 }
                 end = start + itemsPerPage;
-                paginationService.setItemsPerPage(itemsPerPage);
+                paginationService.setItemsPerPage(paginationId, itemsPerPage);
 
                 return collection.slice(start, end);
             } else {
@@ -231,36 +242,58 @@ angular.module('angularUtils.directives.dirPagination', [])
     }])
 
     .service('paginationService', function() {
-        var itemsPerPage;
-        var collectionLength;
-        var currentPageParser;
-        var context;
+        var instances = {};
+        var lastRegisteredInstance;
         this.paginationDirectiveInitialized = false;
 
-        this.setCurrentPageParser = function(val, scope) {
-            currentPageParser = val;
-            context = scope;
-        };
-        this.setCurrentPage = function(val) {
-            currentPageParser.assign(context, val);
-        };
-        this.getCurrentPage = function() {
-            return currentPageParser(context);
+        this.registerInstance = function(instanceId) {
+            if (typeof instances[instanceId] === 'undefined') {
+                instances[instanceId] = {
+                    asyncMode: false
+                };
+                lastRegisteredInstance = instanceId;
+            }
         };
 
-        this.setItemsPerPage = function(val) {
-            itemsPerPage = val;
-        };
-        this.getItemsPerPage = function() {
-            return itemsPerPage;
+        this.isRegistered = function(instanceId) {
+              return (typeof instances[instanceId] !== 'undefined');
         };
 
-        this.setCollectionLength = function(val) {
-            collectionLength = val;
+        this.getLastInstanceId = function() {
+            return lastRegisteredInstance;
         };
-        this.getCollectionLength = function() {
-            return collectionLength;
+
+        this.setCurrentPageParser = function(instanceId, val, scope) {
+            instances[instanceId].currentPageParser = val;
+            instances[instanceId].context = scope;
         };
-        this.asyncMode = false;
+        this.setCurrentPage = function(instanceId, val) {
+            instances[instanceId].currentPageParser.assign(instances[instanceId].context, val);
+        };
+        this.getCurrentPage = function(instanceId) {
+            return instances[instanceId].currentPageParser(instances[instanceId].context);
+        };
+
+        this.setItemsPerPage = function(instanceId, val) {
+            instances[instanceId].itemsPerPage = val;
+        };
+        this.getItemsPerPage = function(instanceId) {
+            return instances[instanceId].itemsPerPage;
+        };
+
+        this.setCollectionLength = function(instanceId, val) {
+            instances[instanceId].collectionLength = val;
+        };
+        this.getCollectionLength = function(instanceId) {
+            return instances[instanceId].collectionLength;
+        };
+
+        this.setAsyncModeTrue = function(instanceId) {
+            instances[instanceId].asyncMode = true;
+        };
+
+        this.isAsyncMode = function(instanceId) {
+            return instances[instanceId].asyncMode;
+        };
     })
 ;

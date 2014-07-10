@@ -149,7 +149,6 @@ describe('dirPagination directive', function() {
 
     });
 
-
     describe('if currentPage attribute is not set', function() {
 
         beforeEach(function() {
@@ -365,5 +364,158 @@ describe('dirPagination directive', function() {
                 });
             });
         });
+
+    });
+
+    describe('multiple pagination instances per page', function() {
+
+        var collection1, collection2, currentPage1, currentPage2;
+
+        beforeEach(function() {
+            collection1 = [];
+            collection2 = [];
+            for (var i = 0; i < 20; i++) {
+                collection1.push('c1:' + i);
+                collection2.push('c2:' + i);
+            }
+        });
+
+        /**
+         * Compile function for multiple pagination directives on a single page
+         * @param collection
+         * @param itemsPerPage
+         * @param currentPage
+         * @param paginationId
+         * @param customExpression
+         */
+        function compileMultiElement(collection, itemsPerPage, currentPage, paginationId, customExpression) {
+            var expression;
+            var html;
+            if ($scope.collection === undefined) {
+                $scope.collection = {};
+            }
+            if ($scope.itemsPerPage === undefined) {
+                $scope.itemsPerPage = {};
+            }
+            if ($scope.currentPage === undefined) {
+                $scope.currentPage = {};
+            }
+            $scope.collection[paginationId] = collection;
+            $scope.itemsPerPage[paginationId] = itemsPerPage;
+            $scope.currentPage[paginationId] = currentPage || 1;
+            expression = customExpression || "item in collection." + paginationId + " | itemsPerPage: itemsPerPage." + paginationId + ": '" + paginationId + "'";
+            html = '<ul class="list"><li dir-paginate="'+ expression + '" current-page="currentPage.' + paginationId + '" pagination-id="' + paginationId + '" >{{ item }}</li></ul> ' +
+                '<dir-pagination-controls pagination-id="' + paginationId + '"></dir-pagination-controls>';
+            containingElement.append($compile(html)($scope));
+            $scope.$apply();
+        }
+
+        function clickPaginationLink(paginationId, index) {
+            var pagination = containingElement.find('dir-pagination-controls[pagination-id="' + paginationId + '"]');
+
+            pagination.find('li').eq(index).find('a').triggerHandler('click');
+            $scope.$apply();
+        }
+
+        function getMultiPageLinksArray(paginationId) {
+            return containingElement.find('dir-pagination-controls[pagination-id="' + paginationId + '"] li').map(function() {
+                return $(this).text().trim();
+            }).get();
+        }
+
+        function getMultiListItems(paginationId) {
+            return containingElement.find('li[pagination-id="' + paginationId + '"]').map(function() {
+                return $(this).text().trim();
+            }).get();
+        }
+
+        it('should allow pagination-id to control a specific collection', function() {
+            compileMultiElement(collection1, 5, 1, "c1" );
+            compileMultiElement(collection2, 5, 1, "c2" );
+
+            clickPaginationLink("c1", 2);
+            clickPaginationLink("c2", 4);
+
+            expect($scope.currentPage.c1).toEqual(2);
+            expect($scope.currentPage.c2).toEqual(4);
+        });
+
+        it('should allow independent changing of items per page', function() {
+            compileMultiElement(collection1, 5, 1, "c1" );
+            compileMultiElement(collection2, 5, 1, "c2" );
+
+            expect(getMultiPageLinksArray("c1").length).toBe(6);
+            expect(getMultiPageLinksArray("c2").length).toBe(6);
+
+            $scope.$apply(function() {
+                $scope.itemsPerPage.c1 = 10;
+            });
+
+            expect(getMultiPageLinksArray("c1").length).toBe(4);
+            expect(getMultiPageLinksArray("c2").length).toBe(6);
+
+            $scope.$apply(function() {
+                $scope.itemsPerPage.c2 = 7;
+            });
+
+            expect(getMultiPageLinksArray("c1").length).toBe(4);
+            expect(getMultiPageLinksArray("c2").length).toBe(5);
+        });
+
+        it('should allow independent filtering', function() {
+            compileMultiElement(collection1, 5, 1, "c1", "item in collection.c1 | filter: filter1 | itemsPerPage: itemsPerPage.c1: 'c1'");
+            compileMultiElement(collection2, 5, 1, "c2", "item in collection.c2 | filter: filter2 | itemsPerPage: itemsPerPage.c2: 'c2'" );
+
+            $scope.$apply(function() {
+                $scope.filter1 = "7";
+                $scope.filter2 = "8";
+            });
+
+            expect(getMultiListItems("c1")).toEqual(['c1:7', 'c1:17']);
+            expect(getMultiListItems("c2")).toEqual(['c2:8', 'c2:18']);
+
+        });
+
+        it('should allow independent setting of current-page externally', function() {
+            compileMultiElement(collection1, 2, 1, "c1" );
+            compileMultiElement(collection2, 2, 1, "c2" );
+
+            $scope.$apply(function() {
+                $scope.currentPage.c1 = 2;
+                $scope.currentPage.c2 = 4;
+            });
+
+            expect(getMultiListItems("c1")).toEqual(['c1:2', 'c1:3']);
+            expect(getMultiListItems("c2")).toEqual(['c2:6', 'c2:7']);
+        });
+
+        it('should throw an exception if a non-existant paginationId is set in the pagination-controls', function() {
+            $scope.collection = [1,2,3,4,5];
+
+            function compile() {
+                html = '<ul class="list"><li dir-paginate="item in collection | itemsPerPage: 3 : \'id1\'" pagination-id="id1" >{{ item }}</li></ul> ' +
+                    '<dir-pagination-controls pagination-id="id2"></dir-pagination-controls>';
+
+                containingElement.append($compile(html)($scope));
+                $scope.$apply();
+            }
+
+            expect(compile).toThrow("pagination directive: the pagination controls (id: id2) cannot be used without the corresponding pagination directive.");
+        });
+
+        it('should throw an exception if a non-existant paginationId is set in the itemsPerPage filter', function() {
+            $scope.collection = [1,2,3,4,5];
+
+            function compile() {
+                html = '<ul class="list"><li dir-paginate="item in collection | itemsPerPage: 3 : \'id2\'" pagination-id="id1" >{{ item }}</li></ul> ' +
+                    '<dir-pagination-controls pagination-id="id1"></dir-pagination-controls>';
+
+                containingElement.append($compile(html)($scope));
+                $scope.$apply();
+            }
+
+            expect(compile).toThrow("pagination directive: the itemsPerPage id argument (id: id2) does not match a registered pagination-id.");
+        });
+
     });
 });
