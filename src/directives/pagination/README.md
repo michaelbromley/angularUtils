@@ -6,6 +6,11 @@ Yes, there are quite a few pagination solutions for Angular out there already, b
 something that would be truly plug-n-play - no need to do any set-up or logic in your controller. Just add
 an attribute, drop in your navigation wherever you like, and boom - instant, full-featured pagination.
 
+## Demo
+
+[Here is a working demo on Plunker](http://plnkr.co/edit/Wtkv71LIqUR4OhzhgpqL?p=preview) which demonstrates some cool features such as live-binding the "itemsPerPage" and
+filtering of the collection.
+
 ## Example
 
 Let's say you have a collection of items on your controller's `$scope`. Often you want to display them with
@@ -31,8 +36,9 @@ correct location of the `dirPagination.tpl.html` file.
 
 ```HTML
 <ANY
-    dir-paginate="expression | itemsPerPage: (int|expression)"
+    dir-paginate="expression | itemsPerPage: (int|expression) [: paginationId (string literal)]"
     [current-page=""]
+    [pagination-id=""]
     [total-items=""]>
     ...
     </ANY>
@@ -41,7 +47,8 @@ correct location of the `dirPagination.tpl.html` file.
     [max-size=""]
     [direction-links=""]
     [boundary-links=""]
-    [on-page-change="">
+    [on-page-change=""]
+    [pagination-id=""]>
     </dir-pagination-controls>
 ```
 
@@ -52,11 +59,16 @@ expression is exactly as you would expect. [See the ng-repeat docs for the full 
 This means that you can also use any kind of filters you like, etc.
 
 * **`itemsPerPage`** The `expression` **must** include this filter. It is required by the pagination logic. The syntax
-is the same as any filter: `itemsPerPage: 10`, or you can also bind it to a property of the $scope: `itemsPerPage: pageSize`.
+is the same as any filter: `itemsPerPage: 10`, or you can also bind it to a property of the $scope: `itemsPerPage: pageSize`. The optional
+third argument `paginationId` is used when you need more than one independent pagination instance on one page. See the section below
+on setting up multiple instances.
 
 * **`current-page`** (optional) Specify a property on your controller's $scope that will be bound to the current
 page of the pagination. If this is not specified, the directive will automatically create a property named `__currentPage` and use
 that instead.
+
+* **`pagination-id`** (optional) Used to group together the dir-paginate directive with a corresponding dir-pagination-controls when you need more than
+one pagination instance per page. See the section below on setting up multiple instances.
 
 * **`total-items`** When working with asynchronous data (i.e. data that is paginated on the server and sent one page at a time to the client), you would be sent
 only one page of results and then some meta-data containing the total number of results. In this case, the pagination directive would think that your one page
@@ -78,8 +90,47 @@ pagination.
 argument `newPageNumber`, which is an integer equal to the page number that has just been navigated to. **Note** you must use that exact argument name in your view,
 i.e. `<dir-pagination-controls on-page-change="myMethod(newPageNumber)">`, and the method you specify must be defined on your controller $scope.
 
+* **`pagination-id`** (optional) Used to group together the dir-pagination-controls with a corresponding dir-paginate when you need more than
+one pagination instance per page. See the section below on setting up multiple instances.
+
 Note: you cannot use the `dir-pagination-controls` directive without `dir-paginate`. Attempting to do so will result in an
 exception.
+
+## Multiple Pagination Instances on One Page
+
+Multiple instances of the directives may be included on a single page by specifying a `pagination-id`. This property **must** be specified in **3** places
+for this to work:
+
+1. Specify the `pagination-id` attribute on the `dir-paginate` directive.
+2. Specify the third parameter of the `itemsPerPage` filter.
+3. Specify the `pagination-id` attribute on the `dir-paginations-controls` directive.
+
+An example of two independent paginations on one page would look like this:
+
+```HTML
+<!-- first pagination instance -->
+<ul>
+    <li dir-paginate="customer in customers | itemsPerPage: 10: 'cust'" pagination-id="cust">{{ customer.name }}</li>
+</ul>
+
+<dir-pagination-controls pagination-id="cust"></dir-pagination-controls>
+
+<!-- second pagination instance -->
+<ul>
+    <li dir-paginate="branch in branches | itemsPerPage: 10: 'branch'" pagination-id="branch">{{ customer.name }}</li>
+</ul>
+
+<dir-pagination-controls pagination-id="branch"></dir-pagination-controls>
+```
+
+The pagination-ids above are set to "cust" in the first instance and "branch" in the second. The pagination-ids can be anything you like,
+the important thing is to make sure the exact same id is used in all 3 places. If the 3 ids don't match, you should see a helpful
+exception in the console.
+
+### Demo
+
+Here is a working demo featuring two instances on one page: [http://plnkr.co/edit/lrfo8J?p=preview](http://plnkr.co/edit/lrfo8J?p=preview)
+
 
 ## Working With Asynchronous Data
 
@@ -152,11 +203,6 @@ potential advantage of being triggered whenever the current-page changes, rather
     <dir-pagination-controls on-page-change="pageChanged(newPageNumber)"></dir-pagination-controls>
 </div>
 ````
-
-## Demo
-
-[Here is a working demo on Plunker](http://plnkr.co/edit/Wtkv71LIqUR4OhzhgpqL?p=preview) which demonstrates some cool features such as live-binding the "itemsPerPage" and
-filtering of the collection.
 
 ## Styling
 
