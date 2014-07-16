@@ -48,8 +48,9 @@ angular.module('angularUtils.directives.dirPagination', [])
                         currentPageGetter = $parse(attrs.currentPage);
                     } else {
                         // if the current-page attribute was not set, we'll make our own
-                        scope.__currentPage = 1;
-                        currentPageGetter = $parse('__currentPage');
+                        var defaultCurrentPage = paginationId + '__currentPage';
+                        scope[defaultCurrentPage] = 1;
+                        currentPageGetter = $parse(defaultCurrentPage);
                     }
                     paginationService.setCurrentPageParser(paginationId, currentPageGetter, scope);
 

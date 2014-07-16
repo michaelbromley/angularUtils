@@ -169,7 +169,7 @@ describe('dirPagination directive', function() {
 
             pagination.children().eq(3).find('a').triggerHandler('click');
             $scope.$apply();
-            expect($scope.__currentPage).toBe(3);
+            expect($scope.__default__currentPage).toBe(3);
             var listItems = getListItems();
             expect(listItems).toEqual(['item 7', 'item 8', 'item 9']);
         });
