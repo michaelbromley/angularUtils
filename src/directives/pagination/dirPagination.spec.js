@@ -262,6 +262,20 @@ describe('dirPagination directive', function() {
             expect(pageLinks.length).toEqual(6);
         });
 
+        it('should update the active page to reflect the value of the current-page property', function() {
+            compileElement(myCollection, 10, 3);
+
+            var activeLink = containingElement.find('ul.pagination li.active');
+            expect(activeLink.html()).toContain(3);
+
+            $scope.$apply(function() {
+                $scope.currentPage = 1;
+            });
+
+            activeLink = containingElement.find('ul.pagination li.active');
+            expect(activeLink.html()).toContain(1);
+        });
+
         describe('optional attributes', function() {
 
             function compileWithAttributes(attributes) {

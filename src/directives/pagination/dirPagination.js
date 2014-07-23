@@ -186,7 +186,7 @@ angular.module('angularUtils.directives.dirPagination', [])
                 scope.$watch(function() {
                     return paginationService.getCurrentPage(paginationId);
                 }, function(currentPage) {
-                    scope.pages = generatePagesArray(currentPage, paginationService.getCollectionLength(paginationId), paginationService.getItemsPerPage(paginationId), paginationRange);
+                    scope.setCurrent(currentPage);
                 });
 
                 scope.setCurrent = function(num) {
