@@ -28,7 +28,7 @@ angular.module('angularUtils.directives.dirPagination', [])
 
                 var filterPattern = /\|\s*itemsPerPage:[^|]*/;
                 if (match[2].match(filterPattern) === null) {
-                    throw "pagination directive: the 'itemsPerPage' filter must be set.";
+                    throw 'pagination directive: the \'itemsPerPage\' filter must be set.';
                 }
                 var itemsPerPageFilterRemoved = match[2].replace(filterPattern, '');
                 var collectionGetter = $parse(itemsPerPageFilterRemoved);
@@ -40,7 +40,7 @@ angular.module('angularUtils.directives.dirPagination', [])
 
                 return function(scope, element, attrs){
                     var paginationId;
-                    paginationId = attrs.paginationId || "__default";
+                    paginationId = attrs.paginationId || '__default';
                     paginationService.registerInstance(paginationId);
 
                     var currentPageGetter;
@@ -159,14 +159,14 @@ angular.module('angularUtils.directives.dirPagination', [])
             },
             link: function(scope, element, attrs) {
                 var paginationId;
-                paginationId = attrs.paginationId || "__default";
+                paginationId = attrs.paginationId || '__default';
                 if (!scope.maxSize) { scope.maxSize = 9; }
                 scope.directionLinks = angular.isDefined(attrs.directionLinks) ? scope.$parent.$eval(attrs.directionLinks) : true;
                 scope.boundaryLinks = angular.isDefined(attrs.boundaryLinks) ? scope.$parent.$eval(attrs.boundaryLinks) : false;
 
                 if (!paginationService.isRegistered(paginationId)) {
-                    var idMessage = (paginationId !== '__default') ? " (id: " + paginationId + ") " : " ";
-                    throw "pagination directive: the pagination controls" + idMessage + "cannot be used without the corresponding pagination directive.";
+                    var idMessage = (paginationId !== '__default') ? ' (id: ' + paginationId + ') ' : ' ';
+                    throw 'pagination directive: the pagination controls' + idMessage + 'cannot be used without the corresponding pagination directive.';
                 }
 
                 var paginationRange = Math.max(scope.maxSize, 5);
@@ -220,10 +220,10 @@ angular.module('angularUtils.directives.dirPagination', [])
     .filter('itemsPerPage', ['paginationService', function(paginationService) {
         return function(collection, itemsPerPage, paginationId) {
             if (typeof (paginationId) === 'undefined') {
-                paginationId = "__default";
+                paginationId = '__default';
             }
             if (!paginationService.isRegistered(paginationId)) {
-                throw "pagination directive: the itemsPerPage id argument (id: " + paginationId + ") does not match a registered pagination-id.";
+                throw 'pagination directive: the itemsPerPage id argument (id: ' + paginationId + ') does not match a registered pagination-id.';
             }
             var end;
             var start;
