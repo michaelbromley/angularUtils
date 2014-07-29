@@ -5,7 +5,7 @@ which adds the facility to display the English ordinal date suffix to the 'day' 
 
 ## Example
 
-Given the timestamp 1384474920000 (15th November 2013, 00:22:00), and the date format string 'd MM yyyy',
+Given the timestamp 1384474920000 (15th November 2013, 00:22:00), and the date format string 'd MMMM yyyy',
 the regular Angular date filter will return '15 November 2013'. This filter will return '15th November 2013'. Simple.
 
 ## Usage
