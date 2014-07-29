@@ -80,6 +80,7 @@ angular.module('angularUtils.directives.dirPagination', [])
     }])
 
     .directive('dirPaginationControls', ['paginationService', function(paginationService) {
+        var numberRegex = /^\d+$/;
         /**
          * Generate an array of page numbers (or the '...' string) which is used in an ng-repeat to generate the
          * links used in pagination
@@ -190,7 +191,7 @@ angular.module('angularUtils.directives.dirPagination', [])
                 });
 
                 scope.setCurrent = function(num) {
-                    if (/^\d+$/.test(num)) {
+                    if (numberRegex.test(num)) {
                         if (0 < num && num <= scope.pagination.last) {
                             paginationService.setCurrentPage(paginationId, num);
                             scope.pages = generatePagesArray(num, paginationService.getCollectionLength(paginationId), paginationService.getItemsPerPage(paginationId), paginationRange);
