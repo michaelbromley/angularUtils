@@ -59,8 +59,8 @@ expression is exactly as you would expect. [See the ng-repeat docs for the full 
 This means that you can also use any kind of filters you like, etc.
 
 * **`itemsPerPage`** The `expression` **must** include this filter. It is required by the pagination logic. The syntax
-is the same as any filter: `itemsPerPage: 10`, or you can also bind it to a property of the $scope: `itemsPerPage: pageSize`. The optional
-third argument `paginationId` is used when you need more than one independent pagination instance on one page. See the section below
+is the same as any filter: `itemsPerPage: 10`, or you can also bind it to a property of the $scope: `itemsPerPage: pageSize`. **Note:** This filter should come *after* any other filters in order to work as expected. A safe rule is to always put it at the end of the expression.
+The optional third argument `paginationId` is used when you need more than one independent pagination instance on one page. See the section below
 on setting up multiple instances.
 
 * **`current-page`** (optional) Specify a property on your controller's $scope that will be bound to the current
