@@ -143,7 +143,7 @@ exception in the console.
 
 ### Demo
 
-Here is a working demo featuring two instances on one page: [http://plnkr.co/edit/lrfo8J?p=preview](http://plnkr.co/edit/lrfo8J?p=preview)
+Here is a working demo featuring two instances on one page: [http://plnkr.co/edit/Pm4L53UYAieF808v8wxL?p=preview](http://plnkr.co/edit/Pm4L53UYAieF808v8wxL?p=preview)
 
 
 ## Working With Asynchronous Data
