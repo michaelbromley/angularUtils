@@ -8,7 +8,7 @@ an attribute, drop in your navigation wherever you like, and boom - instant, ful
 
 ## Demo
 
-[Here is a working demo on Plunker](http://plnkr.co/edit/z98PaAobozPziqoG9Qnd?p=preview) which demonstrates some cool features such as live-binding the "itemsPerPage" and
+[Here is a working demo on Plunker](http://plnkr.co/edit/Wtkv71LIqUR4OhzhgpqL?p=preview) which demonstrates some cool features such as live-binding the "itemsPerPage" and
 filtering of the collection.
 
 ## Example
