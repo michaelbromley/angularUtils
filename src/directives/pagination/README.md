@@ -31,22 +31,14 @@ module will enable:
 
 ## Usage
 
-First you need to include the module in your project, and make sure that the `templateUrl` is pointing to the
-correct location of the `dirPagination.tpl.html` file on [this line](https://github.com/michaelbromley/angularUtils/blob/master/src/directives/pagination/dirPagination.js#L155):
+First you need to include the module in your project:
 
 ```JavaScript
 // in your app
 angular.module('myApp', ['angularUtils.directives.dirPagination']);
-
-// set the templateUrl in the dirPagination.js file, line 155
-restrict: 'AE',
-templateUrl:  'path/to/dirPagination.tpl.html',
-scope: {
-    maxSize: '=?',
-    onPageChange: '&?'
-},
 ```
 
+Then create the paginated content:
 ```HTML
 <ANY
     dir-paginate="expression | itemsPerPage: (int|expression) [: paginationId (string literal)]"
@@ -55,13 +47,20 @@ scope: {
     [total-items=""]>
     ...
     </ANY>
+```
+And finally include the pagination itself. By default the template-url points to
+`directives/pagination/dirPagination.tpl.html`.
+
+
+```HTML
 ...
 <dir-pagination-controls
     [max-size=""]
     [direction-links=""]
     [boundary-links=""]
     [on-page-change=""]
-    [pagination-id=""]>
+    [pagination-id=""]
+    [template-url=""]>
     </dir-pagination-controls>
 ```
 
