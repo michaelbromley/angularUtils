@@ -13,7 +13,7 @@
  *
  * Created by Michael on 04/05/14.
  */
-
+t
 angular.module('angularUtils.directives.dirPagination', [])
     .directive('dirPaginate', ['$compile', '$parse', '$timeout', 'paginationService', function($compile, $parse, $timeout, paginationService) {
         return  {
@@ -152,7 +152,7 @@ angular.module('angularUtils.directives.dirPagination', [])
 
         return {
             restrict: 'AE',
-            templateUrl:  function(elem, attrs) {
+            templateUrl: function(elem, attrs) {
                 return attrs.templateUrl || 'directives/pagination/dirPagination.tpl.html';
             },
             scope: {

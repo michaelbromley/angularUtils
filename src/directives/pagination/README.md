@@ -8,7 +8,7 @@ an attribute, drop in your navigation wherever you like, and boom - instant, ful
 
 ## Demo
 
-[Here is a working demo on Plunker](http://plnkr.co/edit/Wtkv71LIqUR4OhzhgpqL?p=preview) which demonstrates some cool features such as live-binding the "itemsPerPage" and
+[Here is a working demo on Plunker](http://plnkr.co/edit/z98PaAobozPziqoG9Qnd?p=preview) which demonstrates some cool features such as live-binding the "itemsPerPage" and
 filtering of the collection.
 
 ## Example
@@ -48,8 +48,7 @@ Then create the paginated content:
     ...
     </ANY>
 ```
-And finally include the pagination itself. By default the template-url points to
-`directives/pagination/dirPagination.tpl.html`.
+And finally include the pagination itself.
 
 
 ```HTML
@@ -105,8 +104,11 @@ i.e. `<dir-pagination-controls on-page-change="myMethod(newPageNumber)">`, and t
 * **`pagination-id`** (optional) Used to group together the dir-pagination-controls with a corresponding dir-paginate when you need more than
 one pagination instance per page. See the section below on setting up multiple instances.
 
+* **`template-url`**  (optional, default = `directives/pagination/dirPagination.tpl.html`) Specifies the template to use.
+
 Note: you cannot use the `dir-pagination-controls` directive without `dir-paginate`. Attempting to do so will result in an
 exception.
+
 
 ## Multiple Pagination Instances on One Page
 
