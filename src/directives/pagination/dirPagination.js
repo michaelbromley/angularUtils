@@ -13,7 +13,7 @@
  *
  * Created by Michael on 04/05/14.
  */
-t
+
 angular.module('angularUtils.directives.dirPagination', [])
     .directive('dirPaginate', ['$compile', '$parse', '$timeout', 'paginationService', function($compile, $parse, $timeout, paginationService) {
         return  {
