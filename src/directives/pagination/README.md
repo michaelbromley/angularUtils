@@ -32,7 +32,20 @@ module will enable:
 ## Usage
 
 First you need to include the module in your project, and make sure that the `templateUrl` is pointing to the
-correct location of the `dirPagination.tpl.html` file.
+correct location of the `dirPagination.tpl.html` file on [this line](https://github.com/michaelbromley/angularUtils/blob/master/src/directives/pagination/dirPagination.js#L155):
+
+```JavaScript
+// in your app
+angular.module('myApp', ['angularUtils.directives.dirPagination']);
+
+// set the templateUrl in the dirPagination.js file, line 155
+restrict: 'AE',
+templateUrl:  'path/to/dirPagination.tpl.html',
+scope: {
+    maxSize: '=?',
+    onPageChange: '&?'
+},
+```
 
 ```HTML
 <ANY
