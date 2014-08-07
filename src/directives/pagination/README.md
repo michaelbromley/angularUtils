@@ -8,7 +8,7 @@ an attribute, drop in your navigation wherever you like, and boom - instant, ful
 
 ## Demo
 
-[Here is a working demo on Plunker](http://plnkr.co/edit/Wtkv71LIqUR4OhzhgpqL?p=preview) which demonstrates some cool features such as live-binding the "itemsPerPage" and
+[Here is a working demo on Plunker](http://plnkr.co/edit/z98PaAobozPziqoG9Qnd?p=preview) which demonstrates some cool features such as live-binding the "itemsPerPage" and
 filtering of the collection.
 
 ## Example
@@ -31,22 +31,14 @@ module will enable:
 
 ## Usage
 
-First you need to include the module in your project, and make sure that the `templateUrl` is pointing to the
-correct location of the `dirPagination.tpl.html` file on [this line](https://github.com/michaelbromley/angularUtils/blob/master/src/directives/pagination/dirPagination.js#L155):
+First you need to include the module in your project:
 
 ```JavaScript
 // in your app
 angular.module('myApp', ['angularUtils.directives.dirPagination']);
-
-// set the templateUrl in the dirPagination.js file, line 155
-restrict: 'AE',
-templateUrl:  'path/to/dirPagination.tpl.html',
-scope: {
-    maxSize: '=?',
-    onPageChange: '&?'
-},
 ```
 
+Then create the paginated content:
 ```HTML
 <ANY
     dir-paginate="expression | itemsPerPage: (int|expression) [: paginationId (string literal)]"
@@ -55,13 +47,19 @@ scope: {
     [total-items=""]>
     ...
     </ANY>
+```
+And finally include the pagination itself.
+
+
+```HTML
 ...
 <dir-pagination-controls
     [max-size=""]
     [direction-links=""]
     [boundary-links=""]
     [on-page-change=""]
-    [pagination-id=""]>
+    [pagination-id=""]
+    [template-url=""]>
     </dir-pagination-controls>
 ```
 
@@ -106,8 +104,11 @@ i.e. `<dir-pagination-controls on-page-change="myMethod(newPageNumber)">`, and t
 * **`pagination-id`** (optional) Used to group together the dir-pagination-controls with a corresponding dir-paginate when you need more than
 one pagination instance per page. See the section below on setting up multiple instances.
 
+* **`template-url`**  (optional, default = `directives/pagination/dirPagination.tpl.html`) Specifies the template to use.
+
 Note: you cannot use the `dir-pagination-controls` directive without `dir-paginate`. Attempting to do so will result in an
 exception.
+
 
 ## Multiple Pagination Instances on One Page
 
@@ -142,7 +143,7 @@ exception in the console.
 
 ### Demo
 
-Here is a working demo featuring two instances on one page: [http://plnkr.co/edit/lrfo8J?p=preview](http://plnkr.co/edit/lrfo8J?p=preview)
+Here is a working demo featuring two instances on one page: [http://plnkr.co/edit/Pm4L53UYAieF808v8wxL?p=preview](http://plnkr.co/edit/Pm4L53UYAieF808v8wxL?p=preview)
 
 
 ## Working With Asynchronous Data
