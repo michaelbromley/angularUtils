@@ -189,23 +189,26 @@ angular.module('angularUtils.directives.dirPagination', [])
                 scope.$watch(function() {
                     return paginationService.getCurrentPage(paginationId);
                 }, function(currentPage) {
-                    scope.setCurrent(currentPage);
+                    goToPage(currentPage);
                 });
 
                 scope.setCurrent = function(num) {
-                    if (numberRegex.test(num)) {
-                        if (0 < num && num <= scope.pagination.last) {
-                            paginationService.setCurrentPage(paginationId, num);
-                            scope.pages = generatePagesArray(num, paginationService.getCollectionLength(paginationId), paginationService.getItemsPerPage(paginationId), paginationRange);
-                            scope.pagination.current = num;
-
-                            // if a callback has been set, then call it with the page number as an argument
-                            if (scope.onPageChange) {
-                                scope.onPageChange({ newPageNumber : num });
-                            }
-                        }
+                    if (isValidPageNumber(num)) {
+                        paginationService.setCurrentPage(paginationId, num);
                     }
                 };
+
+                function goToPage(num) {
+                    if (isValidPageNumber(num)) {
+                        scope.pages = generatePagesArray(num, paginationService.getCollectionLength(paginationId), paginationService.getItemsPerPage(paginationId), paginationRange);
+                        scope.pagination.current = num;
+
+                        // if a callback has been set, then call it with the page number as an argument
+                        if (scope.onPageChange) {
+                            scope.onPageChange({ newPageNumber : num });
+                        }
+                    }
+                }
 
                 function generatePagination() {
                     scope.pages = generatePagesArray(1, paginationService.getCollectionLength(paginationId), paginationService.getItemsPerPage(paginationId), paginationRange);
@@ -214,6 +217,10 @@ angular.module('angularUtils.directives.dirPagination', [])
                     if (scope.pagination.last < scope.pagination.current) {
                         scope.setCurrent(scope.pagination.last);
                     }
+                }
+
+                function isValidPageNumber(num) {
+                    return (numberRegex.test(num) && (0 < num && num <= scope.pagination.last));
                 }
             }
         };
