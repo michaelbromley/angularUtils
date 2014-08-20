@@ -11,11 +11,29 @@
  * I borrowed a couple of lines and a few attribute names from the AngularUI Bootstrap project:
  * https://github.com/angular-ui/bootstrap/blob/master/src/pagination/pagination.js
  *
- * Created by Michael on 04/05/14.
+ * Copyright 2014 Michael Bromley <michael@michaelbromley.co.uk>
  */
 
-angular.module('angularUtils.directives.dirPagination', [])
-    .directive('dirPaginate', ['$compile', '$parse', '$timeout', 'paginationService', function($compile, $parse, $timeout, paginationService) {
+(function() {
+
+    /**
+     * Config
+     */
+    var moduleName = 'angularUtils.directives.dirPagination';
+    var templatePath = 'directives/pagination/dirPagination.tpl.html';
+
+    /**
+     * Module
+     */
+    var module;
+    try {
+        module = angular.module(moduleName);
+    } catch(err) {
+        // named module does not exist, so create one
+        module = angular.module(moduleName, []);
+    }
+
+    module.directive('dirPaginate', ['$compile', '$parse', '$timeout', 'paginationService', function($compile, $parse, $timeout, paginationService) {
         return  {
             priority: 5000, //High priority means it will execute first
             terminal: true,
@@ -77,9 +95,9 @@ angular.module('angularUtils.directives.dirPagination', [])
                 };
             }
         };
-    }])
+    }]);
 
-    .directive('dirPaginationControls', ['paginationService', function(paginationService) {
+    module.directive('dirPaginationControls', ['paginationService', function(paginationService) {
         var numberRegex = /^\d+$/;
         /**
          * Generate an array of page numbers (or the '...' string) which is used in an ng-repeat to generate the
@@ -153,7 +171,7 @@ angular.module('angularUtils.directives.dirPagination', [])
         return {
             restrict: 'AE',
             templateUrl: function(elem, attrs) {
-                return attrs.templateUrl || 'directives/pagination/dirPagination.tpl.html';
+                return attrs.templateUrl || templatePath;
             },
             scope: {
                 maxSize: '=?',
@@ -224,9 +242,9 @@ angular.module('angularUtils.directives.dirPagination', [])
                 }
             }
         };
-    }])
+    }]);
 
-    .filter('itemsPerPage', ['paginationService', function(paginationService) {
+    module.filter('itemsPerPage', ['paginationService', function(paginationService) {
         return function(collection, itemsPerPage, paginationId) {
             if (typeof (paginationId) === 'undefined') {
                 paginationId = '__default';
@@ -251,9 +269,9 @@ angular.module('angularUtils.directives.dirPagination', [])
                 return collection;
             }
         };
-    }])
+    }]);
 
-    .service('paginationService', function() {
+    module.service('paginationService', function() {
         var instances = {};
         var lastRegisteredInstance;
         this.paginationDirectiveInitialized = false;
@@ -268,7 +286,7 @@ angular.module('angularUtils.directives.dirPagination', [])
         };
 
         this.isRegistered = function(instanceId) {
-              return (typeof instances[instanceId] !== 'undefined');
+            return (typeof instances[instanceId] !== 'undefined');
         };
 
         this.getLastInstanceId = function() {
@@ -307,5 +325,5 @@ angular.module('angularUtils.directives.dirPagination', [])
         this.isAsyncMode = function(instanceId) {
             return instances[instanceId].asyncMode;
         };
-    })
-;
+    });
+})();

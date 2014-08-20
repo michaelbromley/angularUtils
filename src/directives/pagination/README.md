@@ -29,6 +29,14 @@ module will enable:
 
 ...and that's literally it.
 
+## Installation
+
+You can install with Bower:
+
+`bower install angular-utils-pagination`
+
+Alternatively just download the files `dirPagination.js` and `dirPagination.tpl.html`. Using bower has the advantage of making version management easier.
+
 ## Usage
 
 First you need to include the module in your project:
