@@ -63,16 +63,30 @@ module.exports = function(grunt) {
             main: {
               src: ['src/**/*.tpl.html'],
               dest: 'tmp/templates.js'
-            },
+            }
           },
 
+        copy: {
+            // used to copy certain of the utils to external repo directories
+            dirPagination: {
+                expand: true,
+                flatten: true,
+                src: [
+                    'src/directives/pagination/dirPagination.js',
+                    'src/directives/pagination/dirPagination.tpl.html'],
+                dest: '../angularUtils-dist/angularUtils-pagination/'
+
+            }
+        }
     });
 
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-html2js');
+    grunt.loadNpmTasks('grunt-contrib-copy');
 
     grunt.registerTask('default', ['jshint', 'html2js', 'karma']);
+    grunt.registerTask('publish', ['copy']);
 
 };
