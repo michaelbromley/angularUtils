@@ -255,7 +255,7 @@
             var end;
             var start;
             if (collection instanceof Array) {
-                itemsPerPage = itemsPerPage || 9999999999;
+                itemsPerPage = parseInt(itemsPerPage) || 9999999999;
                 if (paginationService.isAsyncMode(paginationId)) {
                     start = 0;
                 } else {
