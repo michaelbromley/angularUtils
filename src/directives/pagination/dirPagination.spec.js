@@ -111,6 +111,19 @@ describe('dirPagination directive', function() {
             expect(listItems).toEqual(['item 99', 'item 98', 'item 97', 'item 96', 'item 95']);
         });
 
+        it('should work inside a transcluded directive (ng-if)', function() {
+            $scope.collection = myCollection;
+            var html = '<div ng-if="true">' +
+                            '<ul class="list"><li dir-paginate="item in collection | itemsPerPage: 5">{{ item }}</li></ul> ' +
+                            '<dir-pagination-controls></dir-pagination-controls>' +
+                        '</div>';
+            containingElement.append($compile(html)($scope));
+            $scope.$apply();
+
+            var listItems = getListItems();
+            expect(listItems).toEqual(['item 1', 'item 2', 'item 3', 'item 4', 'item 5']);
+        });
+
         it('should display the second page when compiled with currentPage = 2', function() {
             var listItems;
             compileElement(myCollection, 3, 2);

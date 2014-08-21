@@ -35,10 +35,10 @@
 
     module.directive('dirPaginate', ['$compile', '$parse', '$timeout', 'paginationService', function($compile, $parse, $timeout, paginationService) {
         return  {
-            priority: 5000, //High priority means it will execute first
             terminal: true,
             compile: function(element, attrs){
                 attrs.$set('ngRepeat', attrs.dirPaginate); //Add ng-repeat to the dom
+                element.removeAttr(attrs.$attr.dirPaginate); // remove the dir-paginate to prevent infinite recursion of compilation
 
                 var expression = attrs.dirPaginate;
                 // regex taken directly from https://github.com/angular/angular.js/blob/master/src/ng/directive/ngRepeat.js#L211
@@ -51,13 +51,10 @@
                 var itemsPerPageFilterRemoved = match[2].replace(filterPattern, '');
                 var collectionGetter = $parse(itemsPerPageFilterRemoved);
 
-                //Now that we added ng-repeat to the element, proceed with compilation
-                //but skip directives with priority 5000 or above to avoid infinite
-                //recursion (we don't want to compile ourselves again)
-                var compiled =  $compile(element, null, 5000);
-
                 return function(scope, element, attrs){
                     var paginationId;
+                    var compiled =  $compile(element); // we manually compile the element again, as we have now swapped dir-paginate for a ng-repeat
+
                     paginationId = attrs.paginationId || '__default';
                     paginationService.registerInstance(paginationId);
 
@@ -90,7 +87,8 @@
                             }
                         });
                     }
-                    //When linking just delegate to the link function returned by the new compile
+
+                    //Delegate to the link function returned by the new compilation of the ng-repeat
                     compiled(scope);
                 };
             }
