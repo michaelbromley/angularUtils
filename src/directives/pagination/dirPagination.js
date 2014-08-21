@@ -37,8 +37,8 @@
         return  {
             terminal: true,
             compile: function(element, attrs){
-                attrs.$set('ngRepeat', attrs.dirPaginate); //Add ng-repeat to the dom
-                element.removeAttr(attrs.$attr.dirPaginate); // remove the dir-paginate to prevent infinite recursion of compilation
+                attrs.$set('ngRepeat', attrs.dirPaginate); // Add ng-repeat to the dom element
+                element.removeAttr(attrs.$attr.dirPaginate); // Remove the dir-paginate attribute to prevent infinite recursion of compilation
 
                 var expression = attrs.dirPaginate;
                 // regex taken directly from https://github.com/angular/angular.js/blob/master/src/ng/directive/ngRepeat.js#L211
@@ -53,7 +53,7 @@
 
                 return function(scope, element, attrs){
                     var paginationId;
-                    var compiled =  $compile(element); // we manually compile the element again, as we have now swapped dir-paginate for a ng-repeat
+                    var compiled =  $compile(element); // we manually compile the element again, as we have now swapped dir-paginate for an ng-repeat
 
                     paginationId = attrs.paginationId || '__default';
                     paginationService.registerInstance(paginationId);
@@ -88,7 +88,7 @@
                         });
                     }
 
-                    //Delegate to the link function returned by the new compilation of the ng-repeat
+                    // Delegate to the link function returned by the new compilation of the ng-repeat
                     compiled(scope);
                 };
             }
