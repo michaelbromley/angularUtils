@@ -231,6 +231,14 @@ potential advantage of being triggered whenever the current-page changes, rather
 I've based the pagination navigation on the Bootstrap 3 component, so if you use Bootstrap in your project,
 you'll get some nice styling for free. If you don't use Bootstrap, it's simple to style the links with css.
 
+## Contribution
+
+Pull requests are welcome. If you are adding a new feature or fixing an as-yet-untested use case, please consider
+writing unit tests to cover your change(s). All unit tests are contained in the `dirPagination.spec.js` file, and 
+Karma is set up if you run `grunt watch` as you make changes.
+
+At a minimum, make sure that all the tests still pass. Thanks!
+
 ## Credits
 
 I did quite a bit of research before I figured I needed to make my own directive, and I picked up a lot of good ideas
