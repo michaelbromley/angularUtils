@@ -2,12 +2,16 @@
  * Created by Michael on 02/04/14.
  */
 
+var templateUrl = 'directives/uiBreadcrumbs/uiBreadcrumbs.tpl.html';
+
 angular.module('angularUtils.directives.uiBreadcrumbs', ['ui.router'])
 
     .directive('uiBreadcrumbs', function($interpolate, $state) {
         return {
             restrict: 'E',
-            templateUrl: 'directives/uiBreadcrumbs/uiBreadcrumbs.tpl.html',
+            templateUrl: function(elem, attrs) {
+              return attrs.templateUrl || templateUrl;
+            },
             scope: {
                 displaynameProperty: '@',
                 abstractProxyProperty: '@?'
