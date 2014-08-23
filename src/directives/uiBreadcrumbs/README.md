@@ -2,6 +2,10 @@
 
 This is a directive that auto-generates breadcrumbs based on angular-ui-router routes.
 
+## Demo
+
+You can see a working demo demonstrating most of the features here: [http://plnkr.co/edit/bBgdxgB91Z6323HLWCzF?p=preview](http://plnkr.co/edit/bBgdxgB91Z6323HLWCzF?p=preview)
+
 ## Requirements
 
 This directive is designed to work with [angular-ui-router](https://github.com/angular-ui/ui-router), and will not work with the default Angular router.
@@ -11,14 +15,30 @@ The design of the directive also relies on the use of nested states in order to 
 Note that the use of nested states does not imply nested *views*. Often, in a usual breadcrumbs use case, you won't want to have to nest a new view each time you go down the breadcrumb trail. To avoid using
 nested views, you should use a named view and refer to it when configuring your states. See the [demo](http://plnkr.co/edit/bBgdxgB91Z6323HLWCzF?p=preview) and the example below for an idea of how this would work.
 
+## Installation
+
+You can install with Bower:
+
+`bower install angular-utils-ui-breadcrumbs`
+
+Alternatively just download the files `uiBreadcrumbs.js` and `uiBreadcrumbs.tpl.html`. Using bower has the advantage of making version management easier.
+
 ## Usage
 
 Assuming you already have your app configured to use ui-router, you then need to put this directive somewhere and use it like so:
 
-    <ui-breadcrumbs displayname-property="data.displayName"></ui-breadcrumbs>
+```HTML
+<ui-breadcrumbs displayname-property="data.displayName"
+                [template-url=""]
+                [abstract-proxy-property=""]>
+</ui-breadcrumbs>
+```
 
-The `displayname-property` attribute must point to some property on your state config object that contains the string you wish to display as the
+* **`displayname-property`** (required) This attribute must point to some property on your state config object that contains the string you wish to display as the
 route's breadcrumb. If none is specified, or if the specified property is not found, the directive will default to displaying the route's name.
+* **`template-url`** (optional) Use this attribute to specify the URL of the `uiBreadcrumbs.tpl.html` file. Alternatively this may be configured in the JavaScript file
+itself, in which case this attribute would not be needed.
+* **`abstract-proxy-property`** (optional) Used when working with abstract states. See the section on working with abstract states below for a full explanation.
 
 ## Example setup
 
@@ -163,10 +183,6 @@ The directive element would then look like this:
 
 Now, when we are in the `contacts.detail` state, the breadcrumbs will show the `contacts.list` as the immediate parent,
 rather than the abstract `contacts` state.
-
-## Demo
-
-You can see a working demo that demonstrates all of the above here: [http://plnkr.co/edit/bBgdxgB91Z6323HLWCzF?p=preview](http://plnkr.co/edit/bBgdxgB91Z6323HLWCzF?p=preview)
 
 ## Styling
 The template structure is based on the [Bootstrap 3 breadcrumbs component](http://getbootstrap.com/components/#breadcrumbs), so it

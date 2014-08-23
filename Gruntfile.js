@@ -76,6 +76,15 @@ module.exports = function(grunt) {
                     'src/directives/pagination/dirPagination.tpl.html'],
                 dest: '../angularUtils-dist/angularUtils-pagination/'
 
+            },
+            uiBreadcrumbs: {
+                expand: true,
+                flatten: true,
+                src: [
+                    'src/directives/uiBreadcrumbs/uiBreadcrumbs.js',
+                    'src/directives/uiBreadcrumbs/uiBreadcrumbs.tpl.html'],
+                dest: '../angularUtils-dist/angularUtils-uiBreadcrumbs/'
+
             }
         }
     });
