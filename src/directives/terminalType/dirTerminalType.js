@@ -191,55 +191,60 @@
 
         return {
             restrict: 'A',
-            link: function(scope, element, attrs) {
-                var start, elapsed, totalChars;
-                var duration = attrs.duration || 1000;
-                var removeCaretAfter = attrs.removeCaret || 1000;
+            compile: function(element, attrs) {
 
-                totalChars = clearTextAndStoreValues(element[0]);
+                var totalChars = clearTextAndStoreValues(element[0]);
 
-                addCaret(element);
+                return function(scope, element, attrs) {
+                    var start, elapsed;
+                    var duration = attrs.duration || 1000;
+                    var removeCaretAfter = attrs.removeCaret || 1000;
 
-                if (typeof attrs.startTyping !=='undefined') {
-                    scope.$watch(function() {
-                        return scope.$eval(attrs.startTyping);
-                    }, function(val) {
-                        if (val) {
-                            totalChars = interpolateText(element[0], scope, totalChars);
-                            window.requestAnimationFrame(tick);
-                        }
-                    });
-                } else {
-                    totalChars = interpolateText(element[0], scope, totalChars);
-                    window.requestAnimationFrame(tick);
-                }
+                    //totalChars = clearTextAndStoreValues(element[0]);
 
-                /**
-                 * This is the animation function that gets looped in a requestAnimationFrame call.
-                 * @param timestamp
-                 */
-                function tick(timestamp) {
-                    var currentIteration, totalIterations, done;
+                    addCaret(element);
 
-                    if (typeof start === 'undefined') {
-                        start = timestamp;
-                    }
-                    elapsed = timestamp - start;
-
-                    totalIterations = Math.round(duration / 1000 * 60);
-                    currentIteration = Math.round(elapsed / 1000 * 60);
-                    done = type(element[0], currentIteration, totalIterations, totalChars);
-
-                    if (elapsed < duration && !done) {
-                        window.requestAnimationFrame(tick);
+                    if (typeof attrs.startTyping !=='undefined') {
+                        scope.$watch(function() {
+                            return scope.$eval(attrs.startTyping);
+                        }, function(val) {
+                            if (val) {
+                                totalChars = interpolateText(element[0], scope, totalChars);
+                                window.requestAnimationFrame(tick);
+                            }
+                        });
                     } else {
-                        $timeout(function() {
-                            removeCaret(element);
-                        }, removeCaretAfter);
-
-                        start = undefined;  // reset
+                        totalChars = interpolateText(element[0], scope, totalChars);
+                        window.requestAnimationFrame(tick);
                     }
-                }
+
+                    /**
+                     * This is the animation function that gets looped in a requestAnimationFrame call.
+                     * @param timestamp
+                     */
+                    function tick(timestamp) {
+                        var currentIteration, totalIterations, done;
+
+                        if (typeof start === 'undefined') {
+                            start = timestamp;
+                        }
+                        elapsed = timestamp - start;
+
+                        totalIterations = Math.round(duration / 1000 * 60);
+                        currentIteration = Math.round(elapsed / 1000 * 60);
+                        done = type(element[0], currentIteration, totalIterations, totalChars);
+
+                        if (elapsed < duration && !done) {
+                            window.requestAnimationFrame(tick);
+                        } else {
+                            $timeout(function() {
+                                removeCaret(element);
+                            }, removeCaretAfter);
+
+                            start = undefined;  // reset
+                        }
+                    }
+                };
             }
         };
     }]);

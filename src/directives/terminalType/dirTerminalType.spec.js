@@ -27,6 +27,13 @@ ddescribe('dirTerminalType directive', function() {
         $scope.$apply();
     }
 
+    it('should initially remove the contents', function() {
+        var text = 'Hello, this is some text!';
+        compile(text, 200);
+
+        expect(containingElement.text()).toEqual('');
+    });
+
     it('should type complete text of simple element', function(done) {
         var text = 'Hello, this is some text!';
         compile(text, 200);
@@ -118,6 +125,25 @@ ddescribe('dirTerminalType directive', function() {
 
         setTimeout(function() {
             expect(containingElement.text()).toEqual('hello');
+            done();
+        }, 250);
+    });
+
+    iit('should work when the element starts off hidden', function(done) {
+        var html = '<p dir-terminal-type duration="100" ng-show="myText" start-typing="myText" >message: {{ myText }}</p>';
+        containingElement.append($compile(html)($scope));
+        $scope.$apply();
+
+        expect(containingElement.text()).toEqual('');
+
+        $scope.$apply(function() {
+            $scope.myText = 'hello';
+        });
+
+        expect(containingElement.text()).toEqual('');
+
+        setTimeout(function() {
+            expect(containingElement.text()).toEqual('message: hello');
             done();
         }, 250);
     });
