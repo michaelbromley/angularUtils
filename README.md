@@ -24,6 +24,7 @@ This code is made available under the MIT license, so feel free to use any of th
 - [**tagbox**](https://github.com/michaelbromley/angularUtils/tree/master/src/directives/tagbox) : A Twitter-style tag suggestion and auto-complete directive that can be added to any text input or textarea.
 - [**uiBreadcrumbs**](https://github.com/michaelbromley/angularUtils/tree/master/src/directives/uiBreadcrumbs) : Auto-generated breadcrumbs for angular-ui-router using nested views.
 - [**pagination**](https://github.com/michaelbromley/angularUtils/tree/master/src/directives/pagination) : Magical automatic pagination for anything.
+- [**terminalType**](https://github.com/michaelbromley/angularUtils/tree/master/src/directives/terminalType) : Terminal-like typing effect for DOM nodes containing text.
 
 ### Services
 
