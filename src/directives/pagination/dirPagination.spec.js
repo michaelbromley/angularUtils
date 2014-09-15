@@ -62,6 +62,14 @@ describe('dirPagination directive', function() {
             expect(compile).toThrow("pagination directive: the 'itemsPerPage' filter must be set.");
         });
 
+        it('should allow a space after itemsPerPage and before the colon', function() {
+            function compile() {
+                var customExpression = "item in collection | itemsPerPage : 10";
+                compileElement(myCollection, 5, 1, customExpression);
+            }
+            expect(compile).not.toThrow();
+        });
+
         it('should repeat the items like ng-repeat', function() {
             compileElement(myCollection);
             var listItems = getListItems();

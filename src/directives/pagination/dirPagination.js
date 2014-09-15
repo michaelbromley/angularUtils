@@ -44,7 +44,7 @@
                 // regex taken directly from https://github.com/angular/angular.js/blob/master/src/ng/directive/ngRepeat.js#L211
                 var match = expression.match(/^\s*([\s\S]+?)\s+in\s+([\s\S]+?)(?:\s+track\s+by\s+([\s\S]+?))?\s*$/);
 
-                var filterPattern = /\|\s*itemsPerPage:[^|]*/;
+                var filterPattern = /\|\s*itemsPerPage\s*:[^|]*/;
                 if (match[2].match(filterPattern) === null) {
                     throw 'pagination directive: the \'itemsPerPage\' filter must be set.';
                 }
