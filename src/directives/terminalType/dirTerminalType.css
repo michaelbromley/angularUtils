@@ -1,0 +1,42 @@
+/*
+ * This styling is for the flashing caret.
+ */
+
+.caret {
+  display: inline-block;
+  width: 3px;
+  margin-bottom: -2px;
+  margin-left: 3px;
+  margin-right: -4px;
+  height: 16px;
+  -webkit-animation: blink 0.8s infinite;
+          animation: blink 0.8s infinite;
+}
+@-webkit-keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  49% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  49% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}

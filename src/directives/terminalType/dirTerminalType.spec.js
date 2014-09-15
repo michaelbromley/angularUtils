@@ -1,0 +1,125 @@
+
+ddescribe('dirTerminalType directive', function() {
+
+    var $compile;
+    var $scope;
+    var $timeout;
+    var containingElement;
+
+    beforeEach(module('angularUtils.directives.dirTerminalType'));
+
+    beforeEach(inject(function($rootScope, _$compile_, _$timeout_) {
+        $compile = _$compile_;
+        $timeout = _$timeout_;
+        $scope = $rootScope.$new();
+        containingElement = angular.element('<div></div>');
+    }));
+
+    function compile(text, duration, removeCaret, startTyping) {
+        var html;
+
+        duration = duration ? 'duration="' + duration + '"' : '';
+        removeCaret = removeCaret ? 'remove-caret="' + removeCaret + '"' : '';
+        startTyping = startTyping ? 'start-typing="' + startTyping + '"' : '';
+
+        html = '<p dir-terminal-type ' + duration + ' ' + removeCaret + ' ' + startTyping + ' >' + text + '</p>';
+        containingElement.append($compile(html)($scope));
+        $scope.$apply();
+    }
+
+    it('should type complete text of simple element', function(done) {
+        var text = 'Hello, this is some text!';
+        compile(text, 200);
+
+        setTimeout(function() {
+            expect(containingElement.html()).toContain(text);
+            done();
+        }, 200);
+    });
+
+    it('should type half the text at halfway through duration', function(done) {
+        var text = 'Hello, this is some text!';
+        compile(text, 200);
+
+        setTimeout(function() {
+            expect(containingElement.html()).toContain(text.substring(0, Math.floor(text.length / 2) - 2));
+            expect(containingElement.html()).not.toContain(text);
+            done();
+        }, 100);
+    });
+
+    it('should add a caret to the element', function() {
+        var text = 'Hello, this is some text!';
+        compile(text);
+
+        expect(containingElement.find('.caret').length).toEqual(1);
+    });
+
+    it('should remove the caret after the specified time', function(done) {
+        var text = 'Hello, this is some text!';
+        compile(text, 100, 100);
+
+        setTimeout(function() {
+            $timeout.flush();
+            expect(containingElement.find('.caret').length).toEqual(0);
+            done();
+        }, 200);
+    });
+
+    it('should handle child elements with text content', function(done) {
+        var text = 'No! I <em>don\'t</em> want to visit <a href="www.google.com">google.com</a>';
+        compile(text, 200);
+
+        setTimeout(function() {
+            expect(containingElement.html()).toContain(text);
+            done();
+        }, 250);
+    });
+
+    it('should interpolate simple text content', function(done) {
+        $scope.myValue = "This is an interpolated string!";
+        compile('{{ myValue }}', 200);
+
+        setTimeout(function() {
+            expect(containingElement.html()).toContain($scope.myValue);
+            done();
+        }, 250);
+    });
+
+    it('should interpolate complex nested content', function(done) {
+        $scope.rap = {
+            location: 'West Philadelphia',
+            action1: 'born',
+            action2: 'raised'
+        };
+
+        compile('In <em>{{ rap.location }}</em> <ul><li>{{ rap.action1 }}</li><li> and {{ rap.action2 }}</li></ul>', 200);
+
+        setTimeout(function() {
+            expect(containingElement.text()).toContain('In West Philadelphia born and raised');
+            done();
+        }, 250);
+    });
+
+    it('should not start typing if the start-typing attribute is set and evals to false', function(done) {
+        compile('hello', 100, 100, 'false');
+
+        setTimeout(function() {
+            expect(containingElement.text()).toEqual('');
+            done();
+        }, 250);
+    });
+
+    it('should start typing when the start-typing attribute is set and evals to true', function(done) {
+        compile('hello', 100, 100, 'myVal');
+        $scope.$apply(function() {
+            $scope.myVal = true;
+        });
+
+        setTimeout(function() {
+            expect(containingElement.text()).toEqual('hello');
+            done();
+        }, 250);
+    });
+
+});
