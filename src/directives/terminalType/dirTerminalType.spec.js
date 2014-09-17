@@ -55,9 +55,26 @@ describe('dirTerminalType directive', function() {
         }, 100);
     });
 
-    it('should add a caret to the element', function() {
+    it('should add a caret to the element', function(done) {
         var text = 'Hello, this is some text!';
         compile(text);
+
+        setTimeout(function() {
+            expect(containingElement.find('.caret').length).toEqual(1);
+            done();
+        }, 50);
+    });
+
+    it('should hide the caret until typing begins by default if typing has not started', function() {
+        compile('hello', 100, 100, 'false');
+
+        expect(containingElement.find('.caret').length).toEqual(0);
+    });
+
+    it('should show the caret when force-caret is used, even if typing has not started', function() {
+        var html = '<p dir-terminal-type duration="100" start-typing="false" force-caret>message: {{ myText }}</p>';
+        containingElement.append($compile(html)($scope));
+        $scope.$apply();
 
         expect(containingElement.find('.caret').length).toEqual(1);
     });
@@ -173,5 +190,4 @@ describe('dirTerminalType directive', function() {
             done();
         }, 250);
     });
-
 });

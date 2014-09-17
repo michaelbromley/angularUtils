@@ -131,22 +131,28 @@
         }
 
         /**
-         * Add the caret to the end of the element, and style it to fit the text
+         * Add the caret to the end of the element, and style it to fit the text.
+         * First line checks if a caret already exists, in which case do nothing.
+         *
          * @param element
          */
         function addCaret(element) {
-            var height = parseInt($window.getComputedStyle(element[0])['font-size']);
-            height -= 2; // make it a bit smaller to prevent it interfering with document flow.
-            var backgroundColor = $window.getComputedStyle(element[0])['color'];
-            var width = Math.ceil(height * 0.05);
-            var marginBottom = Math.ceil(height * -0.1);
-            var caret = $document[0].createElement('span');
-            caret.classList.add('caret');
-            caret.style.height = height + 'px';
-            caret.style.width = width + 'px';
-            caret.style.backgroundColor = backgroundColor;
-            caret.style.marginBottom = marginBottom + 'px';
-            element.append(caret);
+            var elementAlreadyHasCaret = element[0].querySelector('.caret') !== null;
+
+            if (!elementAlreadyHasCaret) {
+                var height = parseInt($window.getComputedStyle(element[0])['font-size']);
+                height -= 2; // make it a bit smaller to prevent it interfering with document flow.
+                var backgroundColor = $window.getComputedStyle(element[0])['color'];
+                var width = Math.ceil(height * 0.05);
+                var marginBottom = Math.ceil(height * -0.1);
+                var caret = $document[0].createElement('span');
+                caret.classList.add('caret');
+                caret.style.height = height + 'px';
+                caret.style.width = width + 'px';
+                caret.style.backgroundColor = backgroundColor;
+                caret.style.marginBottom = marginBottom + 'px';
+                element.append(caret);
+            }
         }
 
         function removeCaret(element) {
@@ -200,19 +206,25 @@
                     var duration = attrs.duration || 1000;
                     var removeCaretAfter = attrs.removeCaret || 1000;
                     var onCompletion = $parse(attrs.onCompletion) || null;
-
-                    addCaret(element);
+                    var forceCaret = typeof attrs.forceCaret !== 'undefined' ? true : false;
 
                     if (typeof attrs.startTyping !=='undefined') {
+                        if (forceCaret) {
+                            addCaret(element);
+                        }
                         scope.$watch(function() {
                             return scope.$eval(attrs.startTyping);
                         }, function(val) {
                             if (val) {
-                                totalChars = interpolateText(element[0], scope, totalChars);
-                                window.requestAnimationFrame(tick);
+                                startTyping();
                             }
                         });
                     } else {
+                        startTyping();
+                    }
+
+                    function startTyping() {
+                        addCaret(element);
                         totalChars = interpolateText(element[0], scope, totalChars);
                         window.requestAnimationFrame(tick);
                     }

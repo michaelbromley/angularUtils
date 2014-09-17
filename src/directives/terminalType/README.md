@@ -28,6 +28,7 @@ The directive can be added as an attribute to any existing element:
 <ANY dir-terminal-type
     [duration=""]
     [start-typing=""]
+    [force-caret]
     [on-completion=""]
     [remove-caret=""] >
     ...
@@ -40,6 +41,10 @@ Default is 1000.
 * **`start-typing`** Optionally specify an expression which, when it evaluates to `true`, will trigger the typing effect.
 Until it evaluates to `true`, the typing will not start. Default behaviour when this attribute is not present
 it to start typing immediately.
+
+* **`force-caret`** If you are using the `start-typing` attribute, by default the element's caret will not be displayed until
+typing commences. Using `force-caret` forces the caret to be added as soon as the page loads, and the caret will just sit there
+blinking until `start-typing` becomes true.
 
 * **`on-completion`** Optionally provide an expression or method to evaluate once the text has finished being typed. Useful for
 chaining elements together by setting a boolean value in the `on-completion` of the first element, which is then used in the
