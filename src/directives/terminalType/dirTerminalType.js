@@ -21,7 +21,7 @@
         module = angular.module(moduleName, []);
     }
 
-    module.directive('dirTerminalType', ['$window', '$document', '$timeout', '$interpolate', function ($window, $document, $timeout, $interpolate) {
+    module.directive('dirTerminalType', ['$window', '$document', '$timeout', '$interpolate', '$parse', function ($window, $document, $timeout, $interpolate, $parse) {
 
         /**
          * requestAnimationFrame polyfill from http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
@@ -199,8 +199,7 @@
                     var start, elapsed;
                     var duration = attrs.duration || 1000;
                     var removeCaretAfter = attrs.removeCaret || 1000;
-
-                    //totalChars = clearTextAndStoreValues(element[0]);
+                    var onCompletion = $parse(attrs.onCompletion) || null;
 
                     addCaret(element);
 
@@ -242,6 +241,11 @@
                             }, removeCaretAfter);
 
                             start = undefined;  // reset
+
+                            // if a callback was defined by the on-completion attribute, invoke it now
+                            if (onCompletion !== null) {
+                                onCompletion(scope);
+                            }
                         }
                     }
                 };

@@ -1,5 +1,5 @@
 
-ddescribe('dirTerminalType directive', function() {
+describe('dirTerminalType directive', function() {
 
     var $compile;
     var $scope;
@@ -41,7 +41,7 @@ ddescribe('dirTerminalType directive', function() {
         setTimeout(function() {
             expect(containingElement.html()).toContain(text);
             done();
-        }, 200);
+        }, 250);
     });
 
     it('should type half the text at halfway through duration', function(done) {
@@ -129,7 +129,7 @@ ddescribe('dirTerminalType directive', function() {
         }, 250);
     });
 
-    iit('should work when the element starts off hidden', function(done) {
+    it('should work when the element starts off hidden', function(done) {
         var html = '<p dir-terminal-type duration="100" ng-show="myText" start-typing="myText" >message: {{ myText }}</p>';
         containingElement.append($compile(html)($scope));
         $scope.$apply();
@@ -144,6 +144,32 @@ ddescribe('dirTerminalType directive', function() {
 
         setTimeout(function() {
             expect(containingElement.text()).toEqual('message: hello');
+            done();
+        }, 250);
+    });
+
+    it('should fire a callback if specified by on-completion', function(done) {
+        $scope.myMethod = function() {};
+
+        var html = '<p dir-terminal-type duration="100" on-completion="myMethod()">message: {{ myText }}</p>';
+        containingElement.append($compile(html)($scope));
+        $scope.$apply();
+
+        spyOn($scope, 'myMethod');
+
+        setTimeout(function() {
+            expect($scope.myMethod).toHaveBeenCalled();
+            done();
+        }, 250);
+    });
+
+    it('should execute an expression if specified by on-completion', function(done) {
+        var html = '<p dir-terminal-type duration="100" on-completion="myVal = \'foo\'">message: {{ myText }}</p>';
+        containingElement.append($compile(html)($scope));
+        $scope.$apply();
+
+        setTimeout(function() {
+            expect($scope.myVal).toEqual('foo');
             done();
         }, 250);
     });
