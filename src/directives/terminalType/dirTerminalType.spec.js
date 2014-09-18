@@ -190,4 +190,15 @@ describe('dirTerminalType directive', function() {
             done();
         }, 250);
     });
+
+    it('should work with multiple elements at the same time', function(done) {
+        compile('will', 100);
+        compile('smith', 100);
+
+        setTimeout(function() {
+            expect(containingElement.children().eq(0).text()).toEqual('will');
+            expect(containingElement.children().eq(1).text()).toEqual('smith');
+            done();
+        }, 250);
+    });
 });

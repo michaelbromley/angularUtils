@@ -61,18 +61,19 @@
          * @param totalChars
          * @returns {number}
          */
-        function clearTextAndStoreValues(node, totalChars) {
+        function clearTextAndStoreValues(node, totalChars, originalNodeValues) {
             var i;
             totalChars = totalChars || 0;
 
             if (node.nodeValue !== null) {
-                node._originalNodeValue = node.nodeValue.replace(/\s+/g, ' ');
+                var nodeValue = node.nodeValue.replace(/\s+/g, ' ');
+                originalNodeValues.values.push(nodeValue);
                 node.nodeValue = '';
-                totalChars += node._originalNodeValue.length;
+                totalChars += nodeValue.length;
             }
 
             for (i = 0; i < node.childNodes.length; i++) {
-                totalChars = clearTextAndStoreValues(node.childNodes[i], totalChars);
+                totalChars = clearTextAndStoreValues(node.childNodes[i], totalChars, originalNodeValues);
             }
 
             return totalChars;
@@ -88,10 +89,10 @@
          * @param totalChars
          * @returns {boolean}
          */
-        function type(element, currentIteration, totalIterations, totalChars) {
+        function type(element, currentIteration, totalIterations, totalChars, originalNodeValues) {
             var currentChar = Math.ceil(currentIteration / totalIterations * totalChars);
 
-            var charsTyped = typeUpToCurrentChar(element, currentChar, 0);
+            var charsTyped = typeUpToCurrentChar(element, currentChar, 0, originalNodeValues, true);
 
             var done = totalChars <= charsTyped;
             return done;
@@ -107,21 +108,29 @@
          * @param charsTyped
          * @returns {*}
          */
-        function typeUpToCurrentChar(node, currentChar, charsTyped) {
+        function typeUpToCurrentChar(node, currentChar, charsTyped, originalNodeValues, resetCounter) {
+
+            if (resetCounter) {
+                originalNodeValues.counter = 0;
+            }
+
             if (node.nodeValue !== null) {
-                if (currentChar - charsTyped < node._originalNodeValue.length) {
+                var originalValue =  originalNodeValues.values[originalNodeValues.counter];
+                if (currentChar - charsTyped < originalValue.length) {
                     var charsToType = currentChar - charsTyped;
-                    node.nodeValue = node._originalNodeValue.substring(0, charsToType);
+                    node.nodeValue = originalValue.substring(0, charsToType);
                     charsTyped += charsToType;
                 } else {
-                    node.nodeValue = node._originalNodeValue;
-                    charsTyped += node._originalNodeValue.length;
+                    node.nodeValue = originalValue;
+                    charsTyped += originalValue.length;
                 }
+
+                originalNodeValues.counter ++;
             }
 
             for (var i = 0; i < node.childNodes.length; i++) {
                 if (charsTyped < currentChar) {
-                    charsTyped = typeUpToCurrentChar(node.childNodes[i], currentChar, charsTyped);
+                    charsTyped = typeUpToCurrentChar(node.childNodes[i], currentChar, charsTyped, originalNodeValues);
                 } else {
                     break;
                 }
@@ -169,7 +178,7 @@
          * @param scope
          * @param totalChars
          */
-        function interpolateText(node, scope, totalChars) {
+        function interpolateText(node, scope, totalChars, originalNodeValues, resetCounter) {
             var i,
                 currentNodeContent,
                 currentLength,
@@ -177,19 +186,25 @@
                 interpolatedLength,
                 lengthDelta;
 
+            if (resetCounter) {
+                originalNodeValues.counter = 0;
+            }
+
             if (node.nodeValue !== null) {
-                currentNodeContent = node._originalNodeValue;
-                currentLength = node._originalNodeValue.length;
+                currentNodeContent = originalNodeValues.values[originalNodeValues.counter];
+                currentLength = currentNodeContent.length;
                 interpolatedContent = $interpolate(currentNodeContent)(scope);
                 interpolatedLength = interpolatedContent.length;
 
                 lengthDelta = interpolatedLength - currentLength;
                 totalChars += lengthDelta;
-                node._originalNodeValue = interpolatedContent;
+                originalNodeValues.values[originalNodeValues.counter] = interpolatedContent;
+
+                originalNodeValues.counter ++;
             }
 
             for (i = 0; i < node.childNodes.length; i++) {
-                totalChars = interpolateText(node.childNodes[i], scope, totalChars);
+                totalChars = interpolateText(node.childNodes[i], scope, totalChars, originalNodeValues);
             }
 
             return totalChars;
@@ -197,11 +212,23 @@
 
         return {
             restrict: 'A',
-            compile: function(element, attrs) {
+            compile: function(element) {
 
-                var totalChars = clearTextAndStoreValues(element[0]);
+                /**
+                 * These two variables are used to store the original text values of any text nodes in the element. The original approach involved
+                 * simply appending a new property onto the DOM node itself, but this proved to be a bad idea since it breaks in IE. This new approach
+                 * is a little more complex since we now have to track the index of each text node in the originalNodeValues array.
+                 * @type {Array}
+                 */
+                var originalNodeValues = {
+                    values: [],
+                    counter: 0
+                };
+
+                var totalChars = clearTextAndStoreValues(element[0], 0, originalNodeValues);
 
                 return function(scope, element, attrs) {
+
                     var start, elapsed;
                     var duration = attrs.duration || 1000;
                     var removeCaretAfter = attrs.removeCaret || 1000;
@@ -225,7 +252,7 @@
 
                     function startTyping() {
                         addCaret(element);
-                        totalChars = interpolateText(element[0], scope, totalChars);
+                        totalChars = interpolateText(element[0], scope, totalChars, originalNodeValues, true);
                         window.requestAnimationFrame(tick);
                     }
 
@@ -243,7 +270,7 @@
 
                         totalIterations = Math.round(duration / 1000 * 60);
                         currentIteration = Math.round(elapsed / 1000 * 60);
-                        done = type(element[0], currentIteration, totalIterations, totalChars);
+                        done = type(element[0], currentIteration, totalIterations, totalChars, originalNodeValues);
 
                         if (elapsed < duration && !done) {
                             window.requestAnimationFrame(tick);
