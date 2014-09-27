@@ -146,7 +146,7 @@
          * @param element
          */
         function addCaret(element) {
-            var elementAlreadyHasCaret = element[0].querySelector('.caret') !== null;
+            var elementAlreadyHasCaret = element[0].querySelector('.dirTerminalType-caret') !== null;
 
             if (!elementAlreadyHasCaret) {
                 var height = parseInt($window.getComputedStyle(element[0])['font-size']);
@@ -155,7 +155,7 @@
                 var width = Math.ceil(height * 0.05);
                 var marginBottom = Math.ceil(height * -0.1);
                 var caret = $document[0].createElement('span');
-                caret.classList.add('caret');
+                caret.classList.add('dirTerminalType-caret');
                 caret.style.height = height + 'px';
                 caret.style.width = width + 'px';
                 caret.style.backgroundColor = backgroundColor;
@@ -165,7 +165,7 @@
         }
 
         function removeCaret(element) {
-            var caret = element[0].querySelector('.caret');
+            var caret = element[0].querySelector('.dirTerminalType-caret');
             angular.element(caret).remove();
         }
 
@@ -211,8 +211,8 @@
         }
 
         return {
-            restrict: 'A',
-            compile: function(element) {
+            restrict: 'AE',
+            link: function(scope, element, attrs) {
 
                 /**
                  * These two variables are used to store the original text values of any text nodes in the element. The original approach involved
@@ -227,67 +227,64 @@
 
                 var totalChars = clearTextAndStoreValues(element[0], 0, originalNodeValues);
 
-                return function(scope, element, attrs) {
+                var start, elapsed;
+                var duration = attrs.duration || 1000;
+                var removeCaretAfter = attrs.removeCaret || 1000;
+                var onCompletion = $parse(attrs.onCompletion) || null;
+                var forceCaret = typeof attrs.forceCaret !== 'undefined' ? true : false;
 
-                    var start, elapsed;
-                    var duration = attrs.duration || 1000;
-                    var removeCaretAfter = attrs.removeCaret || 1000;
-                    var onCompletion = $parse(attrs.onCompletion) || null;
-                    var forceCaret = typeof attrs.forceCaret !== 'undefined' ? true : false;
-
-                    if (typeof attrs.startTyping !=='undefined') {
-                        if (forceCaret) {
-                            addCaret(element);
-                        }
-                        scope.$watch(function() {
-                            return scope.$eval(attrs.startTyping);
-                        }, function(val) {
-                            if (val) {
-                                startTyping();
-                            }
-                        });
-                    } else {
-                        startTyping();
-                    }
-
-                    function startTyping() {
+                if (typeof attrs.startTyping !=='undefined') {
+                    if (forceCaret) {
                         addCaret(element);
-                        totalChars = interpolateText(element[0], scope, totalChars, originalNodeValues, true);
+                    }
+                    scope.$watch(function() {
+                        return scope.$eval(attrs.startTyping);
+                    }, function(val) {
+                        if (val) {
+                            startTyping();
+                        }
+                    });
+                } else {
+                    startTyping();
+                }
+
+                function startTyping() {
+                    addCaret(element);
+                    totalChars = interpolateText(element[0], scope, totalChars, originalNodeValues, true);
+                    window.requestAnimationFrame(tick);
+                }
+
+                /**
+                 * This is the animation function that gets looped in a requestAnimationFrame call.
+                 * @param timestamp
+                 */
+                function tick(timestamp) {
+                    var currentIteration, totalIterations, done;
+
+                    if (typeof start === 'undefined') {
+                        start = timestamp;
+                    }
+                    elapsed = timestamp - start;
+
+                    totalIterations = Math.round(duration / 1000 * 60);
+                    currentIteration = Math.round(elapsed / 1000 * 60);
+                    done = type(element[0], currentIteration, totalIterations, totalChars, originalNodeValues);
+
+                    if (elapsed < duration && !done) {
                         window.requestAnimationFrame(tick);
-                    }
+                    } else {
+                        $timeout(function() {
+                            removeCaret(element);
+                        }, removeCaretAfter);
 
-                    /**
-                     * This is the animation function that gets looped in a requestAnimationFrame call.
-                     * @param timestamp
-                     */
-                    function tick(timestamp) {
-                        var currentIteration, totalIterations, done;
+                        start = undefined;  // reset
 
-                        if (typeof start === 'undefined') {
-                            start = timestamp;
-                        }
-                        elapsed = timestamp - start;
-
-                        totalIterations = Math.round(duration / 1000 * 60);
-                        currentIteration = Math.round(elapsed / 1000 * 60);
-                        done = type(element[0], currentIteration, totalIterations, totalChars, originalNodeValues);
-
-                        if (elapsed < duration && !done) {
-                            window.requestAnimationFrame(tick);
-                        } else {
-                            $timeout(function() {
-                                removeCaret(element);
-                            }, removeCaretAfter);
-
-                            start = undefined;  // reset
-
-                            // if a callback was defined by the on-completion attribute, invoke it now
-                            if (onCompletion !== null) {
-                                onCompletion(scope);
-                            }
+                        // if a callback was defined by the on-completion attribute, invoke it now
+                        if (onCompletion !== null) {
+                            onCompletion(scope);
                         }
                     }
-                };
+                }
             }
         };
     }]);
