@@ -272,7 +272,6 @@
     module.service('paginationService', function() {
         var instances = {};
         var lastRegisteredInstance;
-        this.paginationDirectiveInitialized = false;
 
         this.registerInstance = function(instanceId) {
             if (typeof instances[instanceId] === 'undefined') {
