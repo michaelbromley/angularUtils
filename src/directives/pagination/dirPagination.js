@@ -204,8 +204,10 @@
 
                 scope.$watch(function() {
                     return paginationService.getCurrentPage(paginationId);
-                }, function(currentPage) {
-                    goToPage(currentPage);
+                }, function(currentPage, previousPage) {
+                    if (currentPage != previousPage) {
+                        goToPage(currentPage);
+                    }
                 });
 
                 scope.setCurrent = function(num) {
@@ -227,7 +229,7 @@
                 }
 
                 function generatePagination() {
-                    scope.pages = generatePagesArray(1, paginationService.getCollectionLength(paginationId), paginationService.getItemsPerPage(paginationId), paginationRange);
+                    scope.pages = generatePagesArray(paginationService.getCurrentPage(paginationId), paginationService.getCollectionLength(paginationId), paginationService.getItemsPerPage(paginationId), paginationRange);
                     scope.pagination.current = parseInt(paginationService.getCurrentPage(paginationId));
                     scope.pagination.last = scope.pages[scope.pages.length - 1];
                     if (scope.pagination.last < scope.pagination.current) {
