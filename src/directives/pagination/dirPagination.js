@@ -169,7 +169,7 @@
         return {
             restrict: 'AE',
             templateUrl: function(elem, attrs) {
-                return attrs.templateUrl || templatePath;
+                return attrs.templateurl || templatePath;
             },
             scope: {
                 maxSize: '=?',
