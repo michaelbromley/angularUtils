@@ -44,7 +44,7 @@
                 if (tElement[0].hasAttribute('dir-paginate-start') || tElement[0].hasAttribute('data-dir-paginate-start')) {
                     // using multiElement mode (dir-paginate-start, dir-paginate-end)
                     tAttrs.$set('ngRepeatStart', tAttrs.dirPaginate);
-                    tElement.last().attr('ng-repeat-end', true);
+                    tElement.eq(tElement.length - 1).attr('ng-repeat-end', true);
                 } else {
                     tAttrs.$set('ngRepeat', tAttrs.dirPaginate);
                 }
