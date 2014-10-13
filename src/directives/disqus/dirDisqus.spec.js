@@ -1,4 +1,4 @@
-describe('dirDiqus directive', function() {
+xdescribe('dirDiqus directive', function() {
     var scope,
         elem,
         compiled,

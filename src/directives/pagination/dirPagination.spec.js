@@ -2,7 +2,7 @@
  * Created by Michael on 04/05/14.
  */
 
-describe('dirPagination directive', function() {
+ddescribe('dirPagination directive', function() {
 
     var $compile;
     var $scope;

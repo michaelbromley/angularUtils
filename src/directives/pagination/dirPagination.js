@@ -92,7 +92,7 @@
                     compiled(scope);
                 };
             }
-        };
+        }; 
     }]);
 
     module.directive('dirPaginationControls', ['paginationService', function(paginationService) {
