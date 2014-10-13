@@ -2,7 +2,7 @@
  * Created by Michael on 04/05/14.
  */
 
-ddescribe('dirPagination directive', function() {
+describe('dirPagination directive', function() {
 
     var $compile;
     var $scope;
@@ -433,7 +433,7 @@ ddescribe('dirPagination directive', function() {
          * @param paginationId
          * @param customExpression
          */
-        function compileMultiElement(collection, itemsPerPage, currentPage, paginationId, customExpression) {
+        function compileMultipleInstance(collection, itemsPerPage, currentPage, paginationId, customExpression) {
             var expression;
             var html;
             if ($scope.collection === undefined) {
@@ -475,8 +475,8 @@ ddescribe('dirPagination directive', function() {
         }
 
         it('should allow pagination-id to control a specific collection', function() {
-            compileMultiElement(collection1, 5, 1, "c1" );
-            compileMultiElement(collection2, 5, 1, "c2" );
+            compileMultipleInstance(collection1, 5, 1, "c1" );
+            compileMultipleInstance(collection2, 5, 1, "c2" );
 
             clickPaginationLink("c1", 2);
             clickPaginationLink("c2", 4);
@@ -486,8 +486,8 @@ ddescribe('dirPagination directive', function() {
         });
 
         it('should allow independent changing of items per page', function() {
-            compileMultiElement(collection1, 5, 1, "c1" );
-            compileMultiElement(collection2, 5, 1, "c2" );
+            compileMultipleInstance(collection1, 5, 1, "c1" );
+            compileMultipleInstance(collection2, 5, 1, "c2" );
 
             expect(getMultiPageLinksArray("c1").length).toBe(6);
             expect(getMultiPageLinksArray("c2").length).toBe(6);
@@ -508,8 +508,8 @@ ddescribe('dirPagination directive', function() {
         });
 
         it('should allow independent filtering', function() {
-            compileMultiElement(collection1, 5, 1, "c1", "item in collection.c1 | filter: filter1 | itemsPerPage: itemsPerPage.c1: 'c1'");
-            compileMultiElement(collection2, 5, 1, "c2", "item in collection.c2 | filter: filter2 | itemsPerPage: itemsPerPage.c2: 'c2'" );
+            compileMultipleInstance(collection1, 5, 1, "c1", "item in collection.c1 | filter: filter1 | itemsPerPage: itemsPerPage.c1: 'c1'");
+            compileMultipleInstance(collection2, 5, 1, "c2", "item in collection.c2 | filter: filter2 | itemsPerPage: itemsPerPage.c2: 'c2'" );
 
             $scope.$apply(function() {
                 $scope.filter1 = "7";
@@ -522,8 +522,8 @@ ddescribe('dirPagination directive', function() {
         });
 
         it('should allow independent setting of current-page externally', function() {
-            compileMultiElement(collection1, 2, 1, "c1" );
-            compileMultiElement(collection2, 2, 1, "c2" );
+            compileMultipleInstance(collection1, 2, 1, "c1" );
+            compileMultipleInstance(collection2, 2, 1, "c2" );
 
             $scope.$apply(function() {
                 $scope.currentPage.c1 = 2;
@@ -538,7 +538,7 @@ ddescribe('dirPagination directive', function() {
             $scope.collection = [1,2,3,4,5];
 
             function compile() {
-                html = '<ul class="list"><li dir-paginate="item in collection | itemsPerPage: 3 : \'id1\'" pagination-id="id1" >{{ item }}</li></ul> ' +
+                var html = '<ul class="list"><li dir-paginate="item in collection | itemsPerPage: 3 : \'id1\'" pagination-id="id1" >{{ item }}</li></ul> ' +
                     '<dir-pagination-controls pagination-id="id2"></dir-pagination-controls>';
 
                 containingElement.append($compile(html)($scope));
@@ -552,7 +552,7 @@ ddescribe('dirPagination directive', function() {
             $scope.collection = [1,2,3,4,5];
 
             function compile() {
-                html = '<ul class="list"><li dir-paginate="item in collection | itemsPerPage: 3 : \'id2\'" pagination-id="id1" >{{ item }}</li></ul> ' +
+                var html = '<ul class="list"><li dir-paginate="item in collection | itemsPerPage: 3 : \'id2\'" pagination-id="id1" >{{ item }}</li></ul> ' +
                     '<dir-pagination-controls pagination-id="id1"></dir-pagination-controls>';
 
                 containingElement.append($compile(html)($scope));
@@ -562,5 +562,62 @@ ddescribe('dirPagination directive', function() {
             expect(compile).toThrow("pagination directive: the itemsPerPage id argument (id: id2) does not match a registered pagination-id.");
         });
 
+    });
+
+    describe('multi element functionality', function() {
+
+        function compileMultiElement(collection, itemsPerPage, currentPage) {
+            var html;
+            $scope.collection = collection;
+            $scope.itemsPerPage = itemsPerPage || 10;
+            $scope.currentPage = currentPage || 1;
+            html = '<div>' +
+                        '<div dir-paginate-start="item in collection | itemsPerPage: itemsPerPage" current-page="currentPage">header</div>' +
+                        '<p>{{ item }}</p>' +
+                        '<div dir-paginate-end>footer</div>' +
+                    '</div> ';
+            containingElement.append($compile(html)($scope));
+            $scope.$apply();
+        }
+
+        it('should compile with multi element syntax', function() {
+            function compile() {
+                compileMultiElement([]);
+            }
+            expect(compile).not.toThrow();
+        });
+
+        it('should display the list correctly', function() {
+            compileMultiElement(myCollection, 3);
+            expect(containingElement.find('p').length).toEqual(3);
+        });
+
+        it('should page correctly', function() {
+            compileMultiElement(myCollection, 3);
+
+            expect(containingElement.find('p').eq(0).html()).toEqual('item 1');
+
+            $scope.$apply(function() {
+                $scope.currentPage = 2;
+            });
+
+            expect(containingElement.find('p').eq(0).html()).toEqual('item 4');
+        });
+
+        it('should work with data-dir-paginate-start syntax', function() {
+            function compile() {
+                var html = '<div>' +
+                    '<h1 data-dir-paginate-start="item in collection | itemsPerPage: 3">{{ item }}</h1>' +
+                    '<p data-dir-paginate-end>stuff</p>' +
+                    '</div> ';
+                $scope.collection = myCollection;
+                containingElement.append($compile(html)($scope));
+                $scope.$apply();
+            }
+
+            expect(compile).not.toThrow();
+            expect(containingElement.find('h1').length).toEqual(3);
+            expect(containingElement.find('p').length).toEqual(3);
+        });
     });
 });

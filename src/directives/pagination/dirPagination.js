@@ -36,11 +36,20 @@
     module.directive('dirPaginate', ['$compile', '$parse', '$timeout', 'paginationService', function($compile, $parse, $timeout, paginationService) {
         return  {
             terminal: true,
-            compile: function dirPaginationCompileFn(element, attrs){
-                attrs.$set('ngRepeat', attrs.dirPaginate); // Add ng-repeat to the dom element
-                element.removeAttr(attrs.$attr.dirPaginate); // Remove the dir-paginate attribute to prevent infinite recursion of compilation
+            multiElement: true,
+            priority: 5000, // This setting is used in conjunction with the later call to $compile() to prevent infinite recursion of compilation
+            compile: function dirPaginationCompileFn(tElement, tAttrs){
 
-                var expression = attrs.dirPaginate;
+                // Add ng-repeat to the dom element
+                if (tElement[0].hasAttribute('dir-paginate-start') || tElement[0].hasAttribute('data-dir-paginate-start')) {
+                    // using multiElement mode (dir-paginate-start, dir-paginate-end)
+                    tAttrs.$set('ngRepeatStart', tAttrs.dirPaginate);
+                    tElement.last().attr('ng-repeat-end', true);
+                } else {
+                    tAttrs.$set('ngRepeat', tAttrs.dirPaginate);
+                }
+
+                var expression = tAttrs.dirPaginate;
                 // regex taken directly from https://github.com/angular/angular.js/blob/master/src/ng/directive/ngRepeat.js#L211
                 var match = expression.match(/^\s*([\s\S]+?)\s+in\s+([\s\S]+?)(?:\s+track\s+by\s+([\s\S]+?))?\s*$/);
 
@@ -53,7 +62,7 @@
 
                 return function dirPaginationLinkFn(scope, element, attrs){
                     var paginationId;
-                    var compiled =  $compile(element); // we manually compile the element again, as we have now swapped dir-paginate for an ng-repeat
+                    var compiled =  $compile(element, false, 5000); // we manually compile the element again, as we have now added ng-repeat. Priority less than 5000 prevents infinite recursion of compiling dirPaginate
 
                     paginationId = attrs.paginationId || '__default';
                     paginationService.registerInstance(paginationId);
