@@ -117,6 +117,23 @@ one pagination instance per page. See the section below on setting up multiple i
 Note: you cannot use the `dir-pagination-controls` directive without `dir-paginate`. Attempting to do so will result in an
 exception.
 
+## Special Repeat Start and End Points
+
+As with the [ngRepeat directive](https://docs.angularjs.org/api/ng/directive/ngRepeat#special-repeat-start-and-end-points), you can use the `-start` and `-end` suffix on the `dir-paginate` directive to
+repeat a series of elements instead of just one parent element:
+
+```HTML
+<header dir-paginate-start="item in items | itemsPerPage: 10">
+    Header {{ item }}
+</header>
+<div class="body">
+  Body {{ item }}
+</div>
+<footer dir-paginate-end>
+  Footer {{ item }}
+</footer>
+```
+
 
 ## Multiple Pagination Instances on One Page
 
