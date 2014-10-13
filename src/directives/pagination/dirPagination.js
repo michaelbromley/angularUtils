@@ -36,7 +36,7 @@
     module.directive('dirPaginate', ['$compile', '$parse', '$timeout', 'paginationService', function($compile, $parse, $timeout, paginationService) {
         return  {
             terminal: true,
-            compile: function(element, attrs){
+            compile: function dirPaginationCompileFn(element, attrs){
                 attrs.$set('ngRepeat', attrs.dirPaginate); // Add ng-repeat to the dom element
                 element.removeAttr(attrs.$attr.dirPaginate); // Remove the dir-paginate attribute to prevent infinite recursion of compilation
 
@@ -51,7 +51,7 @@
                 var itemsPerPageFilterRemoved = match[2].replace(filterPattern, '');
                 var collectionGetter = $parse(itemsPerPageFilterRemoved);
 
-                return function(scope, element, attrs){
+                return function dirPaginationLinkFn(scope, element, attrs){
                     var paginationId;
                     var compiled =  $compile(element); // we manually compile the element again, as we have now swapped dir-paginate for an ng-repeat
 
