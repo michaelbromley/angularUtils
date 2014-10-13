@@ -370,11 +370,11 @@ ddescribe('dirPagination directive', function() {
                 it('should call the callback once when page link clicked', function() {
                     var pagination = containingElement.find('ul.pagination');
 
-                    expect($scope.myCallback.calls.count()).toEqual(1);
+                    expect($scope.myCallback.calls.count()).toEqual(0);
                     pagination.children().eq(2).find('a').triggerHandler('click');
                     $scope.$apply();
                     expect($scope.myCallback).toHaveBeenCalled();
-                    expect($scope.myCallback.calls.count()).toEqual(2);
+                    expect($scope.myCallback.calls.count()).toEqual(1);
                 });
 
                 it('should pass the current page number to the callback', function() {
