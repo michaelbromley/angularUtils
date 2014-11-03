@@ -1,3 +1,4 @@
 {
-  "directory": "vendor"
+  "directory": "vendor",
+  "strict-ssl": false
 }
