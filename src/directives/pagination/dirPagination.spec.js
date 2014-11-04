@@ -1,4 +1,4 @@
-/**
+ /**
  * Created by Michael on 04/05/14.
  */
 
@@ -272,6 +272,20 @@ describe('dirPagination directive', function() {
             var pageLinks = getPageLinksArray();
 
             expect(pageLinks).toEqual(['‹','1', '...', '94', '95', '96', '97', '98', '99', '100', '›']);
+        });
+
+        it('should show the correct pagination links after item removed from cllection', function() {
+            compileElement(myCollection, 1);
+            $scope.$apply(function() {
+                $scope.currentPage = 98;
+            });
+
+            $scope.$apply(function() {
+                $scope.collection.pop();
+            });
+            var pageLinks = getPageLinksArray();
+
+            expect(pageLinks).toEqual(['‹','1', '...', '93', '94', '95', '96', '97', '98', '99', '›']);
         });
 
         it('should calculate pages based off collection after all filters are applied', function() {
