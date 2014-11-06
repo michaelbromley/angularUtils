@@ -1,5 +1,5 @@
 
-describe('dirTerminalType directive', function() {
+xdescribe('dirTerminalType directive', function() {
 
     var $compile;
     var $scope;

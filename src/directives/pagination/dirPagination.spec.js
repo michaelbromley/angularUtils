@@ -311,6 +311,33 @@ describe('dirPagination directive', function() {
             expect(activeLink.html()).toContain(1);
         });
 
+        /**
+         * Issue raised here https://github.com/michaelbromley/angularUtils/issues/78
+         * Where the dir-paginate directive is inside an ngSwitch block (which is initially hidden), so the linking function is not immediately executed.
+         * The dir-pagination-controls directive is *outside* the switch block, so it gets both compiled *and* linked on page load.
+         */
+        it('should allow paginate directive to be defined in a deferred-linking situation without error', function() {
+            function compile() {
+                var html;
+                $scope.collection = myCollection;
+                $scope.showList = false;
+                html = '<div ng-if="showList">' +
+                            '<ul class="list"><li dir-paginate="item in collection | itemsPerPage: 10">{{ item }}</li></ul> ' +
+                        '</div>' +
+                        '<dir-pagination-controls></dir-pagination-controls>';
+                containingElement.append($compile(html)($scope));
+                $scope.$apply();
+            }
+
+            expect(compile).not.toThrow();
+            expect(getListItems().length).toEqual(0);
+
+            $scope.$apply(function() {
+                $scope.showList = true;
+            });
+            expect(getListItems().length).toEqual(10);
+        });
+
         describe('optional attributes', function() {
 
             function compileWithAttributes(attributes) {
