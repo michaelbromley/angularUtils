@@ -209,6 +209,14 @@
                         generatePagination();
                     }
                 });
+                
+                scope.$watch(function() {
+                    return (paginationService.getItemsPerPage(paginationId));
+                }, function(prev,cur) {
+                    if (prev != cur) {
+                        goToPage(scope.pagination.current);
+                    }
+                });
 
                 scope.$watch(function() {
                     return paginationService.getCurrentPage(paginationId);
