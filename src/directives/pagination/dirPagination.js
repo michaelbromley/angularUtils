@@ -20,7 +20,6 @@
      * Config
      */
     var moduleName = 'angularUtils.directives.dirPagination';
-    var templatePath = 'directives/pagination/dirPagination.tpl.html';
 
     /**
      * Module
@@ -103,7 +102,7 @@
         }; 
     }]);
 
-    module.directive('dirPaginationControls', ['paginationService', function(paginationService) {
+    module.directive('dirPaginationControls', ['paginationService', 'paginationTemplate', function(paginationService, paginationTemplate) {
         var numberRegex = /^\d+$/;
         /**
          * Generate an array of page numbers (or the '...' string) which is used in an ng-repeat to generate the
@@ -177,7 +176,7 @@
         return {
             restrict: 'AE',
             templateUrl: function(elem, attrs) {
-                return attrs.templateUrl || templatePath;
+                return attrs.templateUrl || paginationTemplate.getPath();
             },
             scope: {
                 maxSize: '=?',
@@ -342,6 +341,22 @@
 
         this.isAsyncMode = function(instanceId) {
             return instances[instanceId].asyncMode;
+        };
+    });
+    
+    module.provider('paginationTemplate', function() {
+        var templatePath = 'directives/pagination/dirPagination.tpl.html';
+        
+        this.setPath = function(path) {
+            templatePath = path;
+        };
+        
+        this.$get = function() {
+            return {
+                getPath: function() {
+                    return templatePath;
+                }
+            };
         };
     });
 })();
