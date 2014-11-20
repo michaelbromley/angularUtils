@@ -71,6 +71,26 @@ And finally include the pagination itself.
     </dir-pagination-controls>
 ```
 
+### Specifying The Template
+
+There are two ways to specify the template of the pagination controls directive:
+
+**1. Use the `paginationTemplateProvider` in your app's config block to set a global template for your app:**
+
+```JavaScript
+myApp.config(function(paginationTemplateProvider) {
+    paginationTemplateProvider.setPath('path/to/dirPagination.tpl.html');
+});
+```
+
+**2. Use the `template-url` attribute on each pagination controls directive:**
+
+```HTML
+<dir-pagination-controls template-url="path/to/dirPagination.tpl.html"></dir-pagination-controls>
+```
+
+## Directives API
+
 ### `dir-paginate`
 
 * **`expression`** Under the hood, this directive delegates to the `ng-repeat` directive, so the syntax for the
@@ -269,3 +289,5 @@ from their pagination directive.
 
 * StackOverflow: http://stackoverflow.com/questions/10816073/how-to-do-paging-in-angularjs. Picked up a lot of ideas
 from the various contributors to this thread.
+
+* Massive credit is due to all the [contributors](https://github.com/michaelbromley/angularUtils/graphs/contributors) to this project - they have brought improvements that I would not have the time or insight to figure out myself.
