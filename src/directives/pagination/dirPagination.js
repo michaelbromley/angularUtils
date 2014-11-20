@@ -33,6 +33,7 @@
     }
 
     module.directive('dirPaginate', ['$compile', '$parse', '$timeout', 'paginationService', function($compile, $parse, $timeout, paginationService) {
+
         return  {
             terminal: true,
             multiElement: true,
@@ -103,7 +104,9 @@
     }]);
 
     module.directive('dirPaginationControls', ['paginationService', 'paginationTemplate', function(paginationService, paginationTemplate) {
+
         var numberRegex = /^\d+$/;
+
         /**
          * Generate an array of page numbers (or the '...' string) which is used in an ng-repeat to generate the
          * links used in pagination
@@ -183,6 +186,7 @@
                 onPageChange: '&?'
             },
             link: function(scope, element, attrs) {
+
                 var paginationId;
                 paginationId = attrs.paginationId || '__default';
                 if (!scope.maxSize) { scope.maxSize = 9; }
@@ -211,8 +215,8 @@
                 
                 scope.$watch(function() {
                     return (paginationService.getItemsPerPage(paginationId));
-                }, function(prev,cur) {
-                    if (prev != cur) {
+                }, function(current, previous) {
+                    if (current != previous) {
                         goToPage(scope.pagination.current);
                     }
                 });
@@ -262,6 +266,7 @@
     }]);
 
     module.filter('itemsPerPage', ['paginationService', function(paginationService) {
+
         return function(collection, itemsPerPage, paginationId) {
             if (typeof (paginationId) === 'undefined') {
                 paginationId = '__default';
@@ -289,6 +294,7 @@
     }]);
 
     module.service('paginationService', function() {
+
         var instances = {};
         var lastRegisteredInstance;
 
@@ -345,6 +351,7 @@
     });
     
     module.provider('paginationTemplate', function() {
+        
         var templatePath = 'directives/pagination/dirPagination.tpl.html';
         
         this.setPath = function(path) {
