@@ -51,13 +51,13 @@
 
                 var expression = tAttrs.dirPaginate;
                 // regex taken directly from https://github.com/angular/angular.js/blob/master/src/ng/directive/ngRepeat.js#L211
-                var match = expression.match(/^\s*([\s\S]+?)\s+in\s+([\s\S]+?)(?:\s+track\s+by\s+([\s\S]+?))?\s*$/);
+                // modified to parse for itemsPerPage as well
+                var match = expression.match(/^\s*([\s\S]+?)\s+in\s+([\s\S]+?)(?:\s+track\s+by\s+([\s\S]+?))?\s*\|\s*(itemsPerPage\s*:[^|]*)$/);
 
-                var filterPattern = /\|\s*itemsPerPage\s*:[^|]*/;
-                if (match[2].match(filterPattern) === null) {
+                if (!match[4]) {
                     throw 'pagination directive: the \'itemsPerPage\' filter must be set.';
                 }
-                var itemsPerPageFilterRemoved = match[2].replace(filterPattern, '');
+                var itemsPerPageFilterRemoved = match[2];
                 var collectionGetter = $parse(itemsPerPageFilterRemoved);
 
                 var paginationId = tAttrs.paginationId || '__default';
