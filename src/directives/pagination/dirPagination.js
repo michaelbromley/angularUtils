@@ -57,8 +57,7 @@
                 if (!match[4]) {
                     throw 'pagination directive: the \'itemsPerPage\' filter must be set.';
                 }
-                var itemsPerPageFilterRemoved = match[2];
-                var collectionGetter = $parse(itemsPerPageFilterRemoved);
+                var collectionGetter = $parse(match[2]);
 
                 var paginationId = tAttrs.paginationId || '__default';
                 paginationService.registerInstance(paginationId);
