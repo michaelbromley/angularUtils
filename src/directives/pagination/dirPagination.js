@@ -208,6 +208,12 @@
                 };
 
                 scope.$watch(function() {
+                    return paginationService.getCollectionLength(paginationId);
+                }, function(length) {
+                    scope.pagination.totalItems = length;
+                });
+
+                scope.$watch(function() {
                     return (paginationService.getCollectionLength(paginationId) + 1) * paginationService.getItemsPerPage(paginationId);
                 }, function(length) {
                     if (0 < length) {
