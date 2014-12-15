@@ -202,7 +202,9 @@
                 scope.pages = [];
                 scope.pagination = {
                     last: 1,
-                    current: 1
+                    current: 1,
+                    itemsPerPage: paginationService.getItemsPerPage(paginationId),
+                    totalItems: paginationService.getCollectionLength(paginationId)
                 };
 
                 scope.$watch(function() {
