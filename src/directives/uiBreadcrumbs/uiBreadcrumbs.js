@@ -26,7 +26,7 @@
         module = angular.module(moduleName, ['ui.router']);
     }
 
-    module.directive('uiBreadcrumbs', function($interpolate, $state) {
+    module.directive('uiBreadcrumbs', ['$interpolate', '$state', function($interpolate, $state) {
             return {
                 restrict: 'E',
                 templateUrl: function(elem, attrs) {
@@ -171,5 +171,5 @@
                     }
                 }
             };
-        });
+        }]);
 })();
