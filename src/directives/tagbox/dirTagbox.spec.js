@@ -9,7 +9,6 @@ describe('tagbox directive', function() {
     var scope;
 
     beforeEach(module('angularUtils.directives.dirTagBox'));
-    beforeEach(module('angularUtils.filters.startsWith'));
     beforeEach(inject(function(_$compile_, _$rootScope_) {
         scope = _$rootScope_;
 
@@ -65,6 +64,16 @@ describe('tagbox directive', function() {
         textarea.triggerHandler('keyup');
         scope.$apply();
         expect(suggestions.children()[0].innerHTML).toBe('#hammer');
+    });
+
+    it('should be case-insensitive', function() {
+        textarea.val('#C');
+        textarea[0].selectionStart = 2;
+
+        textarea.triggerHandler('keyup');
+        scope.$apply();
+        expect(suggestions.children()[0].innerHTML).toBe('#cake');
+        expect(suggestions.children()[1].innerHTML).toBe('#cup');
     });
 
     describe('specifying the tagToken', function() {

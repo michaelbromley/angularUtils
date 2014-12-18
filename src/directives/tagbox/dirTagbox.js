@@ -1,4 +1,6 @@
 /**
+ * Version 0.1.2
+ *
  * A directive to enable tagging auto-complete on an input or textarea.
  *
  * For documentation, see the README.md file in this directory
@@ -7,207 +9,213 @@
  * Copyright Michael Bromley 2014
  * Available under the MIT license.
  */
-angular.module('angularUtils.directives.dirTagBox', [])
 
-    .directive('dirTagbox', function($compile, $parse) {
-        return {
-            restrict: 'A',
-            scope: {
-                tags: '=dirTagbox',
-                callback: '&dirOnTagSelect'
-            },
-            link: function(scope, element, attrs) {
-                var TOKEN = attrs.dirTagtoken !== undefined ? attrs.dirTagtoken : '';
+(function() {
 
-                var input = element;
-                var isValidInputType = (input[0].nodeName === 'INPUT' && (input[0].type === 'text' || input[0].type === 'search' || input[0].type === 'email'));
-                if (input[0].nodeName !== 'TEXTAREA' && !isValidInputType) {
-                    return;
-                }
+    angular.module('angularUtils.directives.dirTagBox', [])
 
-                // create wrapper div
-                var wrapper = angular.element('<div class="dir-tagbox-wrapper" style="position: relative; display: inline-block"></div>');
-                input.wrap(wrapper);
+        .directive('dirTagbox', function dirTagbox($compile, $parse) {
+            return {
+                restrict: 'A',
+                scope: {
+                    tags: '=dirTagbox',
+                    callback: '&dirOnTagSelect'
+                },
+                link: function dirTagboxLinkingFn(scope, element, attrs) {
 
-                // create the suggestions div
-                var suggestions = makeSuggestionsBox();
-                input.parent().append(suggestions);
+                    var TOKEN = attrs.dirTagtoken !== undefined ? attrs.dirTagtoken : '';
 
-                scope.candidateHashtag = "?";
-                scope.candidate = {
-                    start: 0,
-                    end: 0
-                };
-                scope.selectedIndex = null;
-                scope.filteredTags = [];
-                scope.isFocussed = ('autofocus' in input[0]);
-                var mouseIsOverSuggestions = false;
+                    var input = element;
+                    var isValidInputType = (input[0].nodeName === 'INPUT' && (input[0].type === 'text' || input[0].type === 'search' || input[0].type === 'email'));
+                    if (input[0].nodeName !== 'TEXTAREA' && !isValidInputType) {
+                        return;
+                    }
 
-                suggestions.on('click', function(e) {
-                    var selectedTag = e.target.innerHTML.substring(TOKEN.length);
-                    insertSelectedTag(selectedTag);
-                    input[0].focus();
-                    scope.$apply(function() {
-                        scope.candidateHashtag = "?";
-                    });
-                });
+                    // create wrapper div
+                    var wrapper = angular.element('<div class="dir-tagbox-wrapper" style="position: relative; display: inline-block"></div>');
+                    input.wrap(wrapper);
 
-                suggestions.on('mouseover', function() {
-                    mouseIsOverSuggestions = true;
-                    scope.$apply(function() {
-                        scope.selectedIndex = null;
-                    });
-                });
-                suggestions.on('mouseout', function() {
-                    mouseIsOverSuggestions = false;
-                });
+                    // create the suggestions div
+                    var suggestions = makeSuggestionsBox();
+                    input.parent().append(suggestions);
 
-                input.on('focus', function() {
-                    scope.$apply(function() {
-                        scope.isFocussed = true;
-                    });
-                });
+                    scope.candidateHashtag = "?";
+                    scope.candidate = {
+                        start: 0,
+                        end: 0
+                    };
+                    scope.selectedIndex = null;
+                    scope.filteredTags = [];
+                    scope.isFocussed = ('autofocus' in input[0]);
+                    var mouseIsOverSuggestions = false;
 
-                input.on('blur', function() {
-                    if (!mouseIsOverSuggestions) {
+                    suggestions.on('click', function(e) {
+                        var selectedTag = e.target.innerHTML.substring(TOKEN.length);
+                        insertSelectedTag(selectedTag);
+                        input[0].focus();
                         scope.$apply(function() {
-                            scope.isFocussed = false;
+                            scope.candidateHashtag = "?";
                         });
-                    }
-                });
-
-                input.on('keyup', function() {
-                    // is the caret inside a hashtag?
-                    var candidateChanged = false;
-                    var currentCaretIndex = getCaret(input[0]);
-                    var text = input.val();
-                    var regexp;
-                    if (TOKEN !== '') {
-                        regexp = new RegExp('\\B' + TOKEN + '\\w+', 'g');
-                    } else {
-                        regexp = new RegExp('\\b\\w+', 'g');
-                    }
-                    var match;
-                    while ((match = regexp.exec(text)) !== null) {
-                        var startOfHashtag = match.index;
-                        var endOfHashtag = startOfHashtag + match[0].length;
-
-                        if (startOfHashtag <= currentCaretIndex && currentCaretIndex <= endOfHashtag) {
-                            candidateChanged =  match[0].substring(TOKEN.length);
-                            scope.candidate.start = startOfHashtag;
-                            scope.candidate.end = endOfHashtag;
-                        }
-                    }
-                    scope.$apply(function() {
-                        scope.candidateHashtag = candidateChanged ? candidateChanged : "?";
                     });
-                });
 
-                input.on('keydown', function(e) {
-                    var listLength = scope.filteredTags.length;
-                    if (0 < listLength) {
-                        var currentIndex;
-                        var nextIndex = null;
-
-                        if (e.keyCode === 40) {
-                            // down arrow pressed
-                            e.preventDefault();
-                            currentIndex = scope.selectedIndex === null ? -1 : parseInt(scope.selectedIndex, 10);
-                            nextIndex = currentIndex === listLength - 1 ? 0 : currentIndex + 1;
-                        } else if (e.keyCode === 38) {
-                            // up arrow pressed
-                            e.preventDefault();
-                            currentIndex = scope.selectedIndex === null ? 0 : parseInt(scope.selectedIndex, 10);
-                            nextIndex = currentIndex === 0 ? listLength - 1 : currentIndex - 1;
-                        } else if (e.keyCode === 13) {
-                            // enter key pressed
-                            e.preventDefault();
-                            var selectedTag = scope.filteredTags[scope.selectedIndex];
-                            insertSelectedTag(selectedTag);
-                        }
-
+                    suggestions.on('mouseover', function() {
+                        mouseIsOverSuggestions = true;
                         scope.$apply(function() {
-                            scope.selectedIndex = nextIndex;
+                            scope.selectedIndex = null;
                         });
-                    }
-                });
-
-                function makeSuggestionsBox() {
-                    var suggestions =angular.element(
-                        '<div class="suggestions-container" ng-show="isFocussed && 0 < filteredTags.length" tabindex="-1">' +
-                            '<div class="suggestion" ng-class="{selected: $index == selectedIndex}" ng-repeat="tag in filteredTags = (tags | startsWith : candidateHashtag)">' + TOKEN + '{{ tag }}</div>' +
-                            '</div>');
-                    suggestions.css({
-                        'position': 'absolute',
-                        'width': input[0].offsetWidth + 'px',
-                        'left': input[0].offsetLeft + 'px',
-                        'max-height': '200px',
-                        'overflow': 'auto',
-                        'z-index': 100
                     });
-                    $compile(suggestions)(scope);
-                    return suggestions;
-                }
-
-                function insertSelectedTag(selectedTag) {
-                    var inputVal = input.val();
-                    var output = inputVal.substring(0, scope.candidate.start) + TOKEN + selectedTag + inputVal.substring(scope.candidate.end);
-
-                    scope.$parent.$apply(function() {
-                        if (attrs.ngModel) {
-                            var setter = $parse(attrs.ngModel).assign;
-                            setter(scope.$parent, output);
-                        }
-                        input.val(output);
+                    suggestions.on('mouseout', function() {
+                        mouseIsOverSuggestions = false;
                     });
 
-                    if(scope.callback) {
-                        scope.callback();
-                    }
-                }
+                    input.on('focus', function() {
+                        scope.$apply(function() {
+                            scope.isFocussed = true;
+                        });
+                    });
 
-                /**
-                 * function taken from http://stackoverflow.com/a/263796/772859
-                 * @param el
-                 * @returns {*}
-                 */
-                function getCaret(el) {
-                    if (el.selectionStart) {
-                        return el.selectionStart;
-                    } else if (document.selection) {
-                        el.focus();
-
-                        var r = document.selection.createRange();
-                        if (r === null) {
-                            return 0;
+                    input.on('blur', function() {
+                        if (!mouseIsOverSuggestions) {
+                            scope.$apply(function() {
+                                scope.isFocussed = false;
+                            });
                         }
+                    });
 
-                        var re = el.createTextRange(),
-                            rc = re.duplicate();
-                        re.moveToBookmark(r.getBookmark());
-                        rc.setEndPoint('EndToStart', re);
+                    input.on('keyup', function() {
+                        // is the caret inside a hashtag?
+                        var candidateChanged = false;
+                        var currentCaretIndex = getCaret(input[0]);
+                        var text = input.val();
+                        var regexp;
+                        if (TOKEN !== '') {
+                            regexp = new RegExp('\\B' + TOKEN + '\\w+', 'g');
+                        } else {
+                            regexp = new RegExp('\\b\\w+', 'g');
+                        }
+                        var match;
+                        while ((match = regexp.exec(text)) !== null) {
+                            var startOfHashtag = match.index;
+                            var endOfHashtag = startOfHashtag + match[0].length;
 
-                        return rc.text.length;
+                            if (startOfHashtag <= currentCaretIndex && currentCaretIndex <= endOfHashtag) {
+                                candidateChanged =  match[0].substring(TOKEN.length);
+                                scope.candidate.start = startOfHashtag;
+                                scope.candidate.end = endOfHashtag;
+                            }
+                        }
+                        scope.$apply(function() {
+                            scope.candidateHashtag = candidateChanged ? candidateChanged : "?";
+                        });
+                    });
+
+                    input.on('keydown', function(e) {
+                        var listLength = scope.filteredTags.length;
+                        if (0 < listLength) {
+                            var currentIndex;
+                            var nextIndex = null;
+
+                            if (e.keyCode === 40) {
+                                // down arrow pressed
+                                e.preventDefault();
+                                currentIndex = scope.selectedIndex === null ? -1 : parseInt(scope.selectedIndex, 10);
+                                nextIndex = currentIndex === listLength - 1 ? 0 : currentIndex + 1;
+                            } else if (e.keyCode === 38) {
+                                // up arrow pressed
+                                e.preventDefault();
+                                currentIndex = scope.selectedIndex === null ? 0 : parseInt(scope.selectedIndex, 10);
+                                nextIndex = currentIndex === 0 ? listLength - 1 : currentIndex - 1;
+                            } else if (e.keyCode === 13) {
+                                // enter key pressed
+                                e.preventDefault();
+                                var selectedTag = scope.filteredTags[scope.selectedIndex];
+                                insertSelectedTag(selectedTag);
+                            }
+
+                            scope.$apply(function() {
+                                scope.selectedIndex = nextIndex;
+                            });
+                        }
+                    });
+
+                    function makeSuggestionsBox() {
+                        var suggestions =angular.element(
+                            '<div class="suggestions-container" ng-show="isFocussed && 0 < filteredTags.length" tabindex="-1">' +
+                                '<div class="suggestion" ng-class="{selected: $index == selectedIndex}" ng-repeat="tag in filteredTags = (tags | startsWith : candidateHashtag)">' + TOKEN + '{{ tag }}</div>' +
+                                '</div>');
+                        suggestions.css({
+                            'position': 'absolute',
+                            'width': input[0].offsetWidth + 'px',
+                            'left': input[0].offsetLeft + 'px',
+                            'max-height': '200px',
+                            'overflow': 'auto',
+                            'z-index': 100
+                        });
+                        $compile(suggestions)(scope);
+                        return suggestions;
                     }
-                    return 0;
-                }
-            }
-        };
-    })
 
-/**
- * Note - this filter is included since the default Angular `filter` filter will match a string that appears anywhere in the target string, but typically in a tag autocomplete, we only care about
- * matching the start of the string.
- */
-    .filter('startsWith', function() {
-        return function(array, search) {
-            var matches = [];
-            for(var i = 0; i < array.length; i++) {
-                if (array[i].indexOf(search) === 0 &&
-                    search.length < array[i].length) {
-                    matches.push(array[i]);
+                    function insertSelectedTag(selectedTag) {
+                        var inputVal = input.val();
+                        var output = inputVal.substring(0, scope.candidate.start) + TOKEN + selectedTag + inputVal.substring(scope.candidate.end);
+
+                        scope.$parent.$apply(function() {
+                            if (attrs.ngModel) {
+                                var setter = $parse(attrs.ngModel).assign;
+                                setter(scope.$parent, output);
+                            }
+                            input.val(output);
+                        });
+
+                        if(scope.callback) {
+                            scope.callback();
+                        }
+                    }
+
+                    /**
+                     * function taken from http://stackoverflow.com/a/263796/772859
+                     * @param el
+                     * @returns {*}
+                     */
+                    function getCaret(el) {
+                        if (el.selectionStart) {
+                            return el.selectionStart;
+                        } else if (document.selection) {
+                            el.focus();
+
+                            var r = document.selection.createRange();
+                            if (r === null) {
+                                return 0;
+                            }
+
+                            var re = el.createTextRange(),
+                                rc = re.duplicate();
+                            re.moveToBookmark(r.getBookmark());
+                            rc.setEndPoint('EndToStart', re);
+
+                            return rc.text.length;
+                        }
+                        return 0;
+                    }
                 }
-            }
-            return matches;
-        };
-    });
+            };
+        })
+
+    /**
+     * Note - this filter is included since the default Angular `filter` filter will match a string that appears anywhere in the target string, but typically in a tag autocomplete, we only care about
+     * matching the start of the string.
+     */
+        .filter('startsWith', function() {
+            return function(array, search) {
+                var matches = [];
+                for(var i = 0; i < array.length; i++) {
+                    if (array[i].toLowerCase().indexOf(search.toLowerCase()) === 0 &&
+                        search.length < array[i].length) {
+                        matches.push(array[i]);
+                    }
+                }
+                return matches;
+            };
+        });
+
+})();
