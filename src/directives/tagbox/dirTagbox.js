@@ -1,5 +1,5 @@
 /**
- * Version 0.1.2
+ * Version 0.1.3
  *
  * A directive to enable tagging auto-complete on an input or textarea.
  *
