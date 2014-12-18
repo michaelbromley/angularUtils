@@ -202,8 +202,16 @@
                 scope.pages = [];
                 scope.pagination = {
                     last: 1,
-                    current: 1
+                    current: 1,
+                    itemsPerPage: paginationService.getItemsPerPage(paginationId),
+                    totalItems: paginationService.getCollectionLength(paginationId)
                 };
+
+                scope.$watch(function() {
+                    return paginationService.getCollectionLength(paginationId);
+                }, function(length) {
+                    scope.pagination.totalItems = length;
+                });
 
                 scope.$watch(function() {
                     return (paginationService.getCollectionLength(paginationId) + 1) * paginationService.getItemsPerPage(paginationId);
