@@ -23,6 +23,7 @@ filtering of the collection.
 - [Writing A Custom Pagination-Controls Template](#writing-a-custom-pagination-controls-template)
 - [Special Repeat Start and End Points](#special-repeat-start-and-end-points)
 - [Multiple Pagination Instances on One Page](#multiple-pagination-instances-on-one-page)
+    - [Multiple Instances With ngRepeat](#multiple-instances-with-ngrepeat)
 	- [Demo](#demo-1)
 - [Working With Asynchronous Data](#working-with-asynchronous-data)
 	- [Example Asynchronous Setup](#example-asynchronous-setup)
@@ -204,38 +205,68 @@ repeat a series of elements instead of just one parent element:
 
 ## Multiple Pagination Instances on One Page
 
-Multiple instances of the directives may be included on a single page by specifying a `pagination-id`. This property **must** be specified in **3** places
+Multiple instances of the directives may be included on a single page by specifying a `pagination-id`. This property **must** be specified in **2** places
 for this to work:
 
 1. Specify the `pagination-id` attribute on the `dir-paginate` directive.
-2. Specify the third parameter of the `itemsPerPage` filter.
 3. Specify the `pagination-id` attribute on the `dir-paginations-controls` directive.
+
+**Note:** Prior to version 0.5.0, there was an additional requirement to add the ID as a second parameter of the `itemsPerPage` filter. This is now no longer required, as the
+directive will add this parameter automatically. Old code that *does* explicitly declare the ID in the filter will still work.
 
 An example of two independent paginations on one page would look like this:
 
 ```HTML
 <!-- first pagination instance -->
 <ul>
-    <li dir-paginate="customer in customers | itemsPerPage: 10: 'cust'" pagination-id="cust">{{ customer.name }}</li>
+    <li dir-paginate="customer in customers | itemsPerPage: 10" pagination-id="cust">{{ customer.name }}</li>
 </ul>
 
 <dir-pagination-controls pagination-id="cust"></dir-pagination-controls>
 
 <!-- second pagination instance -->
 <ul>
-    <li dir-paginate="branch in branches | itemsPerPage: 10: 'branch'" pagination-id="branch">{{ customer.name }}</li>
+    <li dir-paginate="branch in branches | itemsPerPage: 10" pagination-id="branch">{{ customer.name }}</li>
 </ul>
 
 <dir-pagination-controls pagination-id="branch"></dir-pagination-controls>
 ```
 
 The pagination-ids above are set to "cust" in the first instance and "branch" in the second. The pagination-ids can be anything you like,
-the important thing is to make sure the exact same id is used in all 3 places. If the 3 ids don't match, you should see a helpful
+the important thing is to make sure the exact same id is used on both the pagination and the controls directives. If the 2 ids don't match, you should see a helpful
 exception in the console.
+
+### Multiple Instances With ngRepeat
+
+You can use the pagination-id feature to dynamically create pagination instances, for example inside an `ng-repeat` block. Here is a bare-bones example to
+demonstrate how that would work:
+
+```JavaScript
+// in the controller
+$scope.lists = [
+    {
+        id: 'list1',
+        collection: [1, 2, 3, 4, 5]
+    },
+    {
+        id: 'list2',
+        collection: ['a', 'b', 'c', 'd', 'e']
+    }];
+```
+
+```HTML
+<!-- the view -->
+<div ng-repeat="list in lists">
+    <ul>
+        <li dir-paginate="item in list.collection | itemsPerPage: 3" pagination-id="list.id">ID: {{ list.id }}, item: {{ item }}</li>
+    </ul>
+    <dir-pagination-controls pagination-id="list.id"></dir-pagination-controls>
+</div>
+```
 
 ### Demo
 
-Here is a working demo featuring two instances on one page: [http://plnkr.co/edit/Pm4L53UYAieF808v8wxL?p=preview](http://plnkr.co/edit/Pm4L53UYAieF808v8wxL?p=preview)
+Here is a working demo featuring two instances on one page: [http://plnkr.co/edit/xmjmIId0c9Glh5QH97xz?p=preview](http://plnkr.co/edit/xmjmIId0c9Glh5QH97xz?p=preview)
 
 
 ## Working With Asynchronous Data

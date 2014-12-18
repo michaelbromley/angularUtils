@@ -20,6 +20,7 @@
      * Config
      */
     var moduleName = 'angularUtils.directives.dirPagination';
+    var DEFAULT_ID = '__default';
 
     /**
      * Module
@@ -40,15 +41,6 @@
             priority: 5000, // This setting is used in conjunction with the later call to $compile() to prevent infinite recursion of compilation
             compile: function dirPaginationCompileFn(tElement, tAttrs){
 
-                // Add ng-repeat to the dom element
-                if (tElement[0].hasAttribute('dir-paginate-start') || tElement[0].hasAttribute('data-dir-paginate-start')) {
-                    // using multiElement mode (dir-paginate-start, dir-paginate-end)
-                    tAttrs.$set('ngRepeatStart', tAttrs.dirPaginate);
-                    tElement.eq(tElement.length - 1).attr('ng-repeat-end', true);
-                } else {
-                    tAttrs.$set('ngRepeat', tAttrs.dirPaginate);
-                }
-
                 var expression = tAttrs.dirPaginate;
                 // regex taken directly from https://github.com/angular/angular.js/blob/master/src/ng/directive/ngRepeat.js#L211
                 var match = expression.match(/^\s*([\s\S]+?)\s+in\s+([\s\S]+?)(?:\s+track\s+by\s+([\s\S]+?))?\s*$/);
@@ -60,10 +52,35 @@
                 var itemsPerPageFilterRemoved = match[2].replace(filterPattern, '');
                 var collectionGetter = $parse(itemsPerPageFilterRemoved);
 
-                var paginationId = tAttrs.paginationId || '__default';
-                paginationService.registerInstance(paginationId);
+                // If any value is specified for paginationId, we register the un-evaluated expression at this stage for the benefit of any
+                // dir-pagination-controls directives that may be looking for this ID.
+                var rawId = tAttrs.paginationId || DEFAULT_ID;
+                paginationService.registerInstance(rawId);
 
                 return function dirPaginationLinkFn(scope, element, attrs){
+
+                    // Now that we have access to the `scope` we can interpolate any expression given in the paginationId attribute and
+                    // potentially register a new ID if it evaluates to a different value than the rawId.
+                    var paginationId = $parse(attrs.paginationId)(scope) || attrs.paginationId || DEFAULT_ID;
+                    paginationService.registerInstance(paginationId);
+
+                    var repeatExpression;
+                    var idDefinedInFilter = !!expression.match(/(\|\s*itemsPerPage\s*:[^|]*:[^|]*)/);
+                    if (paginationId !== DEFAULT_ID && !idDefinedInFilter) {
+                        repeatExpression = expression.replace(/(\|\s*itemsPerPage\s*:[^|]*)/, "$1 : '" + paginationId + "'");
+                    } else {
+                        repeatExpression = expression;
+                    }
+
+                    // Add ng-repeat to the dom element
+                    if (element[0].hasAttribute('dir-paginate-start') || element[0].hasAttribute('data-dir-paginate-start')) {
+                        // using multiElement mode (dir-paginate-start, dir-paginate-end)
+                        attrs.$set('ngRepeatStart', repeatExpression);
+                        element.eq(element.length - 1).attr('ng-repeat-end', true);
+                    } else {
+                        attrs.$set('ngRepeat', repeatExpression);
+                    }
+
                     var compiled =  $compile(element, false, 5000); // we manually compile the element again, as we have now added ng-repeat. Priority less than 5000 prevents infinite recursion of compiling dirPaginate
 
                     var currentPageGetter;
@@ -183,20 +200,25 @@
             },
             scope: {
                 maxSize: '=?',
-                onPageChange: '&?'
+                onPageChange: '&?',
+                paginationId: '=?'
             },
-            link: function(scope, element, attrs) {
+            link: function dirPaginationControlsLinkFn(scope, element, attrs) {
 
-                var paginationId;
-                paginationId = attrs.paginationId || '__default';
+                // rawId is the un-interpolated value of the pagination-id attribute. This is only important when the corresponding dir-paginate directive has
+                // not yet been linked (e.g. if it is inside an ng-if block), and in that case it prevents this controls directive from assuming that there is
+                // no corresponding dir-paginate directive and wrongly throwing an exception.
+                var rawId = attrs.paginationId ||  DEFAULT_ID;
+                var paginationId = scope.paginationId || attrs.paginationId ||  DEFAULT_ID;
+
+                if (!paginationService.isRegistered(paginationId) && !paginationService.isRegistered(rawId)) {
+                    var idMessage = (paginationId !== DEFAULT_ID) ? ' (id: ' + paginationId + ') ' : ' ';
+                    throw 'pagination directive: the pagination controls' + idMessage + 'cannot be used without the corresponding pagination directive.';
+                }
+
                 if (!scope.maxSize) { scope.maxSize = 9; }
                 scope.directionLinks = angular.isDefined(attrs.directionLinks) ? scope.$parent.$eval(attrs.directionLinks) : true;
                 scope.boundaryLinks = angular.isDefined(attrs.boundaryLinks) ? scope.$parent.$eval(attrs.boundaryLinks) : false;
-
-                if (!paginationService.isRegistered(paginationId)) {
-                    var idMessage = (paginationId !== '__default') ? ' (id: ' + paginationId + ') ' : ' ';
-                    throw 'pagination directive: the pagination controls' + idMessage + 'cannot be used without the corresponding pagination directive.';
-                }
 
                 var paginationRange = Math.max(scope.maxSize, 5);
                 scope.pages = [];
@@ -291,7 +313,7 @@
 
         return function(collection, itemsPerPage, paginationId) {
             if (typeof (paginationId) === 'undefined') {
-                paginationId = '__default';
+                paginationId = DEFAULT_ID;
             }
             if (!paginationService.isRegistered(paginationId)) {
                 throw 'pagination directive: the itemsPerPage id argument (id: ' + paginationId + ') does not match a registered pagination-id.';
