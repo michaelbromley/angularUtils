@@ -605,6 +605,67 @@ describe('dirPagination directive', function() {
 
     });
 
+    describe('pagination controls template API', function() {
+        function compile() {
+            var html = '<ul class="list"><li dir-paginate="item in collection | itemsPerPage: 3" current-page="currentPage">{{ item }}</li></ul> ' +
+                '<dir-pagination-controls template-url="directives/pagination/testTemplate.tpl.html"></dir-pagination-controls>';
+            $scope.collection = [1,2,3,4,5,6,7];
+            $scope.currentPage = 1;
+            containingElement.append($compile(html)($scope));
+            $scope.$apply();
+        }
+
+        it('should provide correct values for current page', function() {
+            compile();
+
+            expect(containingElement.find('#tt-pagination-current').html()).toEqual('1');
+            $scope.$apply(function() {
+                $scope.currentPage = 2;
+            });
+            expect(containingElement.find('#tt-pagination-current').html()).toEqual('2');
+        });
+
+        it('should provide correct value for last page', function() {
+            compile();
+            expect(containingElement.find('#tt-pagination-last').html()).toEqual('3');
+        });
+
+        it('should provide correct value for range.lower', function() {
+            compile();
+            expect(containingElement.find('#tt-range-lower').html()).toEqual('1');
+            $scope.$apply(function() {
+                $scope.currentPage = 2;
+            });
+            expect(containingElement.find('#tt-range-lower').html()).toEqual('4');
+            $scope.$apply(function() {
+                $scope.currentPage = 3;
+            });
+            expect(containingElement.find('#tt-range-lower').html()).toEqual('7');
+        });
+
+        it('should provide correct value for range.upper', function() {
+            compile();
+            expect(containingElement.find('#tt-range-upper').html()).toEqual('3');
+            $scope.$apply(function() {
+                $scope.currentPage = 2;
+            });
+            expect(containingElement.find('#tt-range-upper').html()).toEqual('6');
+            $scope.$apply(function() {
+                $scope.currentPage = 3;
+            });
+            expect(containingElement.find('#tt-range-upper').html()).toEqual('7');
+        });
+
+        it('should provide correct value for range.total', function() {
+            compile();
+            expect(containingElement.find('#tt-range-total').html()).toEqual('7');
+            $scope.$apply(function() {
+                $scope.currentPage = 2;
+            });
+            expect(containingElement.find('#tt-range-total').html()).toEqual('7');
+        });
+    });
+
     describe('multi element functionality', function() {
 
         function compileMultiElement(collection, itemsPerPage, currentPage) {

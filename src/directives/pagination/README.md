@@ -11,7 +11,26 @@ an attribute, drop in your navigation wherever you like, and boom - instant, ful
 [Here is a working demo on Plunker](http://plnkr.co/edit/Wtkv71LIqUR4OhzhgpqL?p=preview) which demonstrates some cool features such as live-binding the "itemsPerPage" and
 filtering of the collection.
 
-## Example
+# Table of Contents
+
+- [Basic Example](#basic-example)
+- [Installation](#installation)
+- [Usage](#usage)
+	- [Specifying The Template](#specifying-the-template)
+- [Directives API](#directives-api)
+	- [dir-paginate](#dir-paginate)
+	- [dir-pagination-controls](#dir-pagination-controls)
+- [Writing A Custom Pagination-Controls Template](#writing-a-custom-pagination-controls-template)
+- [Special Repeat Start and End Points](#special-repeat-start-and-end-points)
+- [Multiple Pagination Instances on One Page](#multiple-pagination-instances-on-one-page)
+	- [Demo](#demo-1)
+- [Working With Asynchronous Data](#working-with-asynchronous-data)
+	- [Example Asynchronous Setup](#example-asynchronous-setup)
+- [Styling](#styling)
+- [Contribution](#contribution)
+- [Credits](#credits)
+
+## Basic Example
 
 Let's say you have a collection of items on your controller's `$scope`. Often you want to display them with
 the `ng-repeat` directive and then paginate the results if there are too many to fit on one page. This is what this
@@ -91,6 +110,9 @@ myApp.config(function(paginationTemplateProvider) {
 
 ## Directives API
 
+The following attributes form the API for the pagination and pagination-controls directives. Optional attributes are marked as such,
+otherwise they are required.
+
 ### `dir-paginate`
 
 * **`expression`** Under the hood, this directive delegates to the `ng-repeat` directive, so the syntax for the
@@ -136,6 +158,31 @@ one pagination instance per page. See the section below on setting up multiple i
 
 Note: you cannot use the `dir-pagination-controls` directive without `dir-paginate`. Attempting to do so will result in an
 exception.
+
+## Writing A Custom Pagination-Controls Template
+
+The default template ([dirPagination.tpl.html](dirPagination.tpl.html)) is based on the [Bootstrap pagination markup](http://getbootstrap.com/components/#pagination). If you wish to modify the template or write your own,
+there are a few useful values exposed by the directive which you can use:
+
+- `pages` The array of page numbers, typically used in an `ng-repeat` to generate the individual page links.
+- `{{ pagination.current }}` The current page.
+- `{{ pagination.last }}` The number of the last page in the collection.
+- `{{ range.lower }}` The ordinal number of the first item on the current page. E.g. assuming 10 items per page, when on page 2 this will equal 11.
+- `{{ range.upper }}` The ordinal number of the last item on the current page. E.g. assuming 10 items per page, when on page 2 this will equal 20.
+- `{{ range.total }}` The total number of items in the collection.
+
+The three `range` values can be used to generate a label like *"Displaying 16-20 of 53 items"*.
+
+Here is an example of a custom template which uses the range values along with "previous" and "next" arrow links, but no page links:
+
+```HTML
+<div class="range-label">Displaying {{ range.lower }} - {{ range.upper }} of {{ range.total }}</div>
+
+<a href="" title="Previous page" ng-class="{ disabled : pagination.current == 1 }" ng-click="setCurrent(pagination.current - 1)">&lsaquo;</a>
+<a href="" title="Next page"  ng-class="{ disabled : pagination.current == pagination.last }" ng-click="setCurrent(pagination.current + 1)">&rsaquo;</a>
+```
+
+To use a custom template in your app, see the section on [specifying the template](#specifying-the-template).
 
 ## Special Repeat Start and End Points
 

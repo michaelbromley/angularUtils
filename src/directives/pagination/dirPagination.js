@@ -204,6 +204,11 @@
                     last: 1,
                     current: 1
                 };
+                scope.range = {
+                    lower: 1,
+                    upper: 1,
+                    total: 1
+                };
 
                 scope.$watch(function() {
                     return (paginationService.getCollectionLength(paginationId) + 1) * paginationService.getItemsPerPage(paginationId);
@@ -239,6 +244,7 @@
                     if (isValidPageNumber(num)) {
                         scope.pages = generatePagesArray(num, paginationService.getCollectionLength(paginationId), paginationService.getItemsPerPage(paginationId), paginationRange);
                         scope.pagination.current = num;
+                        updateRangeValues();
 
                         // if a callback has been set, then call it with the page number as an argument
                         if (scope.onPageChange) {
@@ -255,7 +261,23 @@
                     scope.pagination.last = scope.pages[scope.pages.length - 1];
                     if (scope.pagination.last < scope.pagination.current) {
                         scope.setCurrent(scope.pagination.last);
+                    } else {
+                        updateRangeValues();
                     }
+                }
+
+                /**
+                 * This function updates the values (lower, upper, total) of the `scope.range` object, which can be used in the pagination
+                 * template to display the current page range, e.g. "showing 21 - 40 of 144 results";
+                 */
+                function updateRangeValues() {
+                    var currentPage = paginationService.getCurrentPage(paginationId),
+                        itemsPerPage = paginationService.getItemsPerPage(paginationId),
+                        totalItems = paginationService.getCollectionLength(paginationId);
+
+                    scope.range.lower = (currentPage - 1) * itemsPerPage + 1;
+                    scope.range.upper = Math.min(currentPage * itemsPerPage, totalItems);
+                    scope.range.total = totalItems;
                 }
 
                 function isValidPageNumber(num) {
@@ -351,7 +373,7 @@
     });
     
     module.provider('paginationTemplate', function() {
-        
+
         var templatePath = 'directives/pagination/dirPagination.tpl.html';
         
         this.setPath = function(path) {
