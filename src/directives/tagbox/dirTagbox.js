@@ -156,8 +156,14 @@
                     }
 
                     function insertSelectedTag(selectedTag) {
-                        var inputVal = input.val();
-                        var output = inputVal.substring(0, scope.candidate.start) + TOKEN + selectedTag + inputVal.substring(scope.candidate.end);
+                        var output,
+                            inputVal = input.val();
+
+                        if (typeof selectedTag === 'undefined') {
+                            output = inputVal;
+                        } else {
+                            output = inputVal.substring(0, scope.candidate.start) + TOKEN + selectedTag + inputVal.substring(scope.candidate.end);
+                        }
 
                         scope.$parent.$apply(function() {
                             if (attrs.ngModel) {
