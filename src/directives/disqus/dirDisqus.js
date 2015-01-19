@@ -1,8 +1,6 @@
 /**
  * A directive to embed a Disqus comments widget on your AngularJS page.
  *
- * For documentation, see the README.md file in this directory
- *
  * Created by Michael on 22/01/14.
  * Copyright Michael Bromley 2014
  * Available under the MIT license.

@@ -13,6 +13,12 @@ Setting up as above will ensure that Disqus is able to correctly distinguish bet
 By default, Angular does not use html5 mode, and also has no hashPrefix set, so you'll have to do one of the above set-up actions in order to use this directive. As far as I know, there is no way to get it to work with
 the default hash-only (no `!`) urls that Angular uses.
 
+## Installation
+
+1. Download the file `dirDisqus.js` or use the Bower command `bower install angular-utils-disqus`
+2. Include the JavaScript file in your index.html page.
+2. Add a reference to the module `angularUtils.directives.dirDisqus` to your app.
+
 ## Usage
 
 First, put the directive code in your app, wherever you store your directives.
@@ -34,8 +40,7 @@ You can optionally specify the other configuration variables by including the as
 on the directive's element tag. For more information on the available config vars, see the
 [Disqus docs](http://help.disqus.com/customer/portal/articles/472098-javascript-configuration-variables).
 
-Note that in the tag, the config attribute names are separated with a hyphen rather
-than an underscore (to make it look more HTML-like).
+Note that in the tag, the config attribute names are separated with a hyphen rather than an underscore (to make it look more HTML-like).
 
 
 
