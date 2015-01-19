@@ -85,6 +85,12 @@ module.exports = function(grunt) {
                     'src/directives/uiBreadcrumbs/uiBreadcrumbs.tpl.html'],
                 dest: '../angularUtils-dist/angularUtils-uiBreadcrumbs/'
 
+            },
+            dirDisqus: {
+                expand: true,
+                flatten: true,
+                src: ['src/directives/disqus/dirDisqus.js'],
+                dest: '../angularUtils-dist/angularUtils-disqus/'
             }
         }
     });

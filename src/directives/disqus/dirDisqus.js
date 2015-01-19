@@ -7,9 +7,26 @@
  * Copyright Michael Bromley 2014
  * Available under the MIT license.
  */
-angular.module('angularUtils.directives.dirDisqus', [])
 
-    .directive('dirDisqus', ['$window', function($window) {
+(function() {
+
+    /**
+     * Config
+     */
+    var moduleName = 'angularUtils.directives.dirDisqus';
+
+    /**
+     * Module
+     */
+    var module;
+    try {
+        module = angular.module(moduleName);
+    } catch(err) {
+        // named module does not exist, so create one
+        module = angular.module(moduleName, []);
+    }
+
+    module.directive('dirDisqus', ['$window', function($window) {
         return {
             restrict: 'E',
             scope: {
@@ -66,3 +83,5 @@ angular.module('angularUtils.directives.dirDisqus', [])
             }
         };
     }]);
+
+})();
