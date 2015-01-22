@@ -33,7 +33,7 @@
         module = angular.module(moduleName, []);
     }
 
-    module.directive('dirPaginate', ['$compile', '$parse', '$timeout', 'paginationService', function($compile, $parse, $timeout, paginationService) {
+    module.directive('dirPaginate', ['$compile', '$parse', 'paginationService', function($compile, $parse, paginationService) {
 
         return  {
             terminal: true,
