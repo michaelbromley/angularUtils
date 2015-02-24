@@ -1,6 +1,6 @@
 angular.module( 'angularUtils.filters.ordinalDate', [] )
 
-    .filter('ordinalDate', function($filter) {
+    .filter('ordinalDate', ['$filter', function($filter) {
 
         var getOrdinalSuffix = function(number) {
             var suffixes = ["'th'", "'st'", "'nd'", "'rd'"];
@@ -60,4 +60,4 @@ angular.module( 'angularUtils.filters.ordinalDate', [] )
             }
             return $filter('date')(date, format);
         };
-    });
+    }]);
