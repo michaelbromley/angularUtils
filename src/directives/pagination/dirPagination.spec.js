@@ -6,15 +6,17 @@ describe('dirPagination directive', function() {
 
     var $compile;
     var $scope;
+    var $timeout;
     var containingElement;
     var myCollection;
 
     beforeEach(module('angularUtils.directives.dirPagination'));
     beforeEach(module('templates-main'));
 
-    beforeEach(inject(function($rootScope, _$compile_) {
+    beforeEach(inject(function($rootScope, _$compile_, _$timeout_) {
 
         $compile = _$compile_;
+        $timeout = _$timeout_;
         $scope = $rootScope.$new();
         containingElement = angular.element('<div></div>');
 
@@ -343,7 +345,7 @@ describe('dirPagination directive', function() {
             function compileWithAttributes(attributes) {
                 $scope.collection = myCollection;
                 $scope.currentPage = 1;
-                html = '<ul class="list"><li dir-paginate="item in collection | itemsPerPage: 10" current-page="currentPage">{{ item }}</li></ul> ' +
+                var html = '<ul class="list"><li dir-paginate="item in collection | itemsPerPage: 10" current-page="currentPage">{{ item }}</li></ul> ' +
                     '<dir-pagination-controls ' + attributes + ' ></dir-pagination-controls>';
                 containingElement.append($compile(html)($scope));
                 $scope.$apply();
@@ -405,10 +407,36 @@ describe('dirPagination directive', function() {
                         return "The current page is " + currentPage;
                     };
                     spyOn($scope, 'myCallback').and.callThrough();
-                    compileWithAttributes(' on-page-change="myCallback(newPageNumber)" ');
                 });
 
                 it('should call the callback once when page link clicked', function() {
+                    compileWithAttributes(' on-page-change="myCallback(newPageNumber)" ');
+                    var pagination = containingElement.find('ul.pagination');
+
+                    expect($scope.myCallback.calls.count()).toEqual(0);
+                    pagination.children().eq(2).find('a').triggerHandler('click');
+                    $scope.$apply();
+                    expect($scope.myCallback).toHaveBeenCalled();
+                    expect($scope.myCallback.calls.count()).toEqual(1);
+                });
+
+                it('should not call the callback on loading first page, even with controls appearing above the pagination', function() {
+                    function compileWithControlsFirst(attributes) {
+                        $scope.currentPage = 1;
+                        var html = '<dir-pagination-controls ' + attributes + ' ></dir-pagination-controls>' +
+                            '<table>' +
+                                '<tr dir-paginate="item in collection | itemsPerPage: 10"><td>{{ item }}</td></tr>' +
+                            '</table>';
+                        containingElement.append($compile(html)($scope));
+                        $scope.$apply();
+                    }
+
+                    compileWithControlsFirst(' on-page-change="myCallback(newPageNumber)" ');
+
+                    $scope.$apply(function() {
+                        $scope.collection = myCollection;
+                    });
+
                     var pagination = containingElement.find('ul.pagination');
 
                     expect($scope.myCallback.calls.count()).toEqual(0);
@@ -419,6 +447,7 @@ describe('dirPagination directive', function() {
                 });
 
                 it('should pass the current page number to the callback', function() {
+                    compileWithAttributes(' on-page-change="myCallback(newPageNumber)" ');
                     var pagination = containingElement.find('ul.pagination');
 
                     pagination.children().eq(2).find('a').triggerHandler('click');
@@ -720,6 +749,31 @@ describe('dirPagination directive', function() {
             expect(compile).not.toThrow();
             expect(containingElement.find('h1').length).toEqual(3);
             expect(containingElement.find('p').length).toEqual(3);
+        });
+
+        /**
+         * See https://github.com/michaelbromley/angularUtils/issues/92
+         */
+        xit('should correctly compile an inner ng-repeat', function() {
+            function compile() {
+                var html = '<div>' +
+                    '<h1 dir-paginate-start="item in collection | itemsPerPage: 3" current-page="currentPage">{{ item }}</h1>' +
+                    '<div dir-paginate-end> yo <ul class="options"><li ng-repeat="option in options">{{ option }} : {{ item }}</li></ul></div>' +
+                    '</div> ';
+                $scope.options = ['option1', 'option2', 'option3'];
+                $scope.collection = myCollection;
+                $scope.currentPage = 1;
+                containingElement.append($compile(html)($scope));
+                $scope.$apply();
+            }
+
+            compile();
+            $timeout.flush();
+
+            console.log(containingElement.html());
+
+            var options = containingElement.find('.options').eq(0).find('li');
+            expect(options.length).toEqual(3);
         });
     });
 

@@ -243,7 +243,7 @@
                 scope.$watch(function() {
                     return (paginationService.getItemsPerPage(paginationId));
                 }, function(current, previous) {
-                    if (current != previous) {
+                    if (current != previous && typeof previous !== 'undefined') {
                         goToPage(scope.pagination.current);
                     }
                 });
