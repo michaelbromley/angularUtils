@@ -61,9 +61,11 @@
                         var cur = resolveState(state);
                         if (cur) {
                             var displayName = getDisplayName(cur);
-                            if (displayName !== false && !isin(cur, breadcrumbs))
+                            if (displayName !== false
+                                && !isin(cur, breadcrumbs)) {
                                 breadcrumbs.push({ displayName: displayName,
                                                    route: cur.name });
+                            }
                         }
 
                         state = state.parent;
