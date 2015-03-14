@@ -141,7 +141,7 @@
                     for (var i = 0, l = arr.length; i < l && context; ++i)
                         context = context[arr[i]];
 
-                    return context || undefined;
+                    return context;
                 }
 
                 /**
