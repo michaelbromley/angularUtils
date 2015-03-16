@@ -7,13 +7,13 @@
  */
 
 
-(function() {
+; (function() {
 
     /**
      * Config
      */
-    var moduleName = 'angularUtils.directives.uiBreadcrumbs';
-    var templateUrl = 'directives/uiBreadcrumbs/uiBreadcrumbs.tpl.html';
+    var moduleName = 'angularUtils.directives.uiBreadcrumbs',
+        templateUrl = 'directives/uiBreadcrumbs/uiBreadcrumbs.tpl.html';
 
     /**
      * Module
@@ -26,150 +26,141 @@
         module = angular.module(moduleName, ['ui.router']);
     }
 
-    module.directive('uiBreadcrumbs', ['$interpolate', '$state', function($interpolate, $state) {
-            return {
-                restrict: 'E',
-                templateUrl: function(elem, attrs) {
-                    return attrs.templateUrl || templateUrl;
-                },
-                scope: {
-                    displaynameProperty: '@',
-                    abstractProxyProperty: '@?'
-                },
-                link: function(scope) {
-                    scope.breadcrumbs = [];
-                    if ($state.$current.name !== '') {
-                        updateBreadcrumbsArray();
-                    }
-                    scope.$on('$stateChangeSuccess', function() {
-                        updateBreadcrumbsArray();
-                    });
+    module.directive('uiBreadcrumbs', uiBreadCrumbsDirective);
 
-                    /**
-                     * Start with the current state and traverse up the path to build the
-                     * array of breadcrumbs that can be used in an ng-repeat in the template.
-                     */
-                    function updateBreadcrumbsArray() {
-                        var workingState;
-                        var displayName;
-                        var breadcrumbs = [];
-                        var currentState = $state.$current;
+    uiBreadCrumbsDirective.$inject = ['$interpolate', '$state' ];
+    function uiBreadCrumbsDirective($interpolate, $state)
+    {
+        return {
+            restrict: 'E',
+            replace: true,
+            templateUrl: 'templates/common/directives/breadcrumbs.html',
+            scope: {
+                displaynameProperty: '@',
+                abstractproxyProperty: '@?'
+            },
+            link: function(scope) {
+                scope.breadcrumbs = [];
 
-                        while(currentState && currentState.name !== '') {
-                            workingState = getWorkingState(currentState);
-                            if (workingState) {
-                                displayName = getDisplayName(workingState);
+                scope.$on('$stateChangeSuccess', function() { update(); });
 
-                                if (displayName !== false && !stateAlreadyInBreadcrumbs(workingState, breadcrumbs)) {
-                                    breadcrumbs.push({
-                                        displayName: displayName,
-                                        route: workingState.name
-                                    });
-                                }
-                            }
-                            currentState = currentState.parent;
-                        }
-                        breadcrumbs.reverse();
-                        scope.breadcrumbs = breadcrumbs;
-                    }
+                if ($state.$current.name !== '')
+                    update();
 
-                    /**
-                     * Get the state to put in the breadcrumbs array, taking into account that if the current state is abstract,
-                     * we need to either substitute it with the state named in the `scope.abstractProxyProperty` property, or
-                     * set it to `false` which means this breadcrumb level will be skipped entirely.
-                     * @param currentState
-                     * @returns {*}
-                     */
-                    function getWorkingState(currentState) {
-                        var proxyStateName;
-                        var workingState = currentState;
-                        if (currentState.abstract === true) {
-                            if (typeof scope.abstractProxyProperty !== 'undefined') {
-                                proxyStateName = getObjectValue(scope.abstractProxyProperty, currentState);
-                                if (proxyStateName) {
-                                    workingState = $state.get(proxyStateName);
-                                } else {
-                                    workingState = false;
-                                }
-                            } else {
-                                workingState = false;
+
+                /**
+                 * Start with the current state and traverse up the path to
+                 * build the array of breadcrumbs that can be used in an
+                 * ng-repeat in the template.
+                 */
+                function update() {
+                    var breadcrumbs = [],
+                        state = $state.$current;
+
+                    while(state && state.name !== '') {
+                        var cur = resolveState(state);
+                        if (cur) {
+                            var displayName = getDisplayName(cur);
+                            if (displayName !== false
+                                && !isin(cur, breadcrumbs)) {
+                                breadcrumbs.push({ displayName: displayName,
+                                                   route: cur.name });
                             }
                         }
-                        return workingState;
+
+                        state = state.parent;
                     }
 
-                    /**
-                     * Resolve the displayName of the specified state. Take the property specified by the `displayname-property`
-                     * attribute and look up the corresponding property on the state's config object. The specified string can be interpolated against any resolved
-                     * properties on the state config object, by using the usual {{ }} syntax.
-                     * @param currentState
-                     * @returns {*}
-                     */
-                    function getDisplayName(currentState) {
-                        var interpolationContext;
-                        var propertyReference;
-                        var displayName;
-
-                        if (!scope.displaynameProperty) {
-                            // if the displayname-property attribute was not specified, default to the state's name
-                            return currentState.name;
-                        }
-                        propertyReference = getObjectValue(scope.displaynameProperty, currentState);
-
-                        if (propertyReference === false) {
-                            return false;
-                        } else if (typeof propertyReference === 'undefined') {
-                            return currentState.name;
-                        } else {
-                            // use the $interpolate service to handle any bindings in the propertyReference string.
-                            interpolationContext =  (typeof currentState.locals !== 'undefined') ? currentState.locals.globals : currentState;
-                            displayName = $interpolate(propertyReference)(interpolationContext);
-                            return displayName;
-                        }
-                    }
-
-                    /**
-                     * Given a string of the type 'object.property.property', traverse the given context (eg the current $state object) and return the
-                     * value found at that path.
-                     *
-                     * @param objectPath
-                     * @param context
-                     * @returns {*}
-                     */
-                    function getObjectValue(objectPath, context) {
-                        var i;
-                        var propertyArray = objectPath.split('.');
-                        var propertyReference = context;
-
-                        for (i = 0; i < propertyArray.length; i ++) {
-                            if (angular.isDefined(propertyReference[propertyArray[i]])) {
-                                propertyReference = propertyReference[propertyArray[i]];
-                            } else {
-                                // if the specified property was not found, default to the state's name
-                                return undefined;
-                            }
-                        }
-                        return propertyReference;
-                    }
-
-                    /**
-                     * Check whether the current `state` has already appeared in the current breadcrumbs array. This check is necessary
-                     * when using abstract states that might specify a proxy that is already there in the breadcrumbs.
-                     * @param state
-                     * @param breadcrumbs
-                     * @returns {boolean}
-                     */
-                    function stateAlreadyInBreadcrumbs(state, breadcrumbs) {
-                        var i;
-                        var alreadyUsed = false;
-                        for(i = 0; i < breadcrumbs.length; i++) {
-                            if (breadcrumbs[i].route === state.name) {
-                                alreadyUsed = true;
-                            }
-                        }
-                        return alreadyUsed;
-                    }
+                    breadcrumbs.reverse();
+                    scope.breadcrumbs = breadcrumbs;
                 }
-            };
-        }]);
-})();
+
+                /**
+                 * Get the state to put in the breadcrumbs array, taking into
+                 * account that if the current state is abstract, we need to
+                 * either substitute it with the state named in the
+                 * `scope.abstractProxyProperty` property, or set it to `false`
+                 * which means this breadcrumb level will be skipped entirely.
+                 * @param state
+                 * @returns {*}
+                 */
+                function resolveState(state) {
+                    if (state.abstract === true) {
+                        if (scope.abstractproxyProperty !== undefined) {
+                            var proxy = evalObject(scope.abstractproxyProperty,
+                                                   state);
+                            if (proxy)
+                                return $state.get(proxy);
+                        }
+
+                        return false;
+                    }
+
+                    return state;
+                }
+
+                /**
+                 * Resolve the displayName of the specified state. Take the
+                 * property specified by the `displayname-property` attribute
+                 * and look up the corresponding property on the state's config
+                 * object. The specified string can be interpolated against any
+                 * resolved properties on the state config object, by using the
+                 * usual {{ }} syntax.
+                 * @param state
+                 * @returns {*}
+                 */
+                function getDisplayName(state) {
+                    if (!scope.displaynameProperty)
+                        return state.name;
+
+                    var prop = evalObject(scope.displaynameProperty, state);
+                    if (prop === false)
+                        return false;
+                    else if (prop === undefined)
+                        return state.name;
+
+                    var ctx = state.locals !== undefined
+                            ? state.locals.globals
+                            : state;
+
+                    return $interpolate(prop)(ctx);
+                }
+
+                /**
+                 * Given a string of the type 'object.property.property',
+                 * traverse the given context (eg the current $state object)
+                 * and return the value found at that path.
+                 *
+                 * @param path
+                 * @param context
+                 * @returns {*}
+                 */
+                function evalObject(path, context) {
+                    /* This would probably be best done a different way. */
+                    var arr = path.split('.');
+                    for (var i = 0, l = arr.length; i < l && context; ++i)
+                        context = context[arr[i]];
+
+                    return context;
+                }
+
+                /**
+                 * Check whether the current `state` has already appeared in
+                 * the current breadcrumbs array. This check is necessary when
+                 * using abstract states that might specify a proxy that is
+                 * already there in the breadcrumbs.
+                 * @param state
+                 * @param breadcrumbs
+                 * @returns {boolean}
+                 */
+                function isin(state, breadcrumbs) {
+                    var name = state.name;
+                    return breadcrumbs.some(function (i) {
+                        return i.route === name;
+                    } );
+                }
+            }
+        };
+    }
+
+} )();
