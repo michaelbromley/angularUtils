@@ -13,6 +13,7 @@ xdescribe('dirDiqus directive', function() {
                            'disqus-url="{{ post.link }}"' +
                            'disqus-category-id="{{ post.catId }}"' +
                            'disqus-disable-mobile="false"' +
+						   'disqus-config-language="{{ post.lang }}"' +
                            'ready-to-bind="{{ loaded }}">' +
                 '</dir-disqus>';
 
@@ -23,7 +24,8 @@ xdescribe('dirDiqus directive', function() {
                 ID: 123,
                 title: 'test title',
                 link: 'http://www.test.com',
-                catId: 999
+                catId: 999,
+				lang: 'en'
             };
             scope.loaded = false;
 
@@ -50,6 +52,7 @@ xdescribe('dirDiqus directive', function() {
         expect(window.disqus_url).toBeFalsy();
         expect(window.disqus_category_id).toBeFalsy();
         expect(window.disqus_disable_mobile).toBeFalsy();
+        expect(window.disqus_config();window.language).toBeFalsy();
     });
 
     it('should activate when ready to bind is true', function() {
@@ -62,5 +65,6 @@ xdescribe('dirDiqus directive', function() {
         expect(window.disqus_url).toEqual('http://www.test.com');
         expect(window.disqus_category_id).toEqual('999');
         expect(window.disqus_disable_mobile).toEqual('false');
+        expect(window.disqus_config();window.language).toEqual('en');
     });
 });
