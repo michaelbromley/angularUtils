@@ -1,4 +1,4 @@
-xdescribe('dirDiqus directive', function() {
+xdescribe('dirDisqus directive', function() {
     var scope,
         elem,
         compiled,
@@ -8,14 +8,14 @@ xdescribe('dirDiqus directive', function() {
     beforeEach(function (){
         //set our view html.
         html = '<dir-disqus disqus-shortname="shortname" ' +
-                           'disqus-identifier="{{ post.ID }}"' +
-                           'disqus-title="{{ post.title }}"' +
-                           'disqus-url="{{ post.link }}"' +
-                           'disqus-category-id="{{ post.catId }}"' +
-                           'disqus-disable-mobile="false"' +
-						   'disqus-config-language="{{ post.lang }}"' +
-                           'ready-to-bind="{{ loaded }}">' +
-                '</dir-disqus>';
+        'disqus-identifier="{{ post.ID }}"' +
+        'disqus-title="{{ post.title }}"' +
+        'disqus-url="{{ post.link }}"' +
+        'disqus-category-id="{{ post.catId }}"' +
+        'disqus-disable-mobile="false"' +
+        'disqus-config-language="{{ post.lang }}"' +
+        'ready-to-bind="{{ loaded }}">' +
+        '</dir-disqus>';
 
         inject(function($compile, $rootScope) {
             //create a scope and populate it
@@ -25,7 +25,7 @@ xdescribe('dirDiqus directive', function() {
                 title: 'test title',
                 link: 'http://www.test.com',
                 catId: 999,
-				lang: 'en'
+                lang: 'en'
             };
             scope.loaded = false;
 
@@ -52,7 +52,7 @@ xdescribe('dirDiqus directive', function() {
         expect(window.disqus_url).toBeFalsy();
         expect(window.disqus_category_id).toBeFalsy();
         expect(window.disqus_disable_mobile).toBeFalsy();
-        expect(window.disqus_config();window.language).toBeFalsy();
+        expect(window.language).toBeFalsy();
     });
 
     it('should activate when ready to bind is true', function() {
@@ -65,6 +65,7 @@ xdescribe('dirDiqus directive', function() {
         expect(window.disqus_url).toEqual('http://www.test.com');
         expect(window.disqus_category_id).toEqual('999');
         expect(window.disqus_disable_mobile).toEqual('false');
-        expect(window.disqus_config();window.language).toEqual('en');
+        window.disqus_config();
+        expect(window.language).toEqual('en');
     });
 });
