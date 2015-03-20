@@ -754,7 +754,7 @@ describe('dirPagination directive', function() {
         /**
          * See https://github.com/michaelbromley/angularUtils/issues/92
          */
-        xit('should correctly compile an inner ng-repeat', function() {
+        it('should correctly compile an inner ng-repeat', function() {
             function compile() {
                 var html = '<div>' +
                     '<h1 dir-paginate-start="item in collection | itemsPerPage: 3" current-page="currentPage">{{ item }}</h1>' +
@@ -768,12 +768,10 @@ describe('dirPagination directive', function() {
             }
 
             compile();
-            $timeout.flush();
-
-            console.log(containingElement.html());
 
             var options = containingElement.find('.options').eq(0).find('li');
             expect(options.length).toEqual(3);
+            expect(options.eq(0).text()).toEqual('option1 : item 1');
         });
     });
 
