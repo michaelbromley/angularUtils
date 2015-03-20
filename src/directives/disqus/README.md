@@ -52,6 +52,7 @@ on the directive's element tag. For more information on the available config var
             disqus-config-language="{{ post.lang }}"
             ready-to-bind="{{ loaded }}">
 </dir-disqus>
+```
 
 If using the `disqus-config-language` setting, please see [this Disqus article on multi-lingual websites](https://help.disqus.com/customer/portal/articles/466249-multi-lingual-websites)
 for which languages are supported.
