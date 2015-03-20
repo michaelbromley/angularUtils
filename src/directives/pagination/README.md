@@ -202,11 +202,6 @@ repeat a series of elements instead of just one parent element:
 </footer>
 ```
 
-**Note:** - This feature is currently a little buggy. E.g. attempting to next an ngRepeat in the `<footer>` block above
-would currently fail. For simple cases it will work fine, but with complex nexted directives you may experience issues.
-I plan to fix this as a priority. See issues https://github.com/michaelbromley/angularUtils/issues/92 & https://github.com/michaelbromley/angularUtils/issues/129
-
-
 ## Multiple Pagination Instances on One Page
 
 Multiple instances of the directives may be included on a single page by specifying a `pagination-id`. This property **must** be specified in **2** places
