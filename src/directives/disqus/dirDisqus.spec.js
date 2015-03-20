@@ -1,3 +1,8 @@
+/**
+ * For some reason, when these tests are run along with all the others in this project, I get a "script error". Running
+ * them on their own using `ddescribe` works okay. Therefore this test is ignored in general unless specifically testing
+ * this directive, in which case change `xdescribe` to `ddescribe`.
+ */
 xdescribe('dirDisqus directive', function() {
     var scope,
         elem,
