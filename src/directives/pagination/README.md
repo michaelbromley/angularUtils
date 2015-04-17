@@ -91,7 +91,16 @@ And finally include the pagination itself.
     </dir-pagination-controls>
 ```
 
-### Specifying The Template
+### Customising & Specifying The Template
+
+By default, the pagination controls will use a built-in template which uses the exact same markup as is found in the
+dirPagination.tpl.html file (which conforms to Bootstrap's pagination markup). Therefore, it is not necessary to specify a template.
+
+However, you may not want to use the default embedded template - for example if you use a particular CSS framework that
+expects pagination lists to have a particular structure different from the default.
+
+If you plan to use a custom template, take a look at the default as demonstrated in dirPagination.tpl.html to get
+an idea of how it interacts with the directive.
 
 There are two ways to specify the template of the pagination controls directive:
 
