@@ -8,7 +8,6 @@
   "description": "A collection of AngularJS utilities",
   "main": "src/angularUtils.js",
   "license": "MIT",
-  "private": true,
   "ignore": [
     "**/.*",
     "node_modules",
