@@ -50,12 +50,22 @@ on the directive's element tag. For more information on the available config var
             disqus-category-id="{{ post.catId }}"
             disqus-disable-mobile="false"
             disqus-config-language="{{ post.lang }}"
-            ready-to-bind="{{ loaded }}">
+            disqus-remote-auth-s3="{{remote_auth_s3}}"
+            disqus-api-key="{{public_api_key}}"
+            ready-to-bind="{{ loaded }}"
+            >
 </dir-disqus>
 ```
 
 If using the `disqus-config-language` setting, please see [this Disqus article on multi-lingual websites](https://help.disqus.com/customer/portal/articles/466249-multi-lingual-websites)
 for which languages are supported.
+
+## `disqus-remote-auth-s3 and disqus-api-key` attributes for SSO
+If using the `disqus-remote-auth-s3 and disqus-api-key` setting, please see [Integrating Single Sign-On](https://help.disqus.com/customer/portal/articles/236206#sso-script)
+to know how to generate a remote_auth_s3 and public_api_key.
+
+note:Single Sign-on (SSO) allows users to sign into a site and be able to use Disqus Comments without having to re-authenticate Disqus. SSO will create a site-specific user profile on Disqus, in a way that will prevent conflict with existing Disqus users.
+
 
 ## `ready-to-bind` attribute
 
