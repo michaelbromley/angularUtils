@@ -56,7 +56,6 @@
                         isReady = "true";
                     }
                     if (scope.$eval(isReady)) {
-                      console.log('remote'+scope.disqus_remote_auth_s3);
                         // put the config variables into separate global vars so that the Disqus script can see them
                         $window.disqus_shortname = scope.disqus_shortname;
                         $window.disqus_identifier = scope.disqus_identifier;
