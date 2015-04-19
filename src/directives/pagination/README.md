@@ -87,7 +87,8 @@ And finally include the pagination itself.
     [boundary-links=""]
     [on-page-change=""]
     [pagination-id=""]
-    [template-url=""]>
+    [template-url=""]
+    [inline-template="">
     </dir-pagination-controls>
 ```
 
@@ -102,7 +103,7 @@ expects pagination lists to have a particular structure different from the defau
 If you plan to use a custom template, take a look at the default as demonstrated in dirPagination.tpl.html to get
 an idea of how it interacts with the directive.
 
-There are two ways to specify the template of the pagination controls directive:
+There are three ways to specify the template of the pagination controls directive:
 
 **1. Use the `paginationTemplateProvider` in your app's config block to set a global template for your app:**
 
@@ -116,6 +117,12 @@ myApp.config(function(paginationTemplateProvider) {
 
 ```HTML
 <dir-pagination-controls template-url="path/to/dirPagination.tpl.html"></dir-pagination-controls>
+```
+
+**3. Use the `inline-template` attribute on each pagination controls directive:**
+
+```HTML
+<dir-pagination-controls inline-template="true"></dir-pagination-controls>
 ```
 
 ## Directives API
