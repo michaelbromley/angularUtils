@@ -339,7 +339,7 @@ potential advantage of being triggered whenever the current-page changes, rather
 ```HTML
 <div ng-controller="UsersController">
     <table>
-        <tr dir-paginate="user in users | itemsPerPage: 25" total-items="totalUsers">
+        <tr dir-paginate="user in users | itemsPerPage: 25" total-items="totalUsers" current-page="pagination.current">
             <td>{{ user.name }}</td>
             <td>{{ user.email }}</td>
         </tr>
