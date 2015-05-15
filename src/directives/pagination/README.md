@@ -16,7 +16,7 @@ filtering of the collection.
 - [Basic Example](#basic-example)
 - [Installation](#installation)
 - [Usage](#usage)
-	- [Specifying The Template](#specifying-the-template)
+	- [Specifying The Template](#customising--specifying-the-template)
 - [Directives API](#directives-api)
 	- [dir-paginate](#dir-paginate)
 	- [dir-pagination-controls](#dir-pagination-controls)
