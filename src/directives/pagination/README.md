@@ -240,7 +240,7 @@ An example of two independent paginations on one page would look like this:
 <dir-pagination-controls pagination-id="branch"></dir-pagination-controls>
 ```
 
-The pagination-ids above are set to "cust" in the first instance and "branch" in the second. The pagination-ids can be anything you like,
+The pagination-ids above are set to "cust" in the first instance and "branch" in the second. The pagination-ids can be any [valid JavaScript identifier](https://mathiasbynens.be/notes/javascript-identifiers) (i.e. no hyphens, cannot begin with a number etc. [further discussion here](http://www.michaelbromley.co.uk/blog/410/a-note-on-angular-expressions-and-javascript-identifiers)),
 the important thing is to make sure the exact same id is used on both the pagination and the controls directives. If the 2 ids don't match, you should see a helpful
 exception in the console.
 
