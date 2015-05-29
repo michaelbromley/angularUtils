@@ -87,7 +87,8 @@ And finally include the pagination itself.
     [boundary-links=""]
     [on-page-change=""]
     [pagination-id=""]
-    [template-url=""]>
+    [template-url=""]
+    [auto-hide=""]>
     </dir-pagination-controls>
 ```
 
@@ -164,7 +165,9 @@ i.e. `<dir-pagination-controls on-page-change="myMethod(newPageNumber)">`, and t
 * **`pagination-id`** (optional) Used to group together the dir-pagination-controls with a corresponding dir-paginate when you need more than
 one pagination instance per page. See the section below on setting up multiple instances.
 
-* **`template-url`**  (optional, default = `directives/pagination/dirPagination.tpl.html`) Specifies the template to use.
+* **`template-url`** (optional, default = `directives/pagination/dirPagination.tpl.html`) Specifies the template to use.
+
+* **`auto-hide`** (optional, default = true) Specify whether the dir-pagination-controls should be hidden when there's not enough elements to paginate over.
 
 Note: you cannot use the `dir-pagination-controls` directive without `dir-paginate`. Attempting to do so will result in an
 exception.
@@ -357,7 +360,7 @@ you'll get some nice styling for free. If you don't use Bootstrap, it's simple t
 ## Contribution
 
 Pull requests are welcome. If you are adding a new feature or fixing an as-yet-untested use case, please consider
-writing unit tests to cover your change(s). All unit tests are contained in the `dirPagination.spec.js` file, and 
+writing unit tests to cover your change(s). All unit tests are contained in the `dirPagination.spec.js` file, and
 Karma is set up if you run `grunt watch` as you make changes.
 
 At a minimum, make sure that all the tests still pass. Thanks!
