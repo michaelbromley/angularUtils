@@ -121,6 +121,15 @@ describe('dirPagination directive', function() {
             expect(listItems).toEqual(['item 99', 'item 98', 'item 97', 'item 96', 'item 95']);
         });
 
+        it('should allow parentheses around the itemsPerPage filter', function() {
+            var customExpression = "item in filtered = (collection | filter: '1' | itemsPerPage: itemsPerPage)";
+            compileElement(myCollection, 5, 1, customExpression);
+
+            var listItems = getListItems();
+            expect(listItems).toEqual(['item 1', 'item 10', 'item 11', 'item 12', 'item 13']);
+            expect($scope.filtered.length).toEqual(5);
+        });
+
         it('should work inside a transcluded directive (ng-if)', function() {
             $scope.collection = myCollection;
             var html = '<div ng-if="true">' +
