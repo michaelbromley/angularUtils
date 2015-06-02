@@ -478,6 +478,56 @@ describe('dirPagination directive', function() {
                     expect(listItems.length).toEqual(100);
                 });
             });
+
+            describe('auto-hide attribute', function () {
+                function compileWithAttributesAndItemsPerPage(attributes, itemsPerPage) {
+                    $scope.collection = myCollection;
+                    $scope.currentPage = 1;
+                    var html = '<ul class="list"><li dir-paginate="item in collection | itemsPerPage: ' +
+                        itemsPerPage + '" current-page="currentPage">{{ item }}</li></ul> ' +
+                        '<dir-pagination-controls ' + attributes + ' ></dir-pagination-controls>';
+                    containingElement.append($compile(html)($scope));
+                    $scope.$apply();
+                }
+
+                it('when not set, should not generate pagination controls, with not enough items to paginate over', function () {
+                    compileWithAttributesAndItemsPerPage('', 100);
+                    var pagination = containingElement.find('ul.pagination');
+                    expect(pagination.length).toEqual(0);
+                });
+
+                it('when not set, should generate pagination controls, with enough items to paginate over', function () {
+                    compileWithAttributesAndItemsPerPage('', 99);
+                    var pagination = containingElement.find('ul.pagination');
+                    expect(pagination.length).toEqual(1);
+                });
+
+                it('when set to false, should generate pagination controls, with not enough items to paginate over', function () {
+                    compileWithAttributesAndItemsPerPage('auto-hide="false"', 100);
+                    var pagination = containingElement.find('ul.pagination');
+                    expect(pagination.length).toEqual(1);
+                    var pageLinks = containingElement.find('ul.pagination li.disabled');
+                    expect(pageLinks.length).toEqual(3);
+                });
+
+                it('when set to false, should generate pagination controls, with enough items to paginate over', function () {
+                    compileWithAttributesAndItemsPerPage('auto-hide="false"', 99);
+                    var pagination = containingElement.find('ul.pagination');
+                    expect(pagination.length).toEqual(1);
+                });
+
+                it('when set to true, should generate pagination controls, with enough items to paginate over', function () {
+                    compileWithAttributesAndItemsPerPage('auto-hide="true"', 100);
+                    var pagination = containingElement.find('ul.pagination');
+                    expect(pagination.length).toEqual(0);
+                });
+
+                it('when set to true, should generate pagination controls, with not enough items to paginate over', function () {
+                    compileWithAttributesAndItemsPerPage('auto-hide="true"', 99);
+                    var pagination = containingElement.find('ul.pagination');
+                    expect(pagination.length).toEqual(1);
+                });
+            });
         });
 
     });

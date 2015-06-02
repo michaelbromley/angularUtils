@@ -218,3 +218,11 @@ pip-log.txt
 .idea/
 node_modules/
 vendor/
+
+
+#############
+## Sublime Text
+#############
+
+*.sublime-project
+*.sublime-workspace
