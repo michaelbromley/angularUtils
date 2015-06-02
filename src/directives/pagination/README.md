@@ -55,7 +55,11 @@ You can install with Bower:
 
 `bower install angular-utils-pagination`
 
-Alternatively just download the files `dirPagination.js` and `dirPagination.tpl.html`. Using bower has the advantage of making version management easier.
+or npm:
+
+`npm install angular-utils-pagination`
+
+Alternatively just download the files `dirPagination.js` and `dirPagination.tpl.html`. Using Bower or npm has the advantage of making version management easier.
 
 ## Usage
 
