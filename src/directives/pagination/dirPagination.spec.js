@@ -209,14 +209,21 @@ describe('dirPagination directive', function() {
 
     describe('pagination controls', function() {
 
-        it('should throw an exception if the dir-paginate directive has not been set up', function() {
+        beforeEach(function(){
+            spyOn(console, 'log').and.callThrough();
+        });
+
+        it('should throw a warning if the dir-paginate directive has not been set up', function() {
+
             function compile() {
                 var html = '<dir-pagination-controls></dir-pagination-controls>';
                 containingElement.append($compile(html)($scope));
                 $scope.$apply();
             }
 
-            expect(compile).toThrow("pagination directive: the pagination controls cannot be used without the corresponding pagination directive.");
+            compile();
+
+            expect(console.log).toHaveBeenCalledWith('WARNING - pagination directive: the pagination controls cannot be used without the corresponding pagination directive, which was not found at link time.');
         });
 
         it('should not display pagination if all rows fit on one page', function() {
@@ -552,6 +559,7 @@ describe('dirPagination directive', function() {
                 collection1.push('c1:' + i);
                 collection2.push('c2:' + i);
             }
+            spyOn(console, 'log').and.callThrough();
         });
 
         /**
@@ -663,7 +671,7 @@ describe('dirPagination directive', function() {
             expect(getMultiListItems("c2")).toEqual(['c2:6', 'c2:7']);
         });
 
-        it('should throw an exception if a non-existant paginationId is set in the pagination-controls', function() {
+        it('should print a warning if a non-existant paginationId is set in the pagination-controls', function() {
             $scope.collection = [1,2,3,4,5];
 
             function compile() {
@@ -673,8 +681,8 @@ describe('dirPagination directive', function() {
                 containingElement.append($compile(html)($scope));
                 $scope.$apply();
             }
-
-            expect(compile).toThrow("pagination directive: the pagination controls (id: id2) cannot be used without the corresponding pagination directive.");
+            compile();
+            expect(console.log).toHaveBeenCalledWith('WARNING - pagination directive: the pagination controls (id: id2) cannot be used without the corresponding pagination directive, which was not found at link time.');
         });
 
         it('should throw an exception if a non-existant paginationId is set in the itemsPerPage filter', function() {
