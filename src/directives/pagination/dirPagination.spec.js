@@ -210,7 +210,7 @@ describe('dirPagination directive', function() {
     describe('pagination controls', function() {
 
         beforeEach(function(){
-            spyOn(console, 'log').and.callThrough();
+            spyOn(console, 'warn').and.callThrough();
         });
 
         it('should throw a warning if the dir-paginate directive has not been set up', function() {
@@ -223,7 +223,7 @@ describe('dirPagination directive', function() {
 
             compile();
 
-            expect(console.log).toHaveBeenCalledWith('WARNING - pagination directive: the pagination controls cannot be used without the corresponding pagination directive, which was not found at link time.');
+            expect(console.warn).toHaveBeenCalledWith('Pagination directive: the pagination controls cannot be used without the corresponding pagination directive, which was not found at link time.');
         });
 
         it('should not display pagination if all rows fit on one page', function() {
@@ -559,7 +559,7 @@ describe('dirPagination directive', function() {
                 collection1.push('c1:' + i);
                 collection2.push('c2:' + i);
             }
-            spyOn(console, 'log').and.callThrough();
+            spyOn(console, 'warn').and.callThrough();
         });
 
         /**
@@ -682,7 +682,7 @@ describe('dirPagination directive', function() {
                 $scope.$apply();
             }
             compile();
-            expect(console.log).toHaveBeenCalledWith('WARNING - pagination directive: the pagination controls (id: id2) cannot be used without the corresponding pagination directive, which was not found at link time.');
+            expect(console.warn).toHaveBeenCalledWith('Pagination directive: the pagination controls (id: id2) cannot be used without the corresponding pagination directive, which was not found at link time.');
         });
 
         it('should throw an exception if a non-existant paginationId is set in the itemsPerPage filter', function() {
