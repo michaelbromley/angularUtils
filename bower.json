@@ -1,14 +1,13 @@
 {
   "name": "angularUtils",
   "version": "0.0.0",
-  "homepage": "https://github.com/michaelbromley/angularUtils",
+  "homepage": "https://github.com/nielsboogaard/angularUtils",
   "authors": [
     "Michael Bromley <michael@michaelbromley.co.uk>"
   ],
   "description": "A collection of AngularJS utilities",
   "main": "src/angularUtils.js",
   "license": "MIT",
-  "private": true,
   "ignore": [
     "**/.*",
     "node_modules",
