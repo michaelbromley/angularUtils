@@ -67,7 +67,7 @@
                                         route: workingState.name
                                     };
                                     if (scope.includeStateData === 'true') {
-                                        breadcrumb.data = workingState.data;
+                                        breadcrumb['data'] = workingState.data;
                                     }
                                     breadcrumbs.push(breadcrumb);
                                 }
