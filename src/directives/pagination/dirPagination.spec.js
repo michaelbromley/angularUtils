@@ -210,7 +210,7 @@ describe('dirPagination directive', function() {
     describe('pagination controls', function() {
 
         beforeEach(function(){
-            spyOn(console, 'warn').and.callThrough();
+            spyOn(console, 'warn');
         });
 
         it('should throw a warning if the dir-paginate directive has not been set up', function() {
@@ -422,7 +422,7 @@ describe('dirPagination directive', function() {
                     $scope.myCallback = function(currentPage) {
                         return "The current page is " + currentPage;
                     };
-                    spyOn($scope, 'myCallback').and.callThrough();
+                    spyOn($scope, 'myCallback');
                 });
 
                 it('should call the callback once when page link clicked', function() {
@@ -559,7 +559,7 @@ describe('dirPagination directive', function() {
                 collection1.push('c1:' + i);
                 collection2.push('c2:' + i);
             }
-            spyOn(console, 'warn').and.callThrough();
+            spyOn(console, 'warn');
         });
 
         /**
