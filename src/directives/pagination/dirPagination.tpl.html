@@ -1,4 +1,4 @@
-<ul class="pagination" ng-if="1 < pages.length">
+<ul class="pagination" ng-if="1 < pages.length || !autoHide">
     <li ng-if="boundaryLinks" ng-class="{ disabled : pagination.current == 1 }">
         <a href="" ng-click="setCurrent(1)">&laquo;</a>
     </li>
