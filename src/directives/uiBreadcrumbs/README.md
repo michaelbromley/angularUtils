@@ -17,11 +17,22 @@ nested views, you should use a named view and refer to it when configuring your 
 
 ## Installation
 
+### 1. Download
 You can install with Bower:
 
 `bower install angular-utils-ui-breadcrumbs`
 
 Alternatively just download the files `uiBreadcrumbs.js` and `uiBreadcrumbs.tpl.html`. Using bower has the advantage of making version management easier.
+
+### 2. Include in your app
+
+Make sure the file `uiBreadcrumbs.js` is being loaded in your app, and that the template file is available somewhere (see the next section for how to configure the path to the template).
+
+Declare the dependency in your Angular module:
+
+```JavaScript
+angular.module('myApp', ['angularUtils.directives.uiBreadcrumbs']);
+```
 
 ## Usage
 
