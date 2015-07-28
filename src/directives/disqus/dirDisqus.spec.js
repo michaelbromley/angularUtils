@@ -3,7 +3,7 @@
  * them on their own using `ddescribe` works okay. Therefore this test is ignored in general unless specifically testing
  * this directive, in which case change `xdescribe` to `ddescribe`.
  */
-xdescribe('dirDisqus directive', function() {
+describe('dirDisqus directive', function() {
     var scope,
         elem,
         compiled,
@@ -19,6 +19,7 @@ xdescribe('dirDisqus directive', function() {
         'disqus-category-id="{{ post.catId }}"' +
         'disqus-disable-mobile="false"' +
         'disqus-config-language="{{ post.lang }}"' +
+        'disqus-on-ready="ready()"' +
         'ready-to-bind="{{ loaded }}">' +
         '</dir-disqus>';
 
@@ -33,6 +34,10 @@ xdescribe('dirDisqus directive', function() {
                 lang: 'en'
             };
             scope.loaded = false;
+            scope.readyCalled = false;
+            scope.ready = function() {
+                scope.readyCalled = true;
+            };
 
             //get the jqLite or jQuery element
             elem = angular.element(html);
@@ -41,14 +46,20 @@ xdescribe('dirDisqus directive', function() {
             compiled = $compile(elem);
 
             //run the compiled view.
-            compiled(scope);
+            var element = compiled(scope);
 
-            //call digest on the scope!
-            scope.$digest();
+            var div = document.createElement("div");
+            div.innerHTML = element.html();
+
+            // Just add disqus to document - it is needed to work embed.js properly
+            document.getElementsByTagName('body')[0].appendChild(div);
         });
     });
 
     it('should not do anything when ready to bind is false', function() {
+        //call digest on the scope!
+        scope.$digest();
+
         expect(elem.find("#disqus_thread")).toBeTruthy();
         expect($("script[src='//shortname.disqus.com/embed.js']").length).toEqual(0);
         expect(window.disqus_shortname).toBeFalsy();
@@ -57,6 +68,7 @@ xdescribe('dirDisqus directive', function() {
         expect(window.disqus_url).toBeFalsy();
         expect(window.disqus_category_id).toBeFalsy();
         expect(window.disqus_disable_mobile).toBeFalsy();
+        expect(scope.readyCalled).toBeFalsy();
         expect(window.language).toBeFalsy();
     });
 
@@ -70,7 +82,16 @@ xdescribe('dirDisqus directive', function() {
         expect(window.disqus_url).toEqual('http://www.test.com');
         expect(window.disqus_category_id).toEqual('999');
         expect(window.disqus_disable_mobile).toEqual('false');
+
+        window.page = {};
+        window.callbacks = {};
         window.disqus_config();
+
         expect(window.language).toEqual('en');
+        expect(window.callbacks.onReady).toBeDefined();
+        expect(window.callbacks.onReady.length).toEqual(1);
+        window.callbacks.onReady[0]();
+        expect(scope.readyCalled).toBeTruthy();
+
     });
 });
