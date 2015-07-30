@@ -98,10 +98,9 @@ function myController($scope, $http) {
 </dir-disqus>
 ```
 
- If you omit the `ready-to-bind` attribute, the Disqus widget will be created immediately. This is okay so long as
- you don't rely on interpolated data which is not available on page load.
+If you omit the `ready-to-bind` attribute, the Disqus widget will be created immediately. This is okay so long as you don't rely on interpolated data which is not available on page load.
 
- ## `disqus-on-ready` attribute
+## `disqus-on-ready` attribute
 
  If Disqus is rendered, `disqus-on-ready` function will be called. Callback is registered to disqus by similar technique
  as explained in [this post](https://help.disqus.com/customer/portal/articles/466258-capturing-disqus-commenting-activity-via-callbacks).
