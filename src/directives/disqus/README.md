@@ -52,6 +52,7 @@ on the directive's element tag. For more information on the available config var
             disqus-config-language="{{ post.lang }}"
             disqus-remote-auth-s3="{{remote_auth_s3}}"
             disqus-api-key="{{public_api_key}}"
+            disqus-on-ready="ready()"
             ready-to-bind="{{ loaded }}"
             >
 </dir-disqus>
@@ -99,3 +100,8 @@ function myController($scope, $http) {
 
  If you omit the `ready-to-bind` attribute, the Disqus widget will be created immediately. This is okay so long as
  you don't rely on interpolated data which is not available on page load.
+
+ ## `disqus-on-ready` attribute
+
+ If Disqus is rendered, `disqus-on-ready` function will be called. Callback is registered to disqus by similar technique
+ as explained in [this post](https://help.disqus.com/customer/portal/articles/466258-capturing-disqus-commenting-activity-via-callbacks).
