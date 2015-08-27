@@ -5,7 +5,7 @@
     <li ng-if="directionLinks" ng-class="{ disabled : pagination.current == 1 }">
         <a href="" ng-click="setCurrent(pagination.current - 1)">&lsaquo;</a>
     </li>
-    <li ng-repeat="pageNumber in pages track by $index" ng-class="{ active : pagination.current == pageNumber, disabled : pageNumber == '...' }">
+    <li ng-repeat="pageNumber in pages track by tracker(pageNumber, $index)" ng-class="{ active : pagination.current == pageNumber, disabled : pageNumber == '...' }">
         <a href="" ng-click="setCurrent(pageNumber)">{{ pageNumber }}</a>
     </li>
 
