@@ -28,6 +28,7 @@ filtering of the collection.
 - [Working With Asynchronous Data](#working-with-asynchronous-data)
 	- [Example Asynchronous Setup](#example-asynchronous-setup)
 - [Styling](#styling)
+- [FAQ](#frequently-asked-questions)
 - [Contribution](#contribution)
 - [Credits](#credits)
 
@@ -360,6 +361,27 @@ potential advantage of being triggered whenever the current-page changes, rather
 
 I've based the pagination navigation on the Bootstrap 3 component, so if you use Bootstrap in your project,
 you'll get some nice styling for free. If you don't use Bootstrap, it's simple to style the links with css.
+
+## Frequently Asked Questions
+
+### Why does my sort / filter only affect the current page?
+This is a common problem and is usually due to the `itemsPerPage` filter not being at the end of the expression. For example, consider the following:
+
+```HTML
+<li dir-paginate="item in collection | itemsPerPage: 10 | filter: q">...</li> <!-- BAD -->
+```
+
+In this case, the collection is first truncated to 10 items by the `itemsPerPage` filter, and then *those 10 items only* are filtered. The solution is to ensure the `itemsPerPage` filter comes after any sorting / filtering:
+
+```HTML
+<li dir-paginate="item in collection | filter: q | itemsPerPage: 10">...</li> <!-- GOOD -->
+```
+
+### What is the `paginationService` and why is it not documented?
+
+The [`paginationService`](https://github.com/michaelbromley/angularUtils/blob/6055d260be44c0ba221a8c9bea015ac97e836a10/src/directives/pagination/dirPagination.js#L466-L521) is used internally to facilitate communication between the instances of the `dir-pagination` and `dir-pagination-controls` directives. Due to the way Angular's dependency injection system works, the service will be exposed in your app, meaning you can inject it directly into your controllers etc.
+
+However, since the `paginationService` is intended as an internal service, I cannot make any guarantees about the API, so it is dangerous to rely on using it directly in your code. Therefore I am not documenting it currently, so as not to encourage its general use. If you have a case that you feel can only be solved by direct use of this API, please open an issue and we can discuss it.
 
 ## Contribution
 
