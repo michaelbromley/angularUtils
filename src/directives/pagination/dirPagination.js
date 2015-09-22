@@ -219,6 +219,7 @@
 
         return {
             restrict: 'AE',
+            replace: true,
             templateUrl: function(elem, attrs) {
                 return attrs.templateUrl || paginationTemplate.getPath();
             },
@@ -232,6 +233,9 @@
         };
 
         function dirPaginationControlsLinkFn(scope, element, attrs) {
+
+            // give developer something to grab for custom styling
+            element.addClass('dir-pagination-controls');
 
             // rawId is the un-interpolated value of the pagination-id attribute. This is only important when the corresponding dir-paginate directive has
             // not yet been linked (e.g. if it is inside an ng-if block), and in that case it prevents this controls directive from assuming that there is
