@@ -174,6 +174,8 @@ one pagination instance per page. See the section below on setting up multiple i
 
 * **`auto-hide`** (optional, default = true) Specify whether the dir-pagination-controls should be hidden when there's not enough elements to paginate over.
 
+* **`dir-disabled ** Specify whether the dir-pagination-controls should be disabled, for example, when fetching data from remote server.
+
 Note: you cannot use the `dir-pagination-controls` directive without `dir-paginate`. Attempting to do so will result in an
 exception.
 
