@@ -87,23 +87,24 @@
                 paginationService.setCurrentPageParser(paginationId, currentPageGetter, scope);
 
                 if (typeof attrs.totalItems !== 'undefined') {
-                    paginationService.setAsyncModeTrue(paginationId);
-                    scope.$watch(function() {
+                    scope.$watch(function () {
                         return $parse(attrs.totalItems)(scope);
                     }, function (result) {
-                        if (0 <= result) {
-                            paginationService.setCollectionLength(paginationId, result);
-                        }
-                    });
-                } else {
-                    scope.$watchCollection(function() {
-                        return collectionGetter(scope);
-                    }, function(collection) {
-                        if (collection) {
-                            paginationService.setCollectionLength(paginationId, collection.length);
+                        if (typeof result !== 'undefined' && result !== null && result !== false && 0 <= result) {
+                            paginationService.setTotalItems(paginationId, result);
+                        } else {
+                            paginationService.setTotalItems(paginationId, null);
                         }
                     });
                 }
+
+                scope.$watchCollection(function () {
+                    return collectionGetter(scope);
+                }, function (collection) {
+                    if (collection) {
+                        paginationService.setCollectionLength(paginationId, collection.length);
+                    }
+                });
 
                 // Delegate to the link function returned by the new compilation of the ng-repeat
                 compiled(scope);
@@ -471,7 +472,7 @@
         this.registerInstance = function(instanceId) {
             if (typeof instances[instanceId] === 'undefined') {
                 instances[instanceId] = {
-                    asyncMode: false
+                    totalItems: null
                 };
                 lastRegisteredInstance = instanceId;
             }
@@ -508,15 +509,19 @@
             instances[instanceId].collectionLength = val;
         };
         this.getCollectionLength = function(instanceId) {
-            return instances[instanceId].collectionLength;
+            if (this.isAsyncMode(instanceId)) {
+                return instances[instanceId].totalItems;
+            } else {
+                return instances[instanceId].collectionLength;
+            }            
         };
 
-        this.setAsyncModeTrue = function(instanceId) {
-            instances[instanceId].asyncMode = true;
+        this.setTotalItems = function(instanceId, value) {
+            instances[instanceId].totalItems = value;
         };
 
         this.isAsyncMode = function(instanceId) {
-            return instances[instanceId].asyncMode;
+            return instances[instanceId].totalItems != null;
         };
     }
 
