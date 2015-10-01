@@ -13,7 +13,7 @@ describe('uiBreadcrumbs directive', function() {
     beforeEach(module('templates-main'));
 
     beforeEach(function() {
-        var mockModule = angular.module('mockModule', function() {})
+        var mockModule = angular.module('mockModule', [])
             .config(function($stateProvider) {
                 $stateProvider
                     .state('root', {
