@@ -443,7 +443,7 @@
             }
             var end;
             var start;
-            if (collection instanceof Array) {
+            if (angular.isObject(collection)) {
                 itemsPerPage = parseInt(itemsPerPage) || 9999999999;
                 if (paginationService.isAsyncMode(paginationId)) {
                     start = 0;
@@ -453,11 +453,41 @@
                 end = start + itemsPerPage;
                 paginationService.setItemsPerPage(paginationId, itemsPerPage);
 
-                return collection.slice(start, end);
+                if (collection instanceof Array) {
+                    // the array just needs to be sliced
+                    return collection.slice(start, end);
+                } else {
+                    // in the case of an object, we need to get an array of keys, slice that, then map back to
+                    // the original object.
+                    var slicedObject = {};
+                    angular.forEach(keys(collection).slice(start, end), function(key) {
+                        slicedObject[key] = collection[key];
+                    });
+                    return slicedObject;
+                }
             } else {
                 return collection;
             }
         };
+    }
+
+    /**
+     * Shim for the Object.keys() method which does not exist in IE < 9
+     * @param obj
+     * @returns {Array}
+     */
+    function keys(obj) {
+        if (!Object.keys) {
+            var objKeys = [];
+            for (var i in obj) {
+                if (obj.hasOwnProperty(i)) {
+                    objKeys.push(i);
+                }
+            }
+            return objKeys;
+        } else {
+            return Object.keys(obj);
+        }
     }
 
     /**

@@ -9,6 +9,7 @@ describe('dirPagination directive', function() {
     var $timeout;
     var containingElement;
     var myCollection;
+    var myObjectCollection;
 
     beforeEach(module('angularUtils.directives.dirPagination'));
     beforeEach(module('templates-main'));
@@ -160,6 +161,38 @@ describe('dirPagination directive', function() {
             var listItems = getListItems();
             expect(listItems.length).toEqual(2);
             expect(listItems).toEqual(['item 1', 'item 2']);
+        });
+
+    });
+
+    describe('paginating over an object', function() {
+        beforeEach(function() {
+            myObjectCollection = {};
+            for(var i = 1; i <= 100; i++) {
+                myObjectCollection['key_' + i] = 'item ' + i;
+            }
+        });
+
+        it('should not throw an exception when the collection is an object', function() {
+            function compile() {
+                compileElement(myObjectCollection, 10, 1, "(key, item) in collection | itemsPerPage: itemsPerPage");
+            }
+            expect(compile).not.toThrow();
+        });
+
+        it('should correctly paginate with simple syntax', function() {
+            compileElement(myObjectCollection, 5, 1, "item in collection | itemsPerPage: itemsPerPage");
+            expect(getListItems()).toEqual(['item 1', 'item 2', 'item 3', 'item 4', 'item 5']);
+        });
+
+        it('should correctly paginate with (key, value) syntax', function() {
+            compileElement(myObjectCollection, 5, 1, "(key, item) in collection | itemsPerPage: itemsPerPage");
+            expect(getListItems()).toEqual(['item 1', 'item 2', 'item 3', 'item 4', 'item 5']);
+        });
+
+        it('should show the correct items for the currentPage', function() {
+            compileElement(myObjectCollection, 5, 4, "(key, item) in collection | itemsPerPage: itemsPerPage");
+            expect(getListItems()).toEqual(['item 16', 'item 17', 'item 18', 'item 19', 'item 20']);
         });
 
     });
