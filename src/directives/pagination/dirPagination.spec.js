@@ -64,14 +64,6 @@ describe('dirPagination directive', function() {
             expect(compile).toThrow("pagination directive: the 'itemsPerPage' filter must be set.");
         });
 
-        it('should allow a space after itemsPerPage and before the colon', function() {
-            function compile() {
-                var customExpression = "item in collection | itemsPerPage : 10";
-                compileElement(myCollection, 5, 1, customExpression);
-            }
-            expect(compile).not.toThrow();
-        });
-
         it('should repeat the items like ng-repeat', function() {
             compileElement(myCollection);
             var listItems = getListItems();
@@ -121,15 +113,6 @@ describe('dirPagination directive', function() {
             expect(listItems).toEqual(['item 99', 'item 98', 'item 97', 'item 96', 'item 95']);
         });
 
-        it('should allow parentheses around the itemsPerPage filter', function() {
-            var customExpression = "item in filtered = (collection | filter: '1' | itemsPerPage: itemsPerPage)";
-            compileElement(myCollection, 5, 1, customExpression);
-
-            var listItems = getListItems();
-            expect(listItems).toEqual(['item 1', 'item 10', 'item 11', 'item 12', 'item 13']);
-            expect($scope.filtered.length).toEqual(5);
-        });
-
         it('should work inside a transcluded directive (ng-if)', function() {
             $scope.collection = myCollection;
             var html = '<div ng-if="true">' +
@@ -177,6 +160,85 @@ describe('dirPagination directive', function() {
             var listItems = getListItems();
             expect(listItems.length).toEqual(2);
             expect(listItems).toEqual(['item 1', 'item 2']);
+        });
+
+    });
+
+    describe('valid expressions', function() {
+
+        beforeEach(function() {
+            $scope.getPageSize = function() {
+                return 10;
+            };
+        });
+
+        it('should allow a space after itemsPerPage and before the colon', function() {
+            function compile() {
+                compileElement(myCollection, 5, 1, "item in collection | itemsPerPage : 10");
+            }
+            expect(compile).not.toThrow();
+        });
+
+        it('should allow parentheses around the itemsPerPage filter', function() {
+            function compile() {
+                compileElement(myCollection, 5, 1, "item in filtered = (collection | filter: '1' | itemsPerPage: itemsPerPage)");
+            }
+
+            expect(compile).not.toThrow();
+            expect(getListItems()).toEqual(['item 1', 'item 10', 'item 11', 'item 12', 'item 13']);
+            expect($scope.filtered.length).toEqual(5);
+        });
+
+        it('should allow the itemsPerPage to be a scope method 1', function() {
+            function compile() {
+                compileElement(myCollection, 5, 1,  "item in collection | itemsPerPage: getPageSize()");
+            }
+            expect(compile).not.toThrow();
+            expect(getListItems().length).toEqual(10);
+        });
+
+        it('should allow the itemsPerPage to be a scope method 2', function() {
+            function compile() {
+                compileElement(myCollection, 5, 1,  "item in collection | itemsPerPage: getPageSize(myvar)");
+            }
+            expect(compile).not.toThrow();
+            expect(getListItems().length).toEqual(10);
+        });
+
+        it('should allow the itemsPerPage to be a scope method 3', function() {
+            function compile() {
+                compileElement(myCollection, 5, 1,  "item in filtered = (collection | itemsPerPage: getPageSize(_myvar))");
+            }
+            expect(compile).not.toThrow();
+            expect(getListItems().length).toEqual(10);
+        });
+
+        it('should allow alias syntax', function() {
+            function compile() {
+                compileElement(myCollection, 5, 1,  "item in collection  | itemsPerPage: 10 as myAlias");
+            }
+            expect(compile).not.toThrow();
+            expect(getListItems().length).toEqual(10);
+            expect($scope.myAlias.length).toEqual(10);
+        });
+
+        it('should allow alias syntax 2', function() {
+            function compile() {
+                compileElement(myCollection, 5, 1,  "item in collection  | itemsPerPage: getPageSize() as myAlias");
+            }
+            expect(compile).not.toThrow();
+            expect(getListItems().length).toEqual(10);
+            expect($scope.myAlias.length).toEqual(10);
+        });
+
+        it('should allow alias syntax 3', function() {
+            function compile() {
+                compileElement(myCollection, 5, 1,  "item in alias1 = (collection  | itemsPerPage: getPageSize()) as alias2");
+            }
+            expect(compile).not.toThrow();
+            expect(getListItems().length).toEqual(10);
+            expect($scope.alias1.length).toEqual(10);
+            expect($scope.alias2.length).toEqual(10);
         });
 
     });

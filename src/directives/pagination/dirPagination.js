@@ -53,10 +53,10 @@
         function dirPaginationCompileFn(tElement, tAttrs){
 
             var expression = tAttrs.dirPaginate;
-            // regex taken directly from https://github.com/angular/angular.js/blob/master/src/ng/directive/ngRepeat.js#L211
-            var match = expression.match(/^\s*([\s\S]+?)\s+in\s+([\s\S]+?)(?:\s+track\s+by\s+([\s\S]+?))?\s*$/);
+            // regex taken directly from https://github.com/angular/angular.js/blob/v1.4.x/src/ng/directive/ngRepeat.js#L339
+            var match = expression.match(/^\s*([\s\S]+?)\s+in\s+([\s\S]+?)(?:\s+as\s+([\s\S]+?))?(?:\s+track\s+by\s+([\s\S]+?))?\s*$/);
 
-            var filterPattern = /\|\s*itemsPerPage\s*:[^|\)]*/;
+            var filterPattern = /\|\s*itemsPerPage\s*:\s*(.*\(\s*\w*\)|([^\)]*?(?=as))|[^\)]*)/;
             if (match[2].match(filterPattern) === null) {
                 throw 'pagination directive: the \'itemsPerPage\' filter must be set.';
             }
