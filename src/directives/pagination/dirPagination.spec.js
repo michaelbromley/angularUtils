@@ -274,6 +274,36 @@ describe('dirPagination directive', function() {
             expect($scope.alias2.length).toEqual(10);
         });
 
+        it('should allow dot and bracket notation', function() {
+            function compile() {
+                $scope.foo = {
+                    name: 'myCollection',
+                    myCollection: myCollection,
+                    perPage: 10
+                };
+                compileElement(myCollection, 5, 1,  "item in foo[foo.name] | itemsPerPage:foo.perPage");
+            }
+            expect(compile).not.toThrow();
+            expect(getListItems().length).toEqual(10);
+        });
+
+
+        it('should allow track by syntax 1', function() {
+            function compile() {
+                compileElement(myCollection, 5, 1,  "item in collection | itemsPerPage: 10 track by $index");
+            }
+            expect(compile).not.toThrow();
+            expect(getListItems().length).toEqual(10);
+        });
+
+        it('should allow track by syntax 2', function() {
+            function compile() {
+                compileElement(myCollection, 5, 1,  "item in collection | itemsPerPage: 10 track by item");
+            }
+            expect(compile).not.toThrow();
+            expect(getListItems().length).toEqual(10);
+        });
+
     });
 
     describe('if currentPage attribute is not set', function() {
