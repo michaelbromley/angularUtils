@@ -710,7 +710,7 @@ describe('dirPagination directive', function() {
             $scope.collection[paginationId] = collection;
             $scope.itemsPerPage[paginationId] = itemsPerPage;
             $scope.currentPage[paginationId] = currentPage || 1;
-            expression = customExpression || "item in collection." + paginationId + " | itemsPerPage: itemsPerPage." + paginationId + ": '" + paginationId + "'";
+            expression = customExpression || "item in collection." + paginationId + " | itemsPerPage: itemsPerPage." + paginationId;
             html = '<ul class="list"><li dir-paginate="'+ expression + '" current-page="currentPage.' + paginationId + '" pagination-id="' + paginationId + '" >{{ item }}</li></ul> ' +
                 '<dir-pagination-controls pagination-id="' + paginationId + '"></dir-pagination-controls>';
             containingElement.append($compile(html)($scope));
@@ -822,6 +822,25 @@ describe('dirPagination directive', function() {
             }
 
             expect(compile).toThrow("pagination directive: the itemsPerPage id argument (id: id2) does not match a registered pagination-id.");
+        });
+
+        describe('valid expressions with pagination id', function() {
+
+            it('should allow track by syntax', function() {
+                function compile() {
+                    compileMultipleInstance(collection1, 10, 1, "c1", "item in collection.c1 | itemsPerPage: itemsPerPage.c1");
+                }
+                expect(compile).not.toThrow();
+                expect(getListItems().length).toEqual(10);
+            });
+
+            it('should allow track by with other filter syntax', function() {
+                function compile() {
+                    compileMultipleInstance(collection1, 10, 1, "c1", "item in collection.c1 | orderBy: reverse | itemsPerPage: itemsPerPage.c1");
+                }
+                expect(compile).not.toThrow();
+                expect(getListItems().length).toEqual(10);
+            });
         });
 
     });
