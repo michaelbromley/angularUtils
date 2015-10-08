@@ -1,4 +1,4 @@
- /**
+/**
  * Created by Michael on 04/05/14.
  */
 
@@ -117,9 +117,9 @@ describe('dirPagination directive', function() {
         it('should work inside a transcluded directive (ng-if)', function() {
             $scope.collection = myCollection;
             var html = '<div ng-if="true">' +
-                            '<ul class="list"><li dir-paginate="item in collection | itemsPerPage: 5">{{ item }}</li></ul> ' +
-                            '<dir-pagination-controls></dir-pagination-controls>' +
-                        '</div>';
+                '<ul class="list"><li dir-paginate="item in collection | itemsPerPage: 5">{{ item }}</li></ul> ' +
+                '<dir-pagination-controls></dir-pagination-controls>' +
+                '</div>';
             containingElement.append($compile(html)($scope));
             $scope.$apply();
 
@@ -465,9 +465,9 @@ describe('dirPagination directive', function() {
                 $scope.collection = myCollection;
                 $scope.showList = false;
                 html = '<div ng-if="showList">' +
-                            '<ul class="list"><li dir-paginate="item in collection | itemsPerPage: 10">{{ item }}</li></ul> ' +
-                        '</div>' +
-                        '<dir-pagination-controls></dir-pagination-controls>';
+                    '<ul class="list"><li dir-paginate="item in collection | itemsPerPage: 10">{{ item }}</li></ul> ' +
+                    '</div>' +
+                    '<dir-pagination-controls></dir-pagination-controls>';
                 containingElement.append($compile(html)($scope));
                 $scope.$apply();
             }
@@ -566,7 +566,7 @@ describe('dirPagination directive', function() {
                         $scope.currentPage = 1;
                         var html = '<dir-pagination-controls ' + attributes + ' ></dir-pagination-controls>' +
                             '<table>' +
-                                '<tr dir-paginate="item in collection | itemsPerPage: 10"><td>{{ item }}</td></tr>' +
+                            '<tr dir-paginate="item in collection | itemsPerPage: 10"><td>{{ item }}</td></tr>' +
                             '</table>';
                         containingElement.append($compile(html)($scope));
                         $scope.$apply();
@@ -843,6 +843,30 @@ describe('dirPagination directive', function() {
             });
         });
 
+        describe('dymanic pagination-id', function() {
+
+            function compileWithDynamicId(paginationId, customExpression) {
+                var html;
+                html = '<ul class="list"><li dir-paginate="'+ customExpression + '" current-page="1" pagination-id="' + paginationId + '" >{{ item }}</li></ul> ' +
+                    '<dir-pagination-controls pagination-id="' + paginationId + '"></dir-pagination-controls>';
+                containingElement.append($compile(html)($scope));
+                $scope.$apply();
+            }
+
+            it('should allow object reference', function() {
+                function compile() {
+                    $scope.myId = {
+                        foo: 'foo'
+                    };
+                    $scope.collection = myCollection;
+                    compileWithDynamicId('myId.foo', 'item in collection | itemsPerPage: 10');
+                }
+
+                expect(compile).not.toThrow();
+                expect(getListItems().length).toEqual(10);
+            });
+        });
+
     });
 
     describe('pagination controls template API', function() {
@@ -914,10 +938,10 @@ describe('dirPagination directive', function() {
             $scope.itemsPerPage = itemsPerPage || 10;
             $scope.currentPage = currentPage || 1;
             html = '<div>' +
-                        '<div dir-paginate-start="item in collection | itemsPerPage: itemsPerPage" current-page="currentPage">header</div>' +
-                        '<p>{{ item }}</p>' +
-                        '<div dir-paginate-end>footer</div>' +
-                    '</div> ';
+                '<div dir-paginate-start="item in collection | itemsPerPage: itemsPerPage" current-page="currentPage">header</div>' +
+                '<p>{{ item }}</p>' +
+                '<div dir-paginate-end>footer</div>' +
+                '</div> ';
             containingElement.append($compile(html)($scope));
             $scope.$apply();
         }
