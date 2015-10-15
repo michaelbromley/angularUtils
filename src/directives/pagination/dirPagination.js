@@ -188,8 +188,11 @@
             if (attrs.currentPage) {
                 currentPageGetter = $parse(attrs.currentPage);
             } else {
-                // if the current-page attribute was not set, we'll make our own
-                var defaultCurrentPage = paginationId + '__currentPage';
+                // If the current-page attribute was not set, we'll make our own.
+                // Replace any non-alphanumeric characters which might confuse
+                // the $parse service and give unexpected results.
+                // See https://github.com/michaelbromley/angularUtils/issues/233
+                var defaultCurrentPage = (paginationId + '__currentPage').replace(/\W/g, '_');
                 scope[defaultCurrentPage] = 1;
                 currentPageGetter = $parse(defaultCurrentPage);
             }

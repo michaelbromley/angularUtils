@@ -163,6 +163,27 @@ describe('dirPagination directive', function() {
             expect(listItems).toEqual(['item 1', 'item 2']);
         });
 
+        // see https://github.com/michaelbromley/angularUtils/issues/233
+        function testPaginationId(paginationIdString) {
+            $scope.collection = myCollection;
+            var html = '<ul class="list"><li dir-paginate="item in collection | itemsPerPage: 2"  pagination-id="' + paginationIdString + '" >{{ item }}</li></ul> ' +
+                '<dir-pagination-controls pagination-id="some.string"></dir-pagination-controls>';
+            containingElement.append($compile(html)($scope));
+            $scope.$apply();
+
+            var listItems = getListItems();
+            expect(listItems.length).toEqual(2);
+            expect(listItems).toEqual(['item 1', 'item 2']);
+        }
+
+        it('should work when the pagination-id evaluates to a string containing a period.', function() {
+            testPaginationId('some.string');
+        });
+
+        it('should work when the pagination-id evaluates to a string containing a hyphen.', function() {
+            testPaginationId('some-string');
+        });
+
     });
 
     describe('paginating over an object', function() {
