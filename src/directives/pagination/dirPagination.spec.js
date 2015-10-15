@@ -287,6 +287,18 @@ describe('dirPagination directive', function() {
             expect(getListItems().length).toEqual(10);
         });
 
+        // see https://github.com/michaelbromley/angularUtils/issues/241
+        // the actual issue was caused by the work "sharedTasksFilters", which was
+        // being matched by the part of the regex that looks for "as" alias syntax.
+        it('should allow deeply nested, long-winded object for itemsPerPage', function() {
+            function compile() {
+                $scope.eventsCtrl = { eventsFilters: { sharedTasksFilters: { eventsPerPage: 10 } } };
+                compileElement(myCollection, 5, 1,  "item in collection | itemsPerPage:eventsCtrl.eventsFilters.sharedTasksFilters.eventsPerPage");
+            }
+            expect(compile).not.toThrow();
+            expect(getListItems().length).toEqual(10);
+        });
+
 
         it('should allow track by syntax 1', function() {
             function compile() {
