@@ -47,6 +47,7 @@
         return  {
             terminal: true,
             multiElement: true,
+            priority: 100,
             compile: dirPaginationCompileFn
         };
 
