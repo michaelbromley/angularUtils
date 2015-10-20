@@ -25,13 +25,7 @@
     /**
      * Module
      */
-    var module;
-    try {
-        module = angular.module(moduleName);
-    } catch(err) {
-        // named module does not exist, so create one
-        module = angular.module(moduleName, []);
-    }
+    var module = angular.module(moduleName, []);
 
     module
         .directive('dirPaginate', ['$compile', '$parse', 'paginationService', dirPaginateDirective])
