@@ -116,7 +116,7 @@
                 idDefinedInFilter = !!expression.match(/(\|\s*itemsPerPage\s*:[^|]*:[^|]*)/);
 
             if (paginationId !== DEFAULT_ID && !idDefinedInFilter) {
-                repeatExpression = expression.replace(/(\|\s*itemsPerPage\s*:[^|]*)/, "$1 : '" + paginationId + "'");
+                repeatExpression = expression.replace(/(\|\s*itemsPerPage\s*:\s*[^|\s]*)/, "$1 : '" + paginationId + "'");
             } else {
                 repeatExpression = expression;
             }

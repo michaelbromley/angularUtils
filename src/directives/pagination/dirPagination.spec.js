@@ -861,7 +861,7 @@ describe('dirPagination directive', function() {
 
             it('should allow track by syntax', function() {
                 function compile() {
-                    compileMultipleInstance(collection1, 10, 1, "c1", "item in collection.c1 | itemsPerPage: itemsPerPage.c1");
+                    compileMultipleInstance(collection1, 10, 1, "c1", "item in collection.c1 | itemsPerPage: itemsPerPage.c1 track by $index");
                 }
                 expect(compile).not.toThrow();
                 expect(getListItems().length).toEqual(10);
@@ -869,7 +869,7 @@ describe('dirPagination directive', function() {
 
             it('should allow track by with other filter syntax', function() {
                 function compile() {
-                    compileMultipleInstance(collection1, 10, 1, "c1", "item in collection.c1 | orderBy: reverse | itemsPerPage: itemsPerPage.c1");
+                    compileMultipleInstance(collection1, 10, 1, "c1", "item in collection.c1 | orderBy: reverse | itemsPerPage: itemsPerPage.c1 track by $index");
                 }
                 expect(compile).not.toThrow();
                 expect(getListItems().length).toEqual(10);
