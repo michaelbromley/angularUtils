@@ -337,6 +337,15 @@ describe('dirPagination directive', function() {
             expect(getListItems().length).toEqual(10);
         });
 
+        it('should allow track by with dot in itemsPerPage', function() {
+            function compile() {
+                $scope.foo = { perPage : 10 };
+                compileElement(myCollection, 5, 1,  "item in collection | itemsPerPage: foo.perPage track by item");
+            }
+            expect(compile).not.toThrow();
+            expect(getListItems().length).toEqual(10);
+        });
+
     });
 
     describe('if currentPage attribute is not set', function() {
