@@ -88,7 +88,9 @@
                                 proxyStateName = getObjectValue(scope.abstractProxyProperty, currentState);
                                 if (proxyStateName) {
                                     workingState = angular.copy($state.get(proxyStateName));
-                                    workingState.locals = currentState.locals;
+                                    if (workingState) {
+                                        workingState.locals = currentState.locals;
+                                    }
                                 } else {
                                     workingState = false;
                                 }
