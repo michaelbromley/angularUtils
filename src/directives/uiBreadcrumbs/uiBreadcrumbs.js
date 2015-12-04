@@ -87,7 +87,10 @@
                             if (typeof scope.abstractProxyProperty !== 'undefined') {
                                 proxyStateName = getObjectValue(scope.abstractProxyProperty, currentState);
                                 if (proxyStateName) {
-                                    workingState = $state.get(proxyStateName);
+                                    workingState = angular.copy($state.get(proxyStateName));
+                                    if (workingState) {
+                                        workingState.locals = currentState.locals;
+                                    }
                                 } else {
                                     workingState = false;
                                 }

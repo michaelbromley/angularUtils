@@ -96,6 +96,30 @@ describe('uiBreadcrumbs directive', function() {
                         data: {
                             displayName: 'A Thing'
                         }
+                    })
+                    .state( 'root.project', {
+                        abstract: true,
+                        url: 'abstract2/',
+                        data: {
+                            breadcrumbProxy: 'root.project.dashboard'
+                        },
+                        resolve: {
+                            resolvedName: function(){
+                                return "Project";
+                            }
+                        }
+                    })
+                    .state( 'root.project.dashboard', {
+                        url: 'dashboard/',
+                        data: {
+                            displayName: '{{ resolvedName }} Dashboard'
+                        }
+                    })
+                    .state( 'root.project.tasks', {
+                        url: 'list/',
+                        data: {
+                            displayName: '{{ resolvedName }} Tasks'
+                        }
                     });
             });
         module('mockModule');
@@ -234,6 +258,18 @@ describe('uiBreadcrumbs directive', function() {
         expect(element2[0].querySelectorAll('li')[1].innerHTML).toContain('Things');
         expect(element2[0].querySelectorAll('li')[2]).not.toBeDefined();
         expect(element2[0].querySelectorAll('li').length).toBe(2);
+    });
+
+    it('should use resolved variables for abstract state proxy', function() {
+        var element2 = $compile('<ui-breadcrumbs displayname-property="data.displayName" abstract-proxy-property="data.breadcrumbProxy"></ui-breadcrumbs>')($scope);
+        $state.go('root.project.tasks');
+        $scope.$apply();
+
+        expect(element2[0].querySelectorAll('li')[0].innerHTML).toContain('Home');
+        expect(element2[0].querySelectorAll('li')[1].innerHTML).toContain('Project Dashboard');
+        expect(element2[0].querySelectorAll('li')[2].innerHTML).toContain('Project Tasks');
+        expect(element2[0].querySelectorAll('li')[3]).not.toBeDefined();
+        expect(element2[0].querySelectorAll('li').length).toBe(3);
     });
 
 });
