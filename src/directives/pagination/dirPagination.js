@@ -240,7 +240,8 @@
                 console.warn('Pagination directive: the pagination controls' + idMessage + 'cannot be used without the corresponding pagination directive, which was not found at link time.');
             }
             
-            if (!scope.maxSize()) { scope.maxSize = function(){return 9;}; }
+            //changed the default value to a function that returns 9.
+            if (!scope.maxSize) { scope.maxSize = function(){return 9;}; }
             scope.autoHide = scope.autoHide === undefined ? true : scope.autoHide;
             scope.directionLinks = angular.isDefined(attrs.directionLinks) ? scope.$parent.$eval(attrs.directionLinks) : true;
             scope.boundaryLinks = angular.isDefined(attrs.boundaryLinks) ? scope.$parent.$eval(attrs.boundaryLinks) : false;
