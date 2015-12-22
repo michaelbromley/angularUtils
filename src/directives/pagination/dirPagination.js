@@ -212,14 +212,14 @@
     function dirPaginationControlsDirective(paginationService, paginationTemplate) {
 
         var numberRegex = /^\d+$/;
-
+        
         return {
             restrict: 'AE',
             templateUrl: function(elem, attrs) {
                 return attrs.templateUrl || paginationTemplate.getPath();
             },
             scope: {
-                maxSize: '=?',
+                maxSize: '&?',
                 onPageChange: '&?',
                 paginationId: '=?',
                 autoHide: '=?'
@@ -228,7 +228,7 @@
         };
 
         function dirPaginationControlsLinkFn(scope, element, attrs) {
-
+        	
             // rawId is the un-interpolated value of the pagination-id attribute. This is only important when the corresponding dir-paginate directive has
             // not yet been linked (e.g. if it is inside an ng-if block), and in that case it prevents this controls directive from assuming that there is
             // no corresponding dir-paginate directive and wrongly throwing an exception.
@@ -239,13 +239,14 @@
                 var idMessage = (paginationId !== DEFAULT_ID) ? ' (id: ' + paginationId + ') ' : ' ';
                 console.warn('Pagination directive: the pagination controls' + idMessage + 'cannot be used without the corresponding pagination directive, which was not found at link time.');
             }
-
-            if (!scope.maxSize) { scope.maxSize = 9; }
+            
+            if (!scope.maxSize()) { scope.maxSize = function(){return 9;}; }
             scope.autoHide = scope.autoHide === undefined ? true : scope.autoHide;
             scope.directionLinks = angular.isDefined(attrs.directionLinks) ? scope.$parent.$eval(attrs.directionLinks) : true;
             scope.boundaryLinks = angular.isDefined(attrs.boundaryLinks) ? scope.$parent.$eval(attrs.boundaryLinks) : false;
 
-            var paginationRange = Math.max(scope.maxSize, 5);
+            var paginationRange = Math.max(scope.maxSize(), 5);
+            
             scope.pages = [];
             scope.pagination = {
                 last: 1,
@@ -256,6 +257,13 @@
                 upper: 1,
                 total: 1
             };
+            
+			//set up watch for maxSize
+   		   scope.$watch('maxSize()',function(newValue, oldValue){
+   				paginationRange = Math.max(newValue, 5);
+   				goToPage(scope.pagination.current);
+   				
+   			});                          
 
             scope.$watch(function() {
                 if (paginationService.isRegistered(paginationId)) {
