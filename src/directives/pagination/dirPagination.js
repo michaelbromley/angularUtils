@@ -93,7 +93,8 @@
                         return collectionGetter(scope);
                     }, function(collection) {
                         if (collection) {
-                            paginationService.setCollectionLength(paginationId, collection.length);
+                            var collectionLength = (collection instanceof Array) ? collection.length : Object.keys(collection).length;
+                            paginationService.setCollectionLength(paginationId, collectionLength);
                         }
                     });
                 }
