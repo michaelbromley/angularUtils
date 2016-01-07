@@ -216,6 +216,13 @@ describe('dirPagination directive', function() {
             expect(getListItems()).toEqual(['item 16', 'item 17', 'item 18', 'item 19', 'item 20']);
         });
 
+        it('should display the correct pagination links', function() {
+            compileElement(myObjectCollection, 20, 1, "item in collection | itemsPerPage: itemsPerPage");
+            var paginationLinks = getPageLinksArray();
+
+            expect(paginationLinks).toEqual(['‹','1', '2', '3', '4', '5', '›']);
+        });
+
     });
 
     describe('valid expressions', function() {
