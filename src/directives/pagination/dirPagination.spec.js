@@ -644,6 +644,15 @@ describe('dirPagination directive', function() {
                     $scope.$apply();
                     expect($scope.myCallback).toHaveBeenCalledWith(2);
                 });
+
+                it('should pass the previous page number to the callback', function() {
+                    compileWithAttributes(' on-page-change="myCallback(oldPageNumber)" ');
+                    var pagination = containingElement.find('ul.pagination');
+
+                    pagination.children().eq(3).find('a').triggerHandler('click');
+                    $scope.$apply();
+                    expect($scope.myCallback).toHaveBeenCalledWith(1);
+                });
             });
 
             describe('total-items attribute', function() {
