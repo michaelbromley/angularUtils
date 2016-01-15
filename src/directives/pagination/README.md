@@ -164,8 +164,8 @@ pagination.
 pagination.
 
 * **`on-page-change`** (optional, default = null) Specify a callback method to run each time one of the pagination links is clicked. The method will be passed the
-argument `newPageNumber`, which is an integer equal to the page number that has just been navigated to. **Note** you must use that exact argument name in your view,
-i.e. `<dir-pagination-controls on-page-change="myMethod(newPageNumber)">`, and the method you specify must be defined on your controller $scope.
+optional arguments `newPageNumber` and `oldPageNumber`, which are integers equal to the page number that has just been navigated to, and the one just left, respectively. **Note** you must use that exact argument name in your view,
+i.e. `<dir-pagination-controls on-page-change="myMethod(newPageNumber, oldPageNumber)">`, and the method you specify must be defined on your controller $scope.
 
 * **`pagination-id`** (optional) Used to group together the dir-pagination-controls with a corresponding dir-paginate when you need more than
 one pagination instance per page. See the section below on setting up multiple instances.
