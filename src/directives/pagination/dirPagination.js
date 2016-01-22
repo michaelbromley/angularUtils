@@ -238,7 +238,9 @@
 
             if (!paginationService.isRegistered(paginationId) && !paginationService.isRegistered(rawId)) {
                 var idMessage = (paginationId !== DEFAULT_ID) ? ' (id: ' + paginationId + ') ' : ' ';
-                console.warn('Pagination directive: the pagination controls' + idMessage + 'cannot be used without the corresponding pagination directive, which was not found at link time.');
+                if (window.console) {
+                    console.warn('Pagination directive: the pagination controls' + idMessage + 'cannot be used without the corresponding pagination directive, which was not found at link time.');
+                }
             }
 
             if (!scope.maxSize) { scope.maxSize = 9; }
