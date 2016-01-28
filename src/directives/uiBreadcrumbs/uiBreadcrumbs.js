@@ -13,7 +13,7 @@
      * Config
      */
     var moduleName = 'angularUtils.directives.uiBreadcrumbs';
-    var templateUrl = 'directives/uiBreadcrumbs/uiBreadcrumbs.tpl.html';
+    var templateUrl = './uiBreadcrumbs.tpl.html';
 
     /**
      * Module
