@@ -260,6 +260,13 @@
                 total: 1
             };
 
+            scope.$watch('maxSize', function(val) {
+                if (val) {
+                    paginationRange = Math.max(scope.maxSize, 5);
+                    generatePagination();
+                }
+            });
+
             scope.$watch(function() {
                 if (paginationService.isRegistered(paginationId)) {
                     return (paginationService.getCollectionLength(paginationId) + 1) * paginationService.getItemsPerPage(paginationId);

@@ -550,6 +550,23 @@ describe('dirPagination directive', function() {
                 expect(pageLinks).toEqual(['‹','1', '2', '3', '...', '10', '›']);
             });
 
+            it('should alter links array when value of max-size changes', function() {
+                $scope.maxSize = 5;
+                compileWithAttributes(' max-size="maxSize" ');
+
+                var pageLinks = getPageLinksArray();
+
+                expect(pageLinks).toEqual(['‹','1', '2', '3', '...', '10', '›']);
+
+                $scope.$apply(function() {
+                    $scope.maxSize = 9;
+                });
+
+                pageLinks = getPageLinksArray();
+
+                expect(pageLinks).toEqual(['‹','1', '2', '3', '4', '5', '6', '7', '...', '10', '›']);
+            });
+
             it('should impose a minimum max-size of 5', function() {
                 compileWithAttributes(' max-size="2" ');
 
