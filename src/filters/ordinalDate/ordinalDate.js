@@ -9,12 +9,14 @@ angular.module( 'angularUtils.filters.ordinalDate', [] )
         };
 
         return function(timestamp, format) {
-            var regex = /d(?=[^d])((?!\w*(?='))(?!d))/g;
+            var regex = /d+((?!\w*(?=')))|d$/g;
             var date = new Date(timestamp);
             var dayOfMonth = date.getDate();
             var suffix = getOrdinalSuffix(dayOfMonth);
 
-            format = format.replace(regex, suffix);
+            format = format.replace(regex, (match) => {
+                return match === "d" ? suffix : match;
+            });
             return $filter('date')(date, format);
         };
     }]);
