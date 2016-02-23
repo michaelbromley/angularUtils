@@ -89,6 +89,7 @@
                         }
                     });
                 } else {
+                    paginationService.setAsyncModeFalse(paginationId);
                     scope.$watchCollection(function() {
                         return collectionGetter(scope);
                     }, function(collection) {
@@ -555,6 +556,10 @@
 
         this.setAsyncModeTrue = function(instanceId) {
             instances[instanceId].asyncMode = true;
+        };
+
+        this.setAsyncModeFalse = function(instanceId) {
+            instances[instanceId].asyncMode = false;
         };
 
         this.isAsyncMode = function(instanceId) {
