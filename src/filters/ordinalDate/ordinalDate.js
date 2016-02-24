@@ -14,7 +14,7 @@ angular.module( 'angularUtils.filters.ordinalDate', [] )
             var dayOfMonth = date.getDate();
             var suffix = getOrdinalSuffix(dayOfMonth);
 
-            format = format.replace(regex, (match) => {
+            format = format.replace(regex, function (match) {
                 return match === "d" ? suffix : match;
             });
             return $filter('date')(date, format);
