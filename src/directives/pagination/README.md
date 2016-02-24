@@ -6,6 +6,8 @@ Yes, there are quite a few pagination solutions for Angular out there already, b
 something that would be truly plug-n-play - no need to do any set-up or logic in your controller. Just add
 an attribute, drop in your navigation wherever you like, and boom - instant, full-featured pagination.
 
+(**Looking for the Angular2 version? [Right here!](https://github.com/michaelbromley/ng2-pagination)**)
+
 ## Demo
 
 [Here is a working demo on Plunker](http://plnkr.co/edit/Wtkv71LIqUR4OhzhgpqL?p=preview) which demonstrates some cool features such as live-binding the "itemsPerPage" and
