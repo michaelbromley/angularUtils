@@ -224,11 +224,8 @@
 
         var numberRegex = /^\d+$/;
 
-        return {
+        var DDO = {
             restrict: 'AE',
-            templateUrl: function(elem, attrs) {
-                return attrs.templateUrl || paginationTemplate.getPath();
-            },
             scope: {
                 maxSize: '=?',
                 onPageChange: '&?',
@@ -237,6 +234,23 @@
             },
             link: dirPaginationControlsLinkFn
         };
+
+        // We need to check the paginationTemplate service to see whether a template path or
+        // string has been specified, and add the `template` or `templateUrl` property to
+        // the DDO as appropriate. The order of priority to decide which template to use is
+        // (highest priority first):
+        // 1. paginationTemplate.getString()
+        // 2. attrs.templateUrl
+        // 3. paginationTemplate.getPath()
+        var templateString = paginationTemplate.getString();
+        if (templateString !== undefined) {
+            DDO.template = templateString;
+        } else {
+            DDO.templateUrl = function(elem, attrs) {
+                return attrs.templateUrl || paginationTemplate.getPath();
+            };
+        }
+        return DDO;
 
         function dirPaginationControlsLinkFn(scope, element, attrs) {
 
@@ -586,15 +600,33 @@
     function paginationTemplateProvider() {
 
         var templatePath = 'angularUtils.directives.dirPagination.template';
+        var templateString;
 
+        /**
+         * Set a templateUrl to be used by all instances of <dir-pagination-controls>
+         * @param {String} path
+         */
         this.setPath = function(path) {
             templatePath = path;
+        };
+
+        /**
+         * Set a string of HTML to be used as a template by all instances
+         * of <dir-pagination-controls>. If both a path *and* a string have been set,
+         * the string takes precedence.
+         * @param {String} str
+         */
+        this.setString = function(str) {
+            templateString = str;
         };
 
         this.$get = function() {
             return {
                 getPath: function() {
                     return templatePath;
+                },
+                getString: function() {
+                    return templateString;
                 }
             };
         };

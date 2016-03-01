@@ -110,9 +110,9 @@ expects pagination lists to have a particular structure different from the defau
 If you plan to use a custom template, take a look at the default as demonstrated in dirPagination.tpl.html to get
 an idea of how it interacts with the directive.
 
-There are two ways to specify the template of the pagination controls directive:
+There are three ways to specify the template of the pagination controls directive:
 
-**1. Use the `paginationTemplateProvider` in your app's config block to set a global template for your app:**
+**1. Use the `paginationTemplateProvider` in your app's config block to set a global templateUrl for your app:**
 
 ```JavaScript
 myApp.config(function(paginationTemplateProvider) {
@@ -120,11 +120,32 @@ myApp.config(function(paginationTemplateProvider) {
 });
 ```
 
-**2. Use the `template-url` attribute on each pagination controls directive:**
+**2. Use the `paginationTemplateProvider` in your app's config block to set a global template string for your app:**
+
+```JavaScript
+myApp.config(function(paginationTemplateProvider) {
+    paginationTemplateProvider.setString('<div class="my-page-links">...</div>');
+    
+    // or with e.g. Webpack you might do
+    paginationTemplateProvider.setString(require('/path/to/customPagination.tpl.html'));
+});
+```
+
+**3. Use the `template-url` attribute on each pagination controls directive:**
 
 ```HTML
 <dir-pagination-controls template-url="path/to/dirPagination.tpl.html"></dir-pagination-controls>
 ```
+
+#### Template Priority
+
+If you use more than one method for specifying the template, the actual template to use will be decided based on
+the following order of precedence (highest priority first):
+
+1. `paginationTemplate.getString()`
+2. `template-url`
+3. `paginationTemplate.getPath()`
+4. (default built-in template)
 
 ## Directives API
 

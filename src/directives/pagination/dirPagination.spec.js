@@ -14,6 +14,13 @@ describe('dirPagination directive', function() {
     beforeEach(module('angularUtils.directives.dirPagination'));
     beforeEach(module('templates-main'));
 
+    // used to test the paginationTemplateProvider (see end of file)
+    var templateProvider;
+    angular.module('customTemplateTestApp', []);
+    beforeEach(module('customTemplateTestApp', function(paginationTemplateProvider) {
+        templateProvider = paginationTemplateProvider;
+    }));
+
     beforeEach(inject(function($rootScope, _$compile_, _$timeout_) {
 
         $compile = _$compile_;
@@ -1141,6 +1148,52 @@ describe('dirPagination directive', function() {
             expect(getListItems($list2)).toEqual([ 'a', 'b', 'c' ]);
         });
 
+    });
+
+    describe('paginationTemplateProvider', function() {
+
+        beforeEach(inject(function($templateCache) {
+            $templateCache.put('setPath_template', '<div class="set-path-template"><span>Test Template</span>{{ pages.length }}</div>');
+            $templateCache.put('templateUrl_template', '<div class="template-url-template"><span>Test TemplateUrl Template</span>{{ pages.length }}</div>');
+        }));
+
+        it('should use the custom template specified by setPath()', function() {
+            templateProvider.setPath('setPath_template');
+            compileElement(myCollection, 10);
+
+            expect(containingElement.find('.set-path-template').html()).toContain('Test Template');
+        });
+
+        it('should use the custom template specified by setString()', function() {
+            templateProvider.setString('<div class="set-string-template"><span>Test Template String</span>{{ pages.length }}</div>');
+            compileElement(myCollection, 10);
+
+            expect(containingElement.find('.set-string-template').html()).toContain('Test Template String');
+        });
+
+        it('should prioritize setString() if both path and string have been set', function() {
+            templateProvider.setString('<div class="set-string-template"><span>Test Template String</span>{{ pages.length }}</div>');
+            templateProvider.setPath('setPath_template');
+            compileElement(myCollection, 10);
+
+            expect(containingElement.find('.set-path-template').html()).toBeUndefined();
+            expect(containingElement.find('.set-string-template').html()).toContain('Test Template String');
+        });
+
+        it('should prioritize setString() over path and template-url attribute.', function() {
+            templateProvider.setString('<div class="set-string-template"><span>Test Template String</span>{{ pages.length }}</div>');
+            templateProvider.setPath('setPath_template');
+
+            var html = '<ul class="list"><li dir-paginate="item in collection | itemsPerPage: itemsPerPage" current-page="currentPage">{{ item }}</li></ul> ' +
+                '<dir-pagination-controls template-url="templateUrl_template"></dir-pagination-controls>';
+            containingElement.append($compile(html)($scope));
+            $scope.$apply();
+
+            expect(containingElement.find('.set-path-template').html()).toBeUndefined();
+            expect(containingElement.find('.template-url-template').html()).toBeUndefined();
+            expect(containingElement.find('.set-string-template').html()).toContain('Test Template String');
+        });
 
     });
+
 });
