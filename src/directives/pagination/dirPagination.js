@@ -68,9 +68,9 @@
                 // Now that we have access to the `scope` we can interpolate any expression given in the paginationId attribute and
                 // potentially register a new ID if it evaluates to a different value than the rawId.
                 var paginationId = $parse(attrs.paginationId)(scope) || attrs.paginationId || DEFAULT_ID;
-                    // In case rawId != paginationId we deregister using rawId for the sake of general cleanliness
-                    // before registering using paginationId
-                    paginationService.deregisterInstance(rawId);
+                // In case rawId != paginationId we deregister using rawId for the sake of general cleanliness
+                // before registering using paginationId
+                paginationService.deregisterInstance(rawId);
                 paginationService.registerInstance(paginationId);
 
                 var repeatExpression = getRepeatExpression(expression, paginationId);
@@ -106,11 +106,11 @@
                 // Delegate to the link function returned by the new compilation of the ng-repeat
                 compiled(scope);
                     
-                    // When the scope is destroyed, we make sure to remove the reference to it in paginationService
-                    // so that it can be properly garbage collected
-                    scope.$on('$destroy', function destroyDirPagination() {
-                    	paginationService.deregisterInstance(paginationId);
-                    });
+                // When the scope is destroyed, we make sure to remove the reference to it in paginationService
+                // so that it can be properly garbage collected
+                scope.$on('$destroy', function destroyDirPagination() {
+                    paginationService.deregisterInstance(paginationId);
+                });
             };
         }
 
@@ -530,7 +530,7 @@
         };
 
         this.deregisterInstance = function(instanceId) {
-        	delete instances[instanceId];
+            delete instances[instanceId];
         };
         
         this.isRegistered = function(instanceId) {
