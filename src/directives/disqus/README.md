@@ -15,7 +15,9 @@ the default hash-only (no `!`) urls that Angular uses.
 
 ## Installation
 
-1. Download the file `dirDisqus.js` or use the Bower command `bower install angular-utils-disqus`
+1. Download the file `dirDisqus.js` or: 
+    * via Bower: `bower install angular-utils-disqus`
+    * via npm: `npm install angular-utils-disqus`
 2. Include the JavaScript file in your index.html page.
 2. Add a reference to the module `angularUtils.directives.dirDisqus` to your app.
 
