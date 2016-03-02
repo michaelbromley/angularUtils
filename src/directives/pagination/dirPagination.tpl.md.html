@@ -1,0 +1,42 @@
+<section layout="row"
+         layout-sm="column"
+         layout-align="center center"
+         ng-if="1 < pages.length || !autoHide"
+         flex>
+    <md-button class="md-fab md-mini material-icons"
+               aria-label="First"
+               ng-if="boundaryLinks"
+               ng-click="setCurrent(1)"
+               ng-disabled="pagination.current == 1">
+        first_page
+    </md-button>
+    <md-button class="md-fab md-mini material-icons"
+               aria-label="Previous"
+               ng-if="directionLinks"
+               ng-click="setCurrent(pagination.current - 1)"
+               ng-disabled="pagination.current == 1">
+        chevron_left
+    </md-button>
+    <md-button class="md-fab md-mini"
+               ng-class="{active : pagination.current == pageNumber}"
+               aria-label="Page {{ pageNumber }}"
+               ng-repeat="pageNumber in pages track by tracker(pageNumber, $index)"
+               ng-click="setCurrent(pageNumber)"
+               ng-disabled="pageNumber == '...' || pageNumber == pagination.current">
+        {{ pageNumber }}
+    </md-button>
+    <md-button class="md-fab md-mini material-icons"
+               aria-label="Next"
+               ng-if="directionLinks"
+               ng-click="setCurrent(pagination.current + 1)"
+               ng-disabled="pagination.current == pagination.last">
+        chevron_right
+    </md-button>
+    <md-button class="md-fab md-mini material-icons"
+               aria-label="Last"
+               ng-if="boundaryLinks"
+               ng-click="setCurrent(pagination.last)"
+               ng-disabled="pagination.current == pagination.last">
+        last_page
+    </md-button>
+</section>
