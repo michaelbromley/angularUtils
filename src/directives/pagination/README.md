@@ -32,6 +32,7 @@ filtering of the collection.
 - [Styling](#styling)
 - [FAQ](#frequently-asked-questions)
 - [Contribution](#contribution)
+- [Changelog](#changelog)
 - [Credits](#credits)
 
 ## Basic Example
