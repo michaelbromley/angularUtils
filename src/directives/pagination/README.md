@@ -414,6 +414,11 @@ Karma is set up if you run `grunt watch` as you make changes.
 
 At a minimum, make sure that all the tests still pass. Thanks!
 
+## Changelog
+
+Please see the [releases page of the package repo](https://github.com/michaelbromley/angularUtils-pagination/releases) for details
+of each released version.
+
 ## Credits
 
 I did quite a bit of research before I figured I needed to make my own directive, and I picked up a lot of good ideas
