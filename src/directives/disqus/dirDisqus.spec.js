@@ -3,7 +3,7 @@
  * them on their own using `ddescribe` works okay. Therefore this test is ignored in general unless specifically testing
  * this directive, in which case change `xdescribe` to `ddescribe`.
  */
-describe('dirDisqus directive', function() {
+xdescribe('dirDisqus directive', function() {
     var scope,
         elem,
         compiled,
