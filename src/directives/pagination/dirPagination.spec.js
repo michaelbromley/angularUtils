@@ -1133,7 +1133,7 @@ describe('dirPagination directive', function() {
             compile();
 
             var $list1 = containingElement.find('ul.list').eq(0);
-            var $list2 = containingElement.find('ul.list').eq(1);
+            var $list2 = containingElement.find('ul.list').eq(1); 
 
             expect(getListItems($list1)).toEqual([ '1', '2', '3' ]);
             expect(getListItems($list2)).toEqual([ 'a', 'b', 'c' ]);
