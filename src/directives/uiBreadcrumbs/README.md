@@ -18,9 +18,10 @@ nested views, you should use a named view and refer to it when configuring your 
 ## Installation
 
 ### 1. Download
-You can install with Bower:
+You can install with Bower or npm:
 
 `bower install angular-utils-ui-breadcrumbs`
+`npm install angular-utils-ui-breadcrumbs`
 
 Alternatively just download the files `uiBreadcrumbs.js` and `uiBreadcrumbs.tpl.html`. Using bower has the advantage of making version management easier.
 
