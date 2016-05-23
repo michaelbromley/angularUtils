@@ -235,6 +235,7 @@
                 maxSize: '=?',
                 onPageChange: '&?',
                 paginationId: '=?',
+                initialPage: '=?',
                 autoHide: '=?'
             },
             link: dirPaginationControlsLinkFn
@@ -273,6 +274,7 @@
             }
 
             if (!scope.maxSize) { scope.maxSize = 9; }
+            if(!scope.initialPage) {scope.initialPage = 1;}
             scope.autoHide = scope.autoHide === undefined ? true : scope.autoHide;
             scope.directionLinks = angular.isDefined(attrs.directionLinks) ? scope.$parent.$eval(attrs.directionLinks) : true;
             scope.boundaryLinks = angular.isDefined(attrs.boundaryLinks) ? scope.$parent.$eval(attrs.boundaryLinks) : false;
@@ -366,6 +368,7 @@
 
             function generatePagination() {
                 if (paginationService.isRegistered(paginationId)) {
+                    paginationService.setCurrentPage(paginationId, scope.initialPage);
                     var page = parseInt(paginationService.getCurrentPage(paginationId)) || 1;
                     scope.pages = generatePagesArray(page, paginationService.getCollectionLength(paginationId), paginationService.getItemsPerPage(paginationId), paginationRange);
                     scope.pagination.current = page;
