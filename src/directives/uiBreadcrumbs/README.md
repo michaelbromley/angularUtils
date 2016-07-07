@@ -2,6 +2,8 @@
 
 This is a directive that auto-generates breadcrumbs based on angular-ui-router routes.
 
+**No longer maintained** (July 2016) I am no longer using this  in any of my projects. As such, I have no time to maintain it. Pull requests for fixes and features are welcome. If someone would like to maintain a fork, let me know and I will link to it here.
+
 ## Demo
 
 You can see a working demo demonstrating most of the features here: [http://plnkr.co/edit/bBgdxgB91Z6323HLWCzF?p=preview](http://plnkr.co/edit/bBgdxgB91Z6323HLWCzF?p=preview)
