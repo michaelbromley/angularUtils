@@ -1,6 +1,3 @@
-# Working Plunker
-http://plnkr.co/edit/ZU2iAOMf0SrmoAC5cdjU?p=preview
-
 # Angular Utilities
 
 I am working on a large-scale AngularJS-based project and I'll be extracting
