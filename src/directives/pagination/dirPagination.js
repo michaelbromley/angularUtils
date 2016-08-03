@@ -334,8 +334,11 @@
                     num = isValidPageNumber(num.id) === true ? parseInt(num.id, 10) : parseInt(num, 10);
                     paginationService.setCurrentPage(paginationId, num);
                 }
+                else { //ellipses were hit
+                  if(num.id == "before-ellipses"){ //before ellipses
                     paginationService.setCurrentPage(paginationId, scope.pages[1].id - 1);
                   }
+                  else { //after ellipses
                     paginationService.setCurrentPage(paginationId, scope.pages[3].id + 1);
                   }
                 }
@@ -438,8 +441,10 @@
                 var openingEllipsesNeeded = (i === 1 && (position === 'middle' || position === 'end'));
                 var closingEllipsesNeeded = (i === paginationRange && (position === 'middle' || position === 'start'));
                 if (ellipsesNeeded && openingEllipsesNeeded) {
+                    pages.push({"id":"before-ellipses", "display": "..."});
                 }
                 else if(ellipsesNeeded && closingEllipsesNeeded){
+                    pages.push({"id":"after-ellipses", "display": "..."});
                 }else {
                     pages.push({"id":pageNumber, "display": pageNumber});
                 }
