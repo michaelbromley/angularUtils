@@ -165,7 +165,7 @@ The optional third argument `paginationId` is used when you need more than one i
 on setting up multiple instances.
 
 * **`current-page`** (optional) Specify a property on your controller's $scope that will be bound to the current
-page of the pagination. If this is not specified, the directive will automatically create a property named `__currentPage` and use
+page of the pagination. If this is not specified, the directive will automatically create a property named `__default__currentPage` and use
 that instead.
 
 * **`pagination-id`** (optional) Used to group together the dir-paginate directive with a corresponding dir-pagination-controls when you need more than
