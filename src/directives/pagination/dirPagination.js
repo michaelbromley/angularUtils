@@ -201,7 +201,9 @@
                 // Replace any non-alphanumeric characters which might confuse
                 // the $parse service and give unexpected results.
                 // See https://github.com/michaelbromley/angularUtils/issues/233
-                var defaultCurrentPage = (paginationId + '__currentPage').replace(/\W/g, '_');
+                // Adding the '_' as a prefix resolves an issue where paginationId might be have a digit as its first char
+                // See https://github.com/michaelbromley/angularUtils/issues/400
+                var defaultCurrentPage = '_' + (paginationId + '__currentPage').replace(/\W/g, '_');
                 scope[defaultCurrentPage] = 1;
                 currentPageGetter = $parse(defaultCurrentPage);
             }
