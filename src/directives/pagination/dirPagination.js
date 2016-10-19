@@ -396,6 +396,25 @@
             function isValidPageNumber(num) {
                 return (numberRegex.test(num) && (0 < num && num <= scope.pagination.last));
             }
+
+            // Add Page Navigation Using Arrow Keys
+            $(window).on('keyup', function(e) {
+                if (e.keyCode == "39" ) { // Right Arrow
+                    if (scope.pagination.current < scope.pagination.last ) {
+                        scope.pagination.current = (scope.pagination.current + 1);
+                        scope.setCurrent(scope.pagination.current);
+                        scope.$apply();
+                    }
+                }
+
+                if (e.keyCode == "37" ) { // Left Arrow
+                    if (scope.pagination.current > 1 ) {
+                        scope.pagination.current = (scope.pagination.current - 1);
+                        scope.setCurrent(scope.pagination.current);
+                        scope.$apply();
+                    }
+                }
+            })
         }
 
         /**
