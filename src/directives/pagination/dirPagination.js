@@ -330,6 +330,8 @@
                 if (paginationService.isRegistered(paginationId) && isValidPageNumber(num)) {
                     num = parseInt(num, 10);
                     paginationService.setCurrentPage(paginationId, num);
+                    // scroll to top of view after clicking pagination button to load new content into view
+                    window.scrollTo(0,0);
                 }
             };
 
