@@ -1,5 +1,11 @@
 # Disqus Directive
 
+### No longer maintained
+(20/04/2017) - I am no longer actively maintaining this project. I no longer use AngularJS in my own projects and do not have the time to dedicate to maintiaining this project as well as my other active open source projects. Thank you for your understanding.
+
+---
+
+
 A directive to embed a Disqus comments widget on your AngularJS page.
 
 ## Prerequisites
