@@ -1,0 +1,21 @@
+<section layout="row" layout-align="center" ng-if="1 < pages.length || !autoHide" class="pagination">
+    <md-button ng-if="boundaryLinks" ng-disabled="pagination.current === 1" ng-click="setCurrent(1)">
+        <ng-md-icon icon="first_page"></ng-md-icon>
+    </md-button>
+
+    <md-button ng-if="directionLinks" ng-disabled="pagination.current === 1" ng-click="setCurrent(pagination.current - 1)">
+        <ng-md-icon icon="chevron_left"></ng-md-icon>
+    </md-button>
+
+    <md-button ng-repeat="pageNumber in pages track by tracker(pageNumber, $index)" ng-class="{ 'md-primary' : pagination.current == pageNumber}" ng-disabled="pageNumber === '...'" ng-click="setCurrent(pageNumber)">
+        {{ pageNumber }}
+    </md-button>
+
+    <md-button ng-if="directionLinks" ng-disabled="pagination.current === pagination.last" ng-click="setCurrent(pagination.current + 1)">
+        <ng-md-icon icon="chevron_right"></ng-md-icon>
+    </md-button>
+
+    <md-button ng-if="boundaryLinks" ng-disabled="pagination.current === pagination.last" ng-click="setCurrent(pagination.last)">
+        <ng-md-icon icon="last_page"></ng-md-icon>
+    </md-button>
+</section>
