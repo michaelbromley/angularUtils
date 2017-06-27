@@ -440,3 +440,7 @@ from their pagination directive.
 from the various contributors to this thread.
 
 * Massive credit is due to all the [contributors](https://github.com/michaelbromley/angularUtils/graphs/contributors) to this project - they have brought improvements that I would not have the time or insight to figure out myself.
+
+## License
+
+MIT
