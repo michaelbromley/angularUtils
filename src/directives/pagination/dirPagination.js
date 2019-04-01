@@ -68,7 +68,7 @@
                 // Now that we have access to the `scope` we can interpolate any expression given in the paginationId attribute and
                 // potentially register a new ID if it evaluates to a different value than the rawId.
                 var paginationId = $parse(attrs.paginationId)(scope) || attrs.paginationId || DEFAULT_ID;
-                
+
                 // (TODO: this seems sound, but I'm reverting as many bug reports followed it's introduction in 0.11.0.
                 // Needs more investigation.)
                 // In case rawId != paginationId we deregister using rawId for the sake of general cleanliness
@@ -108,7 +108,7 @@
 
                 // Delegate to the link function returned by the new compilation of the ng-repeat
                 compiled(scope);
-                 
+
                 // (TODO: Reverting this due to many bug reports in v 0.11.0. Needs investigation as the
                 // principle is sound)
                 // When the scope is destroyed, we make sure to remove the reference to it in paginationService
@@ -224,7 +224,7 @@
     }
 
     function dirPaginationControlsTemplateInstaller($templateCache) {
-        $templateCache.put('angularUtils.directives.dirPagination.template', '<ul class="pagination" ng-if="1 < pages.length || !autoHide"><li ng-if="boundaryLinks" ng-class="{ disabled : pagination.current == 1 }"><a href="" ng-click="setCurrent(1)">&laquo;</a></li><li ng-if="directionLinks" ng-class="{ disabled : pagination.current == 1 }"><a href="" ng-click="setCurrent(pagination.current - 1)">&lsaquo;</a></li><li ng-repeat="pageNumber in pages track by tracker(pageNumber, $index)" ng-class="{ active : pagination.current == pageNumber, disabled : pageNumber == \'...\' || ( ! autoHide && pages.length === 1 ) }"><a href="" ng-click="setCurrent(pageNumber)">{{ pageNumber }}</a></li><li ng-if="directionLinks" ng-class="{ disabled : pagination.current == pagination.last }"><a href="" ng-click="setCurrent(pagination.current + 1)">&rsaquo;</a></li><li ng-if="boundaryLinks"  ng-class="{ disabled : pagination.current == pagination.last }"><a href="" ng-click="setCurrent(pagination.last)">&raquo;</a></li></ul>');
+        $templateCache.put('angularUtils.directives.dirPagination.template', '<ul class="pagination" ng-class="{ \'pagination-sm\' : size == \'small\', \'pagination-lg\' : size == \'big\' }" ng-if="1 < pages.length || !autoHide"><li ng-if="boundaryLinks" ng-class="{ disabled : pagination.current == 1 }"><a href="" ng-click="setCurrent(1)">&laquo;</a></li><li ng-if="directionLinks" ng-class="{ disabled : pagination.current == 1 }"><a href="" ng-click="setCurrent(pagination.current - 1)">&lsaquo;</a></li><li ng-repeat="pageNumber in pages track by tracker(pageNumber, $index)" ng-class="{ active : pagination.current == pageNumber, disabled : pageNumber == \'...\' || ( ! autoHide && pages.length === 1 ) }"><a href="" ng-click="setCurrent(pageNumber)">{{ pageNumber }}</a></li><li ng-if="directionLinks" ng-class="{ disabled : pagination.current == pagination.last }"><a href="" ng-click="setCurrent(pagination.current + 1)">&rsaquo;</a></li><li ng-if="boundaryLinks"  ng-class="{ disabled : pagination.current == pagination.last }"><a href="" ng-click="setCurrent(pagination.last)">&raquo;</a></li></ul>');
     }
 
     function dirPaginationControlsDirective(paginationService, paginationTemplate) {
@@ -237,7 +237,8 @@
                 maxSize: '=?',
                 onPageChange: '&?',
                 paginationId: '=?',
-                autoHide: '=?'
+                autoHide: '=?',
+                size: '@'
             },
             link: dirPaginationControlsLinkFn
         };
@@ -553,7 +554,7 @@
         this.deregisterInstance = function(instanceId) {
             delete instances[instanceId];
         };
-        
+
         this.isRegistered = function(instanceId) {
             return (typeof instances[instanceId] !== 'undefined');
         };
