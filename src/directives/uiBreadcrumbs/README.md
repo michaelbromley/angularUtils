@@ -44,7 +44,8 @@ Assuming you already have your app configured to use ui-router, you then need to
 ```HTML
 <ui-breadcrumbs displayname-property="data.displayName"
                 [template-url=""]
-                [abstract-proxy-property=""]>
+                [abstract-proxy-property=""]
+                [include-state-data=""]
 </ui-breadcrumbs>
 ```
 
@@ -53,6 +54,7 @@ route's breadcrumb. If none is specified, or if the specified property is not fo
 * **`template-url`** (optional) Use this attribute to specify the URL of the `uiBreadcrumbs.tpl.html` file. Alternatively this may be configured in the JavaScript file
 itself, in which case this attribute would not be needed.
 * **`abstract-proxy-property`** (optional) Used when working with abstract states. See the section on working with abstract states below for a full explanation.
+* **`include-state-data`** (optional) If true is specified, the data property of the state will be added to the breadcrumb to be able to implement additional checks based on that on your custom template file.
 
 ## Example setup
 

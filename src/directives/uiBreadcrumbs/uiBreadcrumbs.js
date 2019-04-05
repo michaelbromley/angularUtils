@@ -34,7 +34,8 @@
                 },
                 scope: {
                     displaynameProperty: '@',
-                    abstractProxyProperty: '@?'
+                    abstractProxyProperty: '@?',
+                    includeStateData: '@?'
                 },
                 link: function(scope) {
                     scope.breadcrumbs = [];
@@ -61,10 +62,14 @@
                                 displayName = getDisplayName(workingState);
 
                                 if (displayName !== false && !stateAlreadyInBreadcrumbs(workingState, breadcrumbs)) {
-                                    breadcrumbs.push({
+                                    var breadcrumb = {
                                         displayName: displayName,
                                         route: workingState.name
-                                    });
+                                    };
+                                    if (scope.includeStateData === 'true') {
+                                        breadcrumb['data'] = workingState.data;
+                                    }
+                                    breadcrumbs.push(breadcrumb);
                                 }
                             }
                             currentState = currentState.parent;
