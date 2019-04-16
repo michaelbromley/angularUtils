@@ -201,9 +201,7 @@
                 // Replace any non-alphanumeric characters which might confuse
                 // the $parse service and give unexpected results.
                 // See https://github.com/michaelbromley/angularUtils/issues/233
-                // Adding the '_' as a prefix resolves an issue where paginationId might be have a digit as its first char
-                // See https://github.com/michaelbromley/angularUtils/issues/400
-                var defaultCurrentPage = '_' + (paginationId + '__currentPage').replace(/\W/g, '_');
+                var defaultCurrentPage = (paginationId + '__currentPage').replace(/\W/g, '_');
                 scope[defaultCurrentPage] = 1;
                 currentPageGetter = $parse(defaultCurrentPage);
             }
@@ -224,7 +222,24 @@
     }
 
     function dirPaginationControlsTemplateInstaller($templateCache) {
-        $templateCache.put('angularUtils.directives.dirPagination.template', '<ul class="pagination" ng-if="1 < pages.length || !autoHide"><li ng-if="boundaryLinks" ng-class="{ disabled : pagination.current == 1 }"><a href="" ng-click="setCurrent(1)">&laquo;</a></li><li ng-if="directionLinks" ng-class="{ disabled : pagination.current == 1 }"><a href="" ng-click="setCurrent(pagination.current - 1)">&lsaquo;</a></li><li ng-repeat="pageNumber in pages track by tracker(pageNumber, $index)" ng-class="{ active : pagination.current == pageNumber, disabled : pageNumber == \'...\' || ( ! autoHide && pages.length === 1 ) }"><a href="" ng-click="setCurrent(pageNumber)">{{ pageNumber }}</a></li><li ng-if="directionLinks" ng-class="{ disabled : pagination.current == pagination.last }"><a href="" ng-click="setCurrent(pagination.current + 1)">&rsaquo;</a></li><li ng-if="boundaryLinks"  ng-class="{ disabled : pagination.current == pagination.last }"><a href="" ng-click="setCurrent(pagination.last)">&raquo;</a></li></ul>');
+        $templateCache.put('angularUtils.directives.dirPagination.template',
+            '<ul class="pagination" ng-if="1 < pages.length || !autoHide">' +
+                '<li class="page-item" ng-if="boundaryLinks" ng-class="{ disabled : pagination.current == 1 }">' +
+                    '<a class="page-link" href="" ng-click="setCurrent(1)">&laquo;</a>' +
+                '</li>' +
+                '<li class="page-item" ng-if="directionLinks" ng-class="{ disabled : pagination.current == 1 }">' +
+                    '<a class="page-link" href="" ng-click="setCurrent(pagination.current - 1)">&lsaquo;</a>' +
+                '</li>' +
+                '<li class="page-item" ng-repeat="pageNumber in pages track by tracker(pageNumber, $index)" ng-class="{ active : pagination.current == pageNumber, disabled : pageNumber == \'...\' || ( ! autoHide && pages.length === 1 ) }">' +
+                 '<a class="page-link" href="" ng-click="setCurrent(pageNumber)">{{ pageNumber }}</a>' +
+                '</li>' +
+                '<li class="page-item" ng-if="directionLinks" ng-class="{ disabled : pagination.current == pagination.last }">' +
+                  '<a class="page-link" href="" ng-click="setCurrent(pagination.current + 1)">&rsaquo;</a>' +
+                '</li>' +
+                '<li class="page-item" ng-if="boundaryLinks"  ng-class="{ disabled : pagination.current == pagination.last }">' +
+                  '<a class="page-link" href="" ng-click="setCurrent(pagination.last)">&raquo;</a>' +
+                '</li>' +
+            '</ul>');
     }
 
     function dirPaginationControlsDirective(paginationService, paginationTemplate) {
