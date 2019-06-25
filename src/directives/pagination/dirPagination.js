@@ -567,7 +567,8 @@
             instances[instanceId].context = scope;
         };
         this.setCurrentPage = function(instanceId, val) {
-            instances[instanceId].currentPageParser.assign(instances[instanceId].context, val);
+        	if (instances[instanceId].currentPageParser)
+            	instances[instanceId].currentPageParser.assign(instances[instanceId].context, val);
         };
         this.getCurrentPage = function(instanceId) {
             var parser = instances[instanceId].currentPageParser;
