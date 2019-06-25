@@ -224,7 +224,7 @@
     }
 
     function dirPaginationControlsTemplateInstaller($templateCache) {
-        $templateCache.put('angularUtils.directives.dirPagination.template', '<ul class="pagination" ng-if="1 < pages.length || !autoHide"><li ng-if="boundaryLinks" ng-class="{ disabled : pagination.current == 1 }"><a href="" ng-click="setCurrent(1)">&laquo;</a></li><li ng-if="directionLinks" ng-class="{ disabled : pagination.current == 1 }"><a href="" ng-click="setCurrent(pagination.current - 1)">&lsaquo;</a></li><li ng-repeat="pageNumber in pages track by tracker(pageNumber, $index)" ng-class="{ active : pagination.current == pageNumber, disabled : pageNumber == \'...\' || ( ! autoHide && pages.length === 1 ) }"><a href="" ng-click="setCurrent(pageNumber)">{{ pageNumber }}</a></li><li ng-if="directionLinks" ng-class="{ disabled : pagination.current == pagination.last }"><a href="" ng-click="setCurrent(pagination.current + 1)">&rsaquo;</a></li><li ng-if="boundaryLinks"  ng-class="{ disabled : pagination.current == pagination.last }"><a href="" ng-click="setCurrent(pagination.last)">&raquo;</a></li></ul>');
+        $templateCache.put('angularUtils.directives.dirPagination.template', '<ul class="pagination" ng-if="1 < pages.length || !autoHide"><li ng-if="boundaryLinks" ng-class="{ disabled : pagination.current == 1 }"><a href="" ng-click="setCurrent(1)">&laquo;</a></li><li ng-if="directionLinks" ng-class="{ disabled : pagination.current == 1 }"><a href="" ng-click="setCurrent(pagination.current - 1)">&lsaquo;</a></li><li ng-repeat="pageNumber in pages track by tracker(pageNumber, $index)" ng-class="{ active : pagination.current == pageNumber.display, disabled : pageNumber == \'...\' || ( ! autoHide && pages.length === 1 ) }"><a href="" ng-click="setCurrent(pageNumber)">{{ pageNumber.display }}</a></li><li ng-if="directionLinks" ng-class="{ disabled : pagination.current == pagination.last }"><a href="" ng-click="setCurrent(pagination.current + 1)">&rsaquo;</a></li><li ng-if="boundaryLinks"  ng-class="{ disabled : pagination.current == pagination.last }"><a href="" ng-click="setCurrent(pagination.last)">&raquo;</a></li></ul>');
     }
 
     function dirPaginationControlsDirective(paginationService, paginationTemplate) {
@@ -329,9 +329,20 @@
             });
 
             scope.setCurrent = function(num) {
-                if (paginationService.isRegistered(paginationId) && isValidPageNumber(num)) {
-                    num = parseInt(num, 10);
+              //quick fix for bug with previous arrow
+              if(num === 0) return;
+              
+                if (paginationService.isRegistered(paginationId) && (isValidPageNumber(num.id) || isValidPageNumber(num))) {
+                    num = isValidPageNumber(num.id) === true ? parseInt(num.id, 10) : parseInt(num, 10);
                     paginationService.setCurrentPage(paginationId, num);
+                }
+                else { //ellipses were hit
+                  if(num.id == "before-ellipses"){ //before ellipses
+                    paginationService.setCurrentPage(paginationId, scope.pages[1].id - 1);
+                  }
+                  else { //after ellipses
+                    paginationService.setCurrentPage(paginationId, scope.pages[3].id + 1);
+                  }
                 }
             };
 
@@ -371,7 +382,7 @@
                     var page = parseInt(paginationService.getCurrentPage(paginationId)) || 1;
                     scope.pages = generatePagesArray(page, paginationService.getCollectionLength(paginationId), paginationService.getItemsPerPage(paginationId), paginationRange);
                     scope.pagination.current = page;
-                    scope.pagination.last = scope.pages[scope.pages.length - 1];
+                    scope.pagination.last = scope.pages.last;
                     if (scope.pagination.last < scope.pagination.current) {
                         scope.setCurrent(scope.pagination.last);
                     } else {
@@ -428,16 +439,22 @@
             var i = 1;
             while (i <= totalPages && i <= paginationRange) {
                 var pageNumber = calculatePageNumber(i, currentPage, paginationRange, totalPages);
-
-                var openingEllipsesNeeded = (i === 2 && (position === 'middle' || position === 'end'));
-                var closingEllipsesNeeded = (i === paginationRange - 1 && (position === 'middle' || position === 'start'));
-                if (ellipsesNeeded && (openingEllipsesNeeded || closingEllipsesNeeded)) {
-                    pages.push('...');
-                } else {
-                    pages.push(pageNumber);
+                
+                var openingEllipsesNeeded = (i === 1 && (position === 'middle' || position === 'end'));
+                var closingEllipsesNeeded = (i === paginationRange && (position === 'middle' || position === 'start'));
+                if (ellipsesNeeded && openingEllipsesNeeded) {
+                    pages.push({"id":"before-ellipses", "display": "..."});
+                }
+                else if(ellipsesNeeded && closingEllipsesNeeded){
+                    pages.push({"id":"after-ellipses", "display": "..."});
+                }else {
+                    pages.push({"id":pageNumber, "display": pageNumber});
                 }
                 i ++;
             }
+            
+            //set last page value
+            pages.last = totalPages;
             return pages;
         }
 

@@ -14,6 +14,8 @@ an attribute, drop in your navigation wherever you like, and boom - instant, ful
 (**Looking for the Angular2 version? [Right here!](https://github.com/michaelbromley/ng2-pagination)**)
 
 ## Demo
+# Working Plunker
+[Updated Plunker](http://plnkr.co/edit/ZU2iAOMf0SrmoAC5cdjU?p=preview)
 
 [Here is a working demo on Plunker](http://plnkr.co/edit/Wtkv71LIqUR4OhzhgpqL?p=preview) which demonstrates some cool features such as live-binding the "itemsPerPage" and
 filtering of the collection.
