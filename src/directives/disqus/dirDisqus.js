@@ -37,6 +37,11 @@
                 scope.$watch('config', configChanged, true);
 
                 function configChanged() {
+                    
+                    // Check that the config object isn't undefined before continuing (when data is being passed to it asynchronously, for example)
+                    if (typeof scope.config === 'undefined') {
+                        return;
+                    }
 
                     // Ensure that the disqus_identifier and disqus_url are both set, otherwise we will run in to identifier conflicts when using URLs with "#" in them
                     // see http://help.disqus.com/customer/portal/articles/662547-why-are-the-same-comments-showing-up-on-multiple-pages-
